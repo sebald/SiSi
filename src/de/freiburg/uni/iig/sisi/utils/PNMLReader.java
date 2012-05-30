@@ -71,8 +71,8 @@ public class PNMLReader {
 	private void setDelegations(NodeList nodeList) {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element e = (Element) nodeList.item(i);
-			sm.getSafetyRequirements().addDelegation(sm.getResourceModel().getRole(e.getAttribute("roleRef")),
-					(Transition) sm.getNet().getNode(e.getAttribute("transRef")));
+			sm.getSafetyRequirements().addDelegation((Transition) sm.getNet().getNode(e.getAttribute("transRef")),
+					sm.getResourceModel().getRole(e.getAttribute("roleRef")));
 		}
 	}
 
@@ -97,7 +97,8 @@ public class PNMLReader {
 			NodeList domains = e.getElementsByTagName("domain");
 			for (int j = 0; j < domains.getLength(); j++) {
 				Element domain = (Element) domains.item(j);
-				sm.getResourceModel().getRole(e.getAttribute("id")).addDomain((Transition) sm.getNet().getNode(domain.getAttribute("transRef")));
+				sm.getResourceModel().getRole(e.getAttribute("id"))
+						.addDomain((Transition) sm.getNet().getNode(domain.getAttribute("transRef")));
 			}
 		}
 	}
