@@ -17,6 +17,10 @@ public class NarratorObject extends ModelObject {
 	
 	private List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
 	
+	public NarratorObject(){
+		super();
+	}
+	
 	public NarratorObject(String id, String name) {
 		super(id, name);
 	}

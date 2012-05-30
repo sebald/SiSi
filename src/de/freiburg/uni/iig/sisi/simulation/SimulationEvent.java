@@ -40,5 +40,9 @@ public class SimulationEvent {
 	public String toString() {
 		return "[" + this.transition.getName() + ", "+ this.subject.getName() + ", " + this.usedObjects + ", @" + this.timestamp + "]";
 	}
+	
+	public String toCSV() {
+		return this.timestamp + ", " + this.transition.getName() + ", "+ this.subject.getName() + ", " + this.usedObjects;
+	}
 
 }

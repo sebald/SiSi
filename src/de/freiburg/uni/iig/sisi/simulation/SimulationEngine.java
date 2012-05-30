@@ -4,20 +4,22 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
+import de.freiburg.uni.iig.sisi.model.NarratorObject;
 import de.freiburg.uni.iig.sisi.model.net.Arc;
 import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
 
-public class SimulationEngine {
+public class SimulationEngine extends NarratorObject {
 
+	public static String PROPERTY_TRANSITION_FIRED = "Transition fired";	
+	
 	private final SimulationModel simulationModel;
+	public enum ResourceSelectionMode { LIST, RANDOM }
+	private final ResourceSelectionMode resourceSelectionMode;
 	
 	private LinkedList<Place> currentMarking = new LinkedList<Place>();
 	private HashMap<String, Transition> fireableTransitions = new HashMap<String, Transition>();
-	
-	public enum ResourceSelectionMode { LIST, RANDOM }
-	private final ResourceSelectionMode resourceSelectionMode;
 	
 	public SimulationEngine(SimulationModel simulationModel) {
 		this.simulationModel = simulationModel;
@@ -59,8 +61,9 @@ public class SimulationEngine {
 			fire(transition);
 			Subject subject = firedby(transition);
 			
-			// observable properties
-			System.out.println(transition.getName() + " " + subject.getName() + " " + transition.getUsedObject());
+			// generate event
+			if ( transition.getName() != null )
+				notifyListeners(this, PROPERTY_TRANSITION_FIRED , new SimulationEvent(transition, subject, transition.getUsedObject()));
 		}
 	}	
 	

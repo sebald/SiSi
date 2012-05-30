@@ -6,6 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import de.freiburg.uni.iig.sisi.log.LogGenerator;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
 import de.freiburg.uni.iig.sisi.simulation.SimulationModel;
 
@@ -18,7 +19,10 @@ public class Testing {
 //			System.out.println(sm.getNet().getName());
 			
 			SimulationEngine se = new SimulationEngine(sm);
+			LogGenerator lg = new LogGenerator(se);
 			se.run();
+			lg.generateLog();
+			
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			// TODO Auto-generated catch block
