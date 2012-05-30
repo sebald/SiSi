@@ -237,7 +237,7 @@
 			<domain transRef="t01" />
 			<domain transRef="t02" />
 			<domain transRef="t03" />
-			<domain transRef="t07" />
+			<domain transRef="t08" />
 			<domain transRef="t09" />
 		</role>
 		<role id="r02">
@@ -252,7 +252,7 @@
 			<name>
 				<text>Finanzen</text>
 			</name>
-			<domain transRef="t08" />
+			<domain transRef="t07" />
 		</role>	
 		<subject id="s01">
 			<name>
