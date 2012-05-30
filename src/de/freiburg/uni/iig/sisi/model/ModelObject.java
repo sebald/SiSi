@@ -12,8 +12,8 @@ public abstract class ModelObject {
 	private String name;
 	
 	public ModelObject() {
-		this.id = "000";
-		this.name = "not set";
+		this.id = null;
+		this.name = null;
 	}
 	
 	public ModelObject(String id, String name) {
