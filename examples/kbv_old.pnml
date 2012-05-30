@@ -52,6 +52,11 @@
 					<text></text>
 				</name>
 			</place>
+			<place id="p10">
+				<name>
+					<text></text>
+				</name>
+			</place>
 		   	<transition id="t01">
 		   		<name>
 		   			<text>Beschwerde aufnehmen</text>
@@ -84,7 +89,7 @@
 		   	</transition>
 		   	<transition id="t05">
 		   		<name>
-		   			<text>Gutachten beurteilen</text>
+		   			<text>Gutachten akzeptieren</text>
 		    	</name>
 		    	<usedObject>
 		    		<name>
@@ -94,15 +99,25 @@
 		   	</transition>
 		   	<transition id="t06">
 		   		<name>
-		   			<text>Kunden benachrichtigen</text>
+		   			<text>Gutachten ablehnen</text>
 		    	</name>
-		   	</transition>		   	
+		    	<usedObject>
+		    		<name>
+		    			<text>Gutachten</text>
+		    		</name>
+		    	</usedObject>
+		   	</transition>
 		   	<transition id="t07">
 		   		<name>
 		   			<text>Vergütungszahlung entrichten</text>
 		    	</name>
 		   	</transition>
 		   	<transition id="t08">
+		   		<name>
+		   			<text>Kunden benachrichtigen</text>
+		    	</name>
+		   	</transition>
+		   	<transition id="t09">
 		   		<name>
 		   			<text>Beschwerde archvieren</text>
 		    	</name>
@@ -167,37 +182,47 @@
 		     		<text>1</text>
 		    	</inscription>
 		   	</arc>
-		   	<arc id="a12" source="t05" target="p07">
+		   	<arc id="a12" source="p06" target="t06">
 		    	<inscription>
 		     		<text>1</text>
 		    	</inscription>
 		   	</arc>
-		   	<arc id="a13" source="p07" target="t06">
+		   	<arc id="a13" source="t05" target="p07">
 		    	<inscription>
 		     		<text>1</text>
 		    	</inscription>
 		   	</arc>
-		   	<arc id="a14" source="p07" target="t07">
+		   	<arc id="a14" source="t06" target="p08">
 		    	<inscription>
 		     		<text>1</text>
 		    	</inscription>
 		   	</arc>
-		   	<arc id="a15" source="t06" target="p08">
+		   	<arc id="a15" source="p07" target="t07">
 		    	<inscription>
 		     		<text>1</text>
 		    	</inscription>
 		   	</arc>
-		   	<arc id="a16" source="t07" target="p08">
+		   	<arc id="a16" source="p08" target="t08">
 		    	<inscription>
 		     		<text>1</text>
 		    	</inscription>
 		   	</arc>
-		   	<arc id="a17" source="p08" target="t08">
+		   	<arc id="a17" source="t07" target="p09">
 		    	<inscription>
 		     		<text>1</text>
 		    	</inscription>
 		   	</arc>
 		   	<arc id="a18" source="t08" target="p09">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a19" source="p09" target="t09">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a20" source="t09" target="p10">
 		    	<inscription>
 		     		<text>1</text>
 		    	</inscription>
