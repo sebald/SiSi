@@ -1,6 +1,6 @@
 package de.freiburg.uni.iig.sisi.model.resource;
 
-import java.util.LinkedList;
+import java.util.HashSet;
 
 import de.freiburg.uni.iig.sisi.model.NarratorObject;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
@@ -10,14 +10,14 @@ public class Role extends NarratorObject {
 	public static String PROPERTY_ADD_DOMAIN = "Add Domain";
 	public static String PROPERTY_ADD_MEMBER = "Add Member";
 	
-	private LinkedList<Subject> members = new LinkedList<Subject>();
-	private LinkedList<Transition> domains = new LinkedList<Transition>();
+	private HashSet<Subject> members = new HashSet<Subject>();
+	private HashSet<Transition> domains = new HashSet<Transition>();
 	
 	public Role(String id, String name) {
 		super(id, name);
 	}
 	
-	public LinkedList<Subject> getMembers() {
+	public HashSet<Subject> getMembers() {
 		return members;
 	}
 	
@@ -30,7 +30,7 @@ public class Role extends NarratorObject {
 		return this.members.contains(member);
 	}
 
-	public LinkedList<Transition> getDomains() {
+	public HashSet<Transition> getDomains() {
 		return domains;
 	}
 
