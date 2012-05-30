@@ -138,7 +138,7 @@ public class PNMLReader {
 				NodeList objects = node.getElementsByTagName("usedObject");
 				for (int j = 0; j < objects.getLength(); j++) {
 					transition.addUsedObject(node.getElementsByTagName("usedObject").item(j).getTextContent().trim());
-					sm.getWorkObjectsMap().put(node.getAttribute("id"),
+					sm.getNet().addWorkObject(transition,
 							node.getElementsByTagName("usedObject").item(j).getTextContent().trim());
 				}
 			}

@@ -2,6 +2,7 @@ package de.freiburg.uni.iig.sisi.model.net;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 
@@ -11,9 +12,10 @@ public class PTNet extends ModelObject {
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	
-	// map for quick reference and get
+	// maps for quick reference
 	private HashMap<String, Node> nodeMap = new HashMap<String, Node>();
 	private HashMap<Place, Integer> initialMarking = new HashMap<Place, Integer>();
+	private HashMap<Transition, HashSet<String>> workObjectsMap = new HashMap<Transition, HashSet<String>>();
 
 	public ArrayList<Place> getPlaces() {
 		return places;
@@ -56,5 +58,19 @@ public class PTNet extends ModelObject {
 	public void setInitialMarking(HashMap<Place, Integer> initialMarking) {
 		this.initialMarking = initialMarking;
 	}
+	
+	public HashMap<Transition, HashSet<String>> getWorkObjectsMap() {
+		return workObjectsMap;
+	}
+	
+	public void addWorkObject(Transition transition, String workObject) {
+		if ( this.workObjectsMap.containsKey(transition) ){
+			this.workObjectsMap.get(transition).add(workObject);
+		} else {
+			HashSet<String> objSet = new HashSet<String>();
+			objSet.add(workObject);
+			this.workObjectsMap.put(transition, objSet);
+		}
+	}	
 	
 }

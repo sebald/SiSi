@@ -1,7 +1,6 @@
 package de.freiburg.uni.iig.sisi.simulation;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -17,8 +16,10 @@ public class SimulationModel {
 	private PTNet net = new PTNet();
 	private ResourceModel rm = new ResourceModel();
 	private SafetyRequirements safetyRequirements = new SafetyRequirements();
-	private HashMap<String, String> workObjectsMap = new HashMap<String, String>();
 	
+	// maps and sets for quick reference
+	
+			
 	public SimulationModel(String uri) throws ParserConfigurationException, SAXException, IOException {
 		PNMLReader reader = new PNMLReader();
 		reader.createModelFromPNML(this, uri);
@@ -34,16 +35,6 @@ public class SimulationModel {
 
 	public SafetyRequirements getSafetyRequirements() {
 		return safetyRequirements;
-	}
-
-	
-	public HashMap<String, String> getWorkObjectsMap() {
-		return workObjectsMap;
-	}
-	
-	public void addWorkObjectsMap(String transition, String workObject) {
-		//TODO this could be more than one
-		this.workObjectsMap.put(transition, workObject);
 	}
 	
 }
