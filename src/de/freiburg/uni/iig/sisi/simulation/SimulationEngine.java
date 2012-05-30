@@ -16,11 +16,21 @@ public class SimulationEngine {
 	private LinkedList<Place> currentMarking = new LinkedList<Place>();
 	private HashMap<String, Transition> fireableTransitions = new HashMap<String, Transition>();
 	
+	public enum ResourceSelectionMode { LIST, RANDOM }
+	private final ResourceSelectionMode resourceSelectionMode;
+	
 	public SimulationEngine(SimulationModel simulationModel) {
 		this.simulationModel = simulationModel;
+		this.resourceSelectionMode = ResourceSelectionMode.RANDOM;
 		this.init();
 	}
 
+	public SimulationEngine(SimulationModel simulationModel, ResourceSelectionMode mode) {
+		this.simulationModel = simulationModel;
+		this.resourceSelectionMode = mode;
+		this.init();		
+	}
+	
 	private void init() {
 		// init fireable transitions
 		updateFireableTransitions();
@@ -32,14 +42,13 @@ public class SimulationEngine {
 			if(transition.isFireable())
 				fireableTransitions.put(transition.getId(), transition);
 		}
-		fireableTransitions = fireableTransitions;
+		this.fireableTransitions = fireableTransitions;
 	}
 	
 	private Transition getRandomFireableTransition(){
 		Random generator = new Random();
 		Object[] values = fireableTransitions.values().toArray();
 		return (Transition) values[generator.nextInt(values.length)];
-
 	}
 
 	public void run() {
@@ -48,12 +57,10 @@ public class SimulationEngine {
 			
 			// internal (not observable operations)
 			fire(transition);
-			Subject subject = null;
-			if(transition.getName() != null )
-				subject = firedby(transition);
+			Subject subject = firedby(transition);
 			
-			// observable operations
-			
+			// observable properties
+			System.out.println(transition.getName() + " " + subject.getName() + " " + transition.getUsedObject());
 		}
 	}	
 	
@@ -75,8 +82,16 @@ public class SimulationEngine {
 	}
 
 	private Subject firedby(Transition transition) {
-		simulationModel.getResourceModel().getDomainFor(transition);
-		return null;
+		Subject subject = null;
+		LinkedList<Subject> subjects = simulationModel.getResourceModel().getDomainFor(transition).getMembers();
+		if (resourceSelectionMode == ResourceSelectionMode.LIST) {
+			subject = subjects.getFirst();
+		} else {
+			// random
+			Random r = new Random();
+			subject = subjects.get(r.nextInt(subjects.size()));
+		}
+		return subject;
 	}
 	
 }
