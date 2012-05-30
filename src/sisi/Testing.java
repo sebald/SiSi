@@ -21,7 +21,10 @@ public class Testing {
 			SimulationEngine se = new SimulationEngine(sm);
 			LogGenerator lg = new LogGenerator(se);
 			se.run();
-			lg.generateLog();
+			String log = lg.generateLog();
+			
+			
+			System.out.println(log);
 			
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {

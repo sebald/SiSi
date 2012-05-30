@@ -44,13 +44,13 @@ public class LogGenerator implements PropertyChangeListener {
 		}
 	}
 
-	public void generateLog() throws IOException {
+	public String generateLog() throws IOException {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH-mm-ss");
 		Date date = new Date();
-		generateLog("logs/SiSiLog_"+ dateFormat.format(date)  + ".log");
+		return generateLog("logs/SiSiLog_"+ dateFormat.format(date)  + ".log");
 	}
 
-	public void generateLog(String uri) throws IOException {
+	public String generateLog(String uri) throws IOException {
 		// parse log
 		String log = "";
 		if ( fileMode == FileMode.MXML ) {
@@ -69,6 +69,7 @@ public class LogGenerator implements PropertyChangeListener {
 		output.write(log);
 		output.close();
 
+		return log;
 	}
 
 	private String logToCSV() {
