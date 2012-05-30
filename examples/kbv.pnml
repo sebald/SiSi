@@ -212,8 +212,8 @@
 			<domain transRef="t01" />
 			<domain transRef="t02" />
 			<domain transRef="t03" />
+			<domain transRef="t06" />
 			<domain transRef="t08" />
-			<domain transRef="t09" />
 		</role>
 		<role id="r02">
 			<name>
@@ -221,7 +221,6 @@
 			</name>
 			<domain transRef="t04" />
 			<domain transRef="t05" />
-			<domain transRef="t06" />
 		</role>
 		<role id="r03">
 			<name>
@@ -272,7 +271,7 @@
 			<delegation roleRef="r02" transRef="t07" />
 		</delegations>
 		<policy id="sr01" type="sod" objective="t04" eventually="t05" />
-		<policy id="sr02" type="sod" objective="t04" eventually="t06" />
+		<policy id="sr02" type="bod" objective="t01" eventually="t08" />
 		<policy id="sr03" type="ar"	objective="t01" eventually="t09" />
 	</safetyRequirements>
 </pnml>
