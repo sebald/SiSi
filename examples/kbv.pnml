@@ -109,12 +109,12 @@
 		   	</transition>
 		   	<transition id="t07">
 		   		<name>
-		   			<text>Kunden benachrichtigen</text>
+		   			<text>Vergütungszahlung entrichten</text>
 		    	</name>
 		   	</transition>
 		   	<transition id="t08">
 		   		<name>
-		   			<text>Vergütungszahlung entrichten</text>
+		   			<text>Kunden benachrichtigen</text>
 		    	</name>
 		   	</transition>
 		   	<transition id="t09">
