@@ -12,6 +12,7 @@ public class ResourceModel implements PropertyChangeListener {
 	public HashMap<String, Subject> subjects = new HashMap<String, Subject>();
 	public HashMap<String, Role> roles = new HashMap<String, Role>();
 	
+	// maps for quick reference
 	public HashMap<Transition, Role> domainMap = new HashMap<Transition, Role>();
 	
 	public Collection<Subject> getSubjects() {

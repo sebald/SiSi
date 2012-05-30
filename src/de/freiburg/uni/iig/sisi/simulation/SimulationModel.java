@@ -16,9 +16,6 @@ public class SimulationModel {
 	private PTNet net = new PTNet();
 	private ResourceModel rm = new ResourceModel();
 	private SafetyRequirements safetyRequirements = new SafetyRequirements();
-	
-	// maps and sets for quick reference
-	
 			
 	public SimulationModel(String uri) throws ParserConfigurationException, SAXException, IOException {
 		PNMLReader reader = new PNMLReader();
