@@ -1,0 +1,303 @@
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml" type="de.freiburg.uni.iig.sisi">
+	<net id="240784" type="http://www.pnml.org/version-2009/grammar/ptnet">
+		<name>
+			<text>Kundebeschwerdeverfahren</text>
+		</name>
+		<page id="000">
+			<place id="p01">
+				<name>
+					<text></text>
+				</name>
+				<initialMarking>
+					<text>1</text>
+				</initialMarking>
+			</place>
+			<place id="p02">
+				<name>
+					<text></text>
+				</name>
+			</place>
+			<place id="p03">
+				<name>
+					<text></text>
+				</name>
+			</place>
+			<place id="p04">
+				<name>
+					<text></text>
+				</name>
+			</place>
+			<place id="p05">
+				<name>
+					<text></text>
+				</name>
+			</place>
+			<place id="p06">
+				<name>
+					<text></text>
+				</name>
+			</place>
+			<place id="p07">
+				<name>
+					<text></text>
+				</name>
+			</place>
+			<place id="p08">
+				<name>
+					<text></text>
+				</name>
+			</place>
+			<place id="p09">
+				<name>
+					<text></text>
+				</name>
+			</place>
+			<place id="p10">
+				<name>
+					<text></text>
+				</name>
+			</place>
+		   	<transition id="t01">
+		   		<name>
+		   			<text>Beschwerde aufnehmen</text>
+		    	</name>
+		   	</transition>
+		   	<transition id="t02">
+		   		<name>
+		   			<text>Abteilung informieren</text>
+		    	</name>
+		   	</transition>
+		   	<transition id="t03">
+		   		<name>
+		   			<text>Kunden informieren</text>
+		    	</name>
+		   	</transition>
+		   	<transition id="t04">
+		   		<name>
+		   			<text>Gutachten erstellen</text>
+		    	</name>
+		    	<usedObject>
+		    		<name>
+		    			<text>Stellungnahme</text>
+		    		</name>
+		    	</usedObject>
+		    	<usedObject>
+		    		<name>
+		    			<text>Kundenangaben</text>
+		    		</name>
+		    	</usedObject>
+		   	</transition>
+		   	<transition id="t05">
+		   		<name>
+		   			<text>Gutachten akzeptieren</text>
+		    	</name>
+		    	<usedObject>
+		    		<name>
+		    			<text>Gutachten</text>
+		    		</name>
+		    	</usedObject>
+		   	</transition>
+		   	<transition id="t06">
+		   		<name>
+		   			<text>Gutachten ablehnen</text>
+		    	</name>
+		    	<usedObject>
+		    		<name>
+		    			<text>Gutachten</text>
+		    		</name>
+		    	</usedObject>
+		   	</transition>
+		   	<transition id="t07">
+		   		<name>
+		   			<text>Kunden benachrichtigen</text>
+		    	</name>
+		   	</transition>
+		   	<transition id="t08">
+		   		<name>
+		   			<text>Vergütungszahlung entrichten</text>
+		    	</name>
+		   	</transition>
+		   	<transition id="t09">
+		   		<name>
+		   			<text>Beschwerde archvieren</text>
+		    	</name>
+				<usedObject>
+		    		<name>
+		    			<text>Beschwerde</text>
+		    		</name>
+		    	</usedObject>		    	
+		   	</transition>
+		   	<arc id="a01" source="p01" target="t01">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a02" source="t01" target="p02">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a03" source="t01" target="p03">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a04" source="p02" target="t02">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a05" source="p03" target="t03">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a06" source="t02" target="p04">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a07" source="t03" target="p05">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a08" source="p04" target="t04">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a09" source="p05" target="t04">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a10" source="t04" target="p06">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a11" source="p06" target="t05">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a12" source="p06" target="t06">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a13" source="t05" target="p07">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a14" source="t06" target="p08">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a15" source="p07" target="t07">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a16" source="p08" target="t08">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a17" source="t07" target="p09">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a18" source="t08" target="p09">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a19" source="p09" target="t09">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>
+		   	<arc id="a20" source="t09" target="p10">
+		    	<inscription>
+		     		<text>1</text>
+		    	</inscription>
+		   	</arc>	   						
+		</page>
+	</net>
+	<resourceModel>
+		<role id="r01">
+			<name>
+				<text>Kundenbetreuung</text>
+			</name>
+			<domain transRef="t01" />
+			<domain transRef="t02" />
+			<domain transRef="t03" />
+			<domain transRef="t07" />
+			<domain transRef="t09" />
+		</role>
+		<role id="r02">
+			<name>
+				<text>Gutachter</text>
+			</name>
+			<domain transRef="t04" />
+			<domain transRef="t05" />
+			<domain transRef="t06" />
+		</role>
+		<role id="r03">
+			<name>
+				<text>Finanzen</text>
+			</name>
+			<domain transRef="t08" />
+		</role>	
+		<subject id="s01">
+			<name>
+				<text>Gerhard</text>
+			</name>
+			<assigned roleRef="r02" />
+			<assigned roleRef="r03" />
+		</subject>
+		<subject id="s02">
+			<name>
+				<text>Maria</text>
+			</name>
+			<assigned roleRef="r01" />
+		</subject>
+		<subject id="s03">
+			<name>
+				<text>Renate</text>
+			</name>
+			<assigned roleRef="r01" />
+		</subject>
+		<subject id="s04">
+			<name>
+				<text>Frank</text>
+			</name>
+			<assigned roleRef="r01" />
+		</subject>
+		<subject id="s05">
+			<name>
+				<text>Anna</text>
+			</name>
+			<assigned roleRef="r02" />
+		</subject>
+		<subject id="s06">
+			<name>
+				<text>Walter</text>
+			</name>
+			<assigned roleRef="r03" />
+		</subject>
+	</resourceModel>
+	<safetyRequirements>
+		<delegations>
+			<delegation roleRef="r03" transRef="t07" />
+		</delegations>
+		<policy id="sr01" type="sod" objective="t04" eventually="t05" />
+		<policy id="sr02" type="sod" objective="t04" eventually="t06" />
+		<policy id="sr03" type="ar"	objective="t01" eventually="t09" />
+	</safetyRequirements>
+</pnml>
