@@ -51,8 +51,14 @@ public class LogGenerator implements PropertyChangeListener {
 	}
 
 	public void generateLog(String uri) throws IOException {
-		// parse log		
-		String log = logToCSV();
+		// parse log
+		String log = "";
+		if ( fileMode == FileMode.MXML ) {
+			log = logToCSV();
+		} else {
+			log = logToCSV();
+		}
+		
 		
 		// create file
 		Writer output = null;
