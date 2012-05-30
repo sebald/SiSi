@@ -21,7 +21,7 @@ public class SimulationModel {
 	
 	public SimulationModel(String uri) throws ParserConfigurationException, SAXException, IOException {
 		PNMLReader reader = new PNMLReader();
-		reader.createModelFromPNML(this, "examples/kbv.pnml");
+		reader.createModelFromPNML(this, uri);
 	}
 
 	public PTNet getNet() {
@@ -44,10 +44,6 @@ public class SimulationModel {
 	public void addWorkObjectsMap(String transition, String workObject) {
 		//TODO this could be more than one
 		this.workObjectsMap.put(transition, workObject);
-	}
-	
-	public void simulate(){
-		
 	}
 	
 }
