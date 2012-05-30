@@ -1,6 +1,7 @@
 package de.freiburg.uni.iig.sisi.simulation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -8,16 +9,19 @@ import de.freiburg.uni.iig.sisi.model.NarratorObject;
 import de.freiburg.uni.iig.sisi.model.net.Arc;
 import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
+import de.freiburg.uni.iig.sisi.model.resource.Role;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
 
 public class SimulationEngine extends NarratorObject {
 
 	public static String PROPERTY_TRANSITION_FIRED = "Transition fired";	
 	
-	private final SimulationModel simulationModel;
+	// engine config vars
 	public enum ResourceSelectionMode { LIST, RANDOM }
 	private final ResourceSelectionMode resourceSelectionMode;
+	private boolean respectSafetyRequirements;
 	
+	private final SimulationModel simulationModel;
 	private LinkedList<Place> currentMarking = new LinkedList<Place>();
 	private HashMap<String, Transition> fireableTransitions = new HashMap<String, Transition>();
 	
@@ -34,6 +38,9 @@ public class SimulationEngine extends NarratorObject {
 	}
 	
 	private void init() {
+		// should the engine respect safety requirements?
+		respectSafetyRequirements = true;
+		
 		// init fireable transitions
 		updateFireableTransitions();
 	}
@@ -86,13 +93,24 @@ public class SimulationEngine extends NarratorObject {
 
 	private Subject firedby(Transition transition) {
 		Subject subject = null;
-		LinkedList<Subject> subjects = simulationModel.getResourceModel().getDomainFor(transition).getMembers();
+		// get subjects which are authorized (implied through domain assignment)
+		HashSet<Subject> subjects = simulationModel.getResourceModel().getDomainFor(transition).getMembers();
+		
+		// get delegations and add subjects that are authorized through the delegations
+		if ( respectSafetyRequirements && simulationModel.getSafetyRequirements().hasDelegation(transition)) {
+			HashSet<Role> delegationRoles = simulationModel.getSafetyRequirements().getDelegations().get(transition);
+			for (Role role : delegationRoles) {
+				subjects.addAll(role.getMembers());
+			}
+		}
+		
 		if (resourceSelectionMode == ResourceSelectionMode.LIST) {
-			subject = subjects.getFirst();
+			subject = subjects.iterator().next();
 		} else {
 			// random
-			Random r = new Random();
-			subject = subjects.get(r.nextInt(subjects.size()));
+			Random generator = new Random();
+			Object[] values = subjects.toArray();
+			subject = (Subject) values[generator.nextInt(values.length)];
 		}
 		return subject;
 	}
