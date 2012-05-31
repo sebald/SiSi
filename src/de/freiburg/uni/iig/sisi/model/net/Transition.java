@@ -13,5 +13,18 @@ public class Transition extends Node {
 		}
 		return true;
 	}
-	
+
+	/**
+	 * Checks if the transition will be fireable in the future.
+	 * This is true iff the pre-set of the transition is not a
+	 * decision place (since the net has to be acyclic).
+	 * 
+	 * @return is the transition fireable in the future?
+	 */
+	public boolean canFireLater() {
+		for (Arc arc : getIncomingArcs()) {
+			if( arc.getSource().getOutgoingArcs().size() == 1 ) return true;
+		}
+		return false;
+	}
 }
