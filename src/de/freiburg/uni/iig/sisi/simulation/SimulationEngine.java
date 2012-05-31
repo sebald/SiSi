@@ -56,7 +56,7 @@ public class SimulationEngine extends NarratorObject {
 		updateFireableTransitions();
 	}
 
-	public void run() throws SimulationExcpetion {
+	public ModelState run() throws SimulationExcpetion {
 		while (!fireableTransitions.isEmpty()) {
 			Transition transition = getRandomFireableTransition();
 			// internal (not observable operations)
@@ -69,6 +69,7 @@ public class SimulationEngine extends NarratorObject {
 			if (transition.getName() != null)
 				notifyListeners(this, PROPERTY_TRANSITION_FIRED, event);
 		}
+		return evaluateModel();
 	}	
 	
 	public void reset() {
@@ -84,9 +85,21 @@ public class SimulationEngine extends NarratorObject {
 			}
 		}
 		// adapt the fireable set according to usage control rules
-		if( considerSafetyRequirements && (fireableTransitions.size() > 0) ) {
-					fireableTransitions = satisfyUsageControl(fireableTransitions);
+		if( considerSafetyRequirements && !fireableTransitions.isEmpty() ) {
+			fireableTransitions = satisfyUsageControl(fireableTransitions);
 		}
+		// remove usage restrictions, b/c they are now (finished the simulation) satisfied
+		if( considerSafetyRequirements && fireableTransitions.isEmpty() ) {
+			for (Transition transition : usageControlsToSatisfy.keySet()) {
+				for (UsageControl usageControl : usageControlsToSatisfy.get(transition)) {
+					if( usageControl.getType() == UsageControlType.USAGE_RESTRICTION )
+						usageControlsToSatisfy.get(transition).remove(usageControl);
+					if ( usageControlsToSatisfy.get(transition).isEmpty() )
+						usageControlsToSatisfy.remove(transition);
+				}
+			}
+		}
+		
 		this.fireableTransitions = fireableTransitions;
 	}
 
@@ -265,7 +278,8 @@ public class SimulationEngine extends NarratorObject {
 	}
 	
 	private ModelState evaluateModel(){
-
+		
+		
 		return ModelState.VIOLATED;
 	}
 	
