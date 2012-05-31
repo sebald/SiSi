@@ -115,6 +115,18 @@ public class SimulationEngine extends NarratorObject {
 				}
 			}
 		}
+		// is the fire transition the eventually part of an action requirement?
+		if ( considerSafetyRequirements && usageControlsToSatisfy.containsKey(transition) ) {
+			for (UsageControl usageControl : usageControlsToSatisfy.get(transition)) {
+				// if so => remove it, b/c it is satisfied
+				if( usageControl.getType() == UsageControlType.ACTION_REQUIREMENT )
+					usageControlsToSatisfy.get(transition).remove(usageControl);
+				if ( usageControlsToSatisfy.get(transition).isEmpty() )
+					usageControlsToSatisfy.remove(transition);
+			}
+			
+		}
+		
 		// check what is now fireable
 		updateFireableTransitions();
 	}
