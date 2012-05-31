@@ -162,14 +162,6 @@ public class PNMLReader {
 			Element node = (Element) nodeList.item(i);
 			Transition transition = new Transition(node.getAttribute("id"), node.getElementsByTagName("name").item(0).getTextContent()
 					.trim());
-			// if (node.getElementsByTagName("usedObject").getLength() != 0) {
-			// NodeList objects = node.getElementsByTagName("usedObject");
-			// for (int j = 0; j < objects.getLength(); j++) {
-			// transition.addUsedObject(node.getElementsByTagName("usedObject").item(j).getTextContent().trim());
-			// sm.getNet().addWorkObject(transition,
-			// node.getElementsByTagName("usedObject").item(j).getTextContent().trim());
-			// }
-			// }
 			sm.getNet().addTransition(transition);
 		}
 	}
