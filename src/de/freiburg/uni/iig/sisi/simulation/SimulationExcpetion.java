@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import de.freiburg.uni.iig.sisi.model.net.Transition;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 
 
@@ -21,6 +22,10 @@ public class SimulationExcpetion extends Exception {
 
 	public SimulationExcpetion(Transition transition) {
 		super("The transition "+ transition.getId() +" is part of an action requirement and an usage restrition rule.");
+	}
+
+	public SimulationExcpetion(Policy policy) {
+		super("After satisfing " + policy.getId() + "there is now subject left that can execute the task.");
 	}
 
 	

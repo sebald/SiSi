@@ -34,17 +34,17 @@ public class SimulationEngine extends NarratorObject {
 	private HashMap<Transition, HashSet<UsageControl>> usageControlsToSatisfy = new HashMap<Transition, HashSet<UsageControl>>();
 	private HashMap<Transition, SimulationEvent> internalEventMap = new HashMap<Transition, SimulationEvent>();
 
-	public SimulationEngine(SimulationModel simulationModel) {
+	public SimulationEngine(SimulationModel simulationModel) throws SimulationExcpetion {
 		this(simulationModel, ResourceSelectionMode.RANDOM);
 	}
 
-	public SimulationEngine(SimulationModel simulationModel, ResourceSelectionMode mode) {
+	public SimulationEngine(SimulationModel simulationModel, ResourceSelectionMode mode) throws SimulationExcpetion {
 		this.simulationModel = simulationModel;
 		this.resourceSelectionMode = mode;
 		this.init();
 	}
 
-	private void init() {
+	private void init() throws SimulationExcpetion {
 		// should the engine respect safety requirements?
 		considerSafetyRequirements = true;
 
@@ -52,7 +52,7 @@ public class SimulationEngine extends NarratorObject {
 		updateFireableTransitions();
 	}
 
-	public void run() {
+	public void run() throws SimulationExcpetion {
 		while (!fireableTransitions.isEmpty()) {
 			Transition transition = getRandomFireableTransition();
 			// internal (not observable operations)
@@ -67,7 +67,7 @@ public class SimulationEngine extends NarratorObject {
 		}
 	}	
 	
-	private void updateFireableTransitions() {
+	private void updateFireableTransitions() throws SimulationExcpetion {
 		HashSet<Transition> fireableTransitions = new HashSet<Transition>();
 		// add every transition that could be fired (ignore safety requirements for now)
 		for (Transition transition : simulationModel.getNet().getTransitions()) {
@@ -77,12 +77,7 @@ public class SimulationEngine extends NarratorObject {
 		}
 		// adapt the fireable set according to usage control rules
 		if( considerSafetyRequirements && (fireableTransitions.size() > 0) ) {
-					/* fireableTransitions = */ try {
-						satisfyUsageControl(fireableTransitions);
-					} catch (SimulationExcpetion e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					fireableTransitions = satisfyUsageControl(fireableTransitions);
 		}
 		this.fireableTransitions = fireableTransitions;
 	}
@@ -93,7 +88,7 @@ public class SimulationEngine extends NarratorObject {
 		return (Transition) values[generator.nextInt(values.length)];
 	}
 
-	private void fire(Transition transition) {
+	private void fire(Transition transition) throws SimulationExcpetion {
 		// we fire it, we remove it
 		fireableTransitions.remove(transition.getId());
 		// remove tokens form pre set
@@ -124,12 +119,12 @@ public class SimulationEngine extends NarratorObject {
 		updateFireableTransitions();
 	}
 
-	private Subject firedby(Transition transition) {
+	private Subject firedby(Transition transition) throws SimulationExcpetion {
 		Subject subject = null;
 		// get subjects which are authorized (implied through domain assignment)
 		HashSet<Subject> subjects = simulationModel.getResourceModel().getDomainFor(transition).getMembers();
 		
-		// check if safetyRquirements should be respected
+		// check if safetyRquirements should be considered
 		if (considerSafetyRequirements) {
 			// get delegations and add subjects that are authorized through the delegations
 			if (simulationModel.getSafetyRequirements().hasDelegation(transition)) {
@@ -164,8 +159,6 @@ public class SimulationEngine extends NarratorObject {
 			}
 
 		}
-		
-		//TODO check that subjects is NOT empty!
 
 		// resource selection
 		if (resourceSelectionMode == ResourceSelectionMode.LIST) {
@@ -179,7 +172,7 @@ public class SimulationEngine extends NarratorObject {
 		return subject;
 	}
 	
-	private HashSet<Subject> satisfyPolicy(Policy policy, HashSet<Subject> subjectSet) {
+	private HashSet<Subject> satisfyPolicy(Policy policy, HashSet<Subject> subjectSet) throws SimulationExcpetion {
 		// get event to check who has executed the task
 		SimulationEvent event = internalEventMap.get(policy.getObjective());
 		// set the available subjects according to the policy rules
@@ -197,12 +190,13 @@ public class SimulationEngine extends NarratorObject {
 			}
 		}
 		
+		if ( subjectSet.isEmpty() )
+			throw new SimulationExcpetion(policy);
+		
 		return subjectSet;
 	}
 
-	private HashSet<Transition> satisfyUsageControl(HashSet<Transition> fireableTransitions) throws SimulationExcpetion {
-		// TODO: Same transition can not be eventually part of AR + UR
-		
+	private HashSet<Transition> satisfyUsageControl(HashSet<Transition> fireableTransitions) throws SimulationExcpetion {	
 		// set of transitions that can only be fired now
 		HashSet<Transition> needToBeFired = new HashSet<Transition>();
 		
@@ -237,7 +231,7 @@ public class SimulationEngine extends NarratorObject {
 		if ( needToBeFired.size() > 1 )
 			throw new SimulationExcpetion(needToBeFired);
 		// fireableTransitions are empty
-		if ( fireableTransitions.size() < 1 )
+		if ( fireableTransitions.isEmpty() )
 			throw new SimulationExcpetion(usageControlsToSatisfy);
 		
 		// there is one transition that has to be fired now
