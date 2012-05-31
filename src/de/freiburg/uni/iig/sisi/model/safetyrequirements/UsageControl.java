@@ -22,7 +22,7 @@ public class UsageControl extends ModelObject {
 		this.eventually = eventually;
 		
 		switch (type) {
-		case "ua":
+		case "ur":
 			this.type = UsageControlType.USAGE_RESTRICTION;
 			break;
 		case "ar":
