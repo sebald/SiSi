@@ -2,6 +2,7 @@ package de.freiburg.uni.iig.sisi.simulation;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 
 import de.freiburg.uni.iig.sisi.model.NarratorObject;
@@ -12,6 +13,7 @@ import de.freiburg.uni.iig.sisi.model.resource.Role;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy.PolicyType;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 
 public class SimulationEngine extends NarratorObject {
 
@@ -23,12 +25,13 @@ public class SimulationEngine extends NarratorObject {
 
 	// engine config vars
 	private final ResourceSelectionMode resourceSelectionMode;
-	private boolean respectSafetyRequirements;
+	private boolean considerSafetyRequirements;
 	private final SimulationModel simulationModel;
 
 	// important vars while simulation
 	private HashMap<String, Transition> fireableTransitions = new HashMap<String, Transition>();
-	private HashMap<Transition, Policy> policiesToSatisfy = new HashMap<Transition, Policy>();
+	private HashMap<Transition, HashSet<Policy>> policiesToSatisfy = new HashMap<Transition, HashSet<Policy>>();
+	private HashMap<Transition, UsageControl> usaceControlsToSatisfy = new HashMap<Transition, UsageControl>();
 	private HashMap<Transition, SimulationEvent> internalEventMap = new HashMap<Transition, SimulationEvent>();
 
 	public SimulationEngine(SimulationModel simulationModel) {
@@ -43,7 +46,7 @@ public class SimulationEngine extends NarratorObject {
 
 	private void init() {
 		// should the engine respect safety requirements?
-		respectSafetyRequirements = true;
+		considerSafetyRequirements = true;
 
 		// init fireable transitions
 		updateFireableTransitions();
@@ -52,8 +55,15 @@ public class SimulationEngine extends NarratorObject {
 	private void updateFireableTransitions() {
 		HashMap<String, Transition> fireableTransitions = new HashMap<String, Transition>();
 		for (Transition transition : simulationModel.getNet().getTransitions()) {
-			if (transition.isFireable())
+			if (transition.isFireable()) {
+
+				// is enabled usage control rules will be considered
+				if(considerSafetyRequirements) {
+					
+				}
+				
 				fireableTransitions.put(transition.getId(), transition);
+			}
 		}
 		this.fireableTransitions = fireableTransitions;
 	}
@@ -73,7 +83,7 @@ public class SimulationEngine extends NarratorObject {
 			Subject subject = firedby(transition);
 
 			// generate event
-			SimulationEvent event = new SimulationEvent(transition, subject, transition.getUsedObject());
+			SimulationEvent event = new SimulationEvent(transition, subject, simulationModel.getResourceModel().getWorkObjectFor(transition));
 			internalEventMap.put(transition, event);
 			
 			// the event is observable, if the transition has a label (no silent transition)
@@ -83,7 +93,7 @@ public class SimulationEngine extends NarratorObject {
 	}
 
 	private void fire(Transition transition) {
-		// we fire it we remove it
+		// we fire it, we remove it
 		fireableTransitions.remove(transition.getId());
 		// remove tokens form pre set
 		for (Arc arc : transition.getIncomingArcs()) {
@@ -95,6 +105,11 @@ public class SimulationEngine extends NarratorObject {
 			Place p = ((Place) arc.getTarget());
 			p.setMarking(p.getMarking() + 1);
 		}
+		// is the fired transition part of a usage control rule?
+//		if ( considerSafetyRequirements && simulationModel.getSafetyRequirements().hasUsageControl(transition) ) {
+//			UsageControl uc = simulationModel.getSafetyRequirements().getUsageControlMap().get(transition);
+//			usaceControlsToSatisfy.put(key, value)
+//		}
 		// check what is now fireable
 		updateFireableTransitions();
 	}
@@ -105,9 +120,8 @@ public class SimulationEngine extends NarratorObject {
 		HashSet<Subject> subjects = simulationModel.getResourceModel().getDomainFor(transition).getMembers();
 		
 		// check if safetyRquirements should be respected
-		if (respectSafetyRequirements) {
-			// get delegations and add subjects that are authorized through the
-			// delegations
+		if (considerSafetyRequirements) {
+			// get delegations and add subjects that are authorized through the delegations
 			if (simulationModel.getSafetyRequirements().hasDelegation(transition)) {
 				HashSet<Role> delegationRoles = simulationModel.getSafetyRequirements().getDelegations().get(transition);
 				for (Role role : delegationRoles) {
@@ -117,27 +131,12 @@ public class SimulationEngine extends NarratorObject {
 
 			// check if transition is an eventually part of one or more policies
 			if (policiesToSatisfy.containsKey(transition)) {
-				Policy policy = policiesToSatisfy.get(transition);
-				SimulationEvent event = internalEventMap.get(policy.getObjective());
-				
-				// set the available subjects according to the policy rules
-				if( policy.getType() == PolicyType.SEPERATION_OF_DUTY ) {
-					subjects.remove(event.getSubject());
-				} else if ( policy.getType() == PolicyType.BINDING_OF_DUTY  ) {
-					subjects = new HashSet<Subject>();
-					subjects.add(event.getSubject());
-				} else if ( policy.getType() == PolicyType.CONFLICT_OF_INTEREST ) {
-					// remove subjects if they have a role, which is not a role of the subject that executed the objective task
-					for (Subject subject2 : subjects) {
-						if( !subject2.hasCompatibleRoles(event.getSubject()) ) {
-							subjects.remove(subject2);
-						}
-					}
-				} else if ( policy.getType() == PolicyType.USAGE_RESTRICTION ) {
-					
-				} else if ( policy.getType() == PolicyType.ACTION_REQUIREMENT ) {
-					
+				HashSet<Policy> policies = policiesToSatisfy.get(transition);
+				for (Iterator iterator = policies.iterator(); iterator.hasNext();) {
+					Policy policy = (Policy) iterator.next();
+					subjects = satisfyPolicy(policy, subjects);
 				}
+				
 			}
 
 			// check if transition is an objective of one or more policies
@@ -145,7 +144,14 @@ public class SimulationEngine extends NarratorObject {
 				HashSet<Policy> policies = simulationModel.getSafetyRequirements().getPolicyMap().get(transition);
 				// add policies to policiesToSatisfy map
 				for (Policy policy : policies) {
-					policiesToSatisfy.put(policy.getEventually(), policy);
+					// is eventually-transition already registers?
+					if( policiesToSatisfy.containsKey(policy.getEventually()) ) {
+						policiesToSatisfy.get(policy.getEventually()).add(policy);
+					} else {
+						HashSet<Policy> newPolicies = new HashSet<Policy>();
+						newPolicies.add(policy);
+						policiesToSatisfy.put(policy.getEventually(), newPolicies);
+					}
 				}
 			}
 
@@ -161,6 +167,27 @@ public class SimulationEngine extends NarratorObject {
 			subject = (Subject) values[generator.nextInt(values.length)];
 		}
 		return subject;
+	}
+	
+	private HashSet<Subject> satisfyPolicy(Policy policy, HashSet<Subject> subjectSet) {
+		SimulationEvent event = internalEventMap.get(policy.getObjective());
+		
+		// set the available subjects according to the policy rules
+		if( policy.getType() == PolicyType.SEPERATION_OF_DUTY ) {
+			subjectSet.remove(event.getSubject());
+		} else if ( policy.getType() == PolicyType.BINDING_OF_DUTY  ) {
+			subjectSet = new HashSet<Subject>();
+			subjectSet.add(event.getSubject());
+		} else if ( policy.getType() == PolicyType.CONFLICT_OF_INTEREST ) {
+			// remove subjects if they have a role, which is not a role of the subject that executed the objective task
+			for (Subject subject : subjectSet) {
+				if( !subject.hasCompatibleRoles(event.getSubject()) ) {
+					subjectSet.remove(subject);
+				}
+			}
+		}
+		
+		return subjectSet;
 	}
 
 }
