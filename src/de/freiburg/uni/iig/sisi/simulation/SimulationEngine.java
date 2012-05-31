@@ -67,6 +67,10 @@ public class SimulationEngine extends NarratorObject {
 		}
 	}	
 	
+	public void reset() {
+		simulationModel.getNet().rest();
+	}
+	
 	private void updateFireableTransitions() throws SimulationExcpetion {
 		HashSet<Transition> fireableTransitions = new HashSet<Transition>();
 		// add every transition that could be fired (ignore safety requirements for now)

@@ -71,6 +71,12 @@ public class PTNet extends ModelObject {
 			objSet.add(workObject);
 			this.workObjectsMap.put(transition, objSet);
 		}
-	}	
+	}
+	
+	public void rest(){
+		for (Place place : places) {
+			place.setMarking(initialMarking.get(place));
+		}
+	}
 	
 }
