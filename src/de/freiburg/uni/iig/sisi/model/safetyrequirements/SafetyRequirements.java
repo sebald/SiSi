@@ -11,10 +11,12 @@ public class SafetyRequirements {
 	
 	// one transition can has one or more roles for delegation
 	private HashMap<Transition, HashSet<Role>> delegations = new HashMap<Transition, HashSet<Role>>();
-	private LinkedList<Policy> policies= new LinkedList<Policy>();
+	private LinkedList<Policy> policies = new LinkedList<Policy>();
+	private LinkedList<UsageControl> usageControls = new LinkedList<UsageControl>();
 	
 	// maps for quick reference
 	private HashMap<Transition, HashSet<Policy>> policyMap = new HashMap<Transition, HashSet<Policy>>();
+	private HashMap<Transition, HashSet<UsageControl>> usageControlMap = new HashMap<Transition, HashSet<UsageControl>>();
 
 	public HashMap<Transition, HashSet<Role>> getDelegations() {
 		return delegations;
@@ -44,19 +46,43 @@ public class SafetyRequirements {
 			this.policyMap.put(policy.getObjective(), policySet);
 		}		
 	}
-	
+
 	public boolean hasDelegation(Transition transition) {
-		if  (delegations.containsKey(transition) ) return true;
+		if  (this.delegations.containsKey(transition) ) return true;
 		return false;
 	}
 	
 	public boolean hasPolicy(Transition transition) {
-		if  (policyMap.containsKey(transition) ) return true;
+		if  (this.policyMap.containsKey(transition) ) return true;
 		return false;		
 	}
 	
 	public HashMap<Transition, HashSet<Policy>> getPolicyMap() {
 		return policyMap;
+	}
+
+	public LinkedList<UsageControl> getUsageControls() {
+		return usageControls;
 	}	
+	
+	public void addUsageControl(UsageControl usageControl) {
+		this.usageControls.add(usageControl);
+		if ( this.usageControlMap.containsKey(usageControl.getObjective()) ){
+			this.usageControlMap.get(usageControl.getObjective()).add(usageControl);
+		} else {
+			HashSet<UsageControl> policySet = new HashSet<UsageControl>();
+			policySet.add(usageControl);
+			this.usageControlMap.put(usageControl.getObjective(), policySet);
+		}
+	}
+
+	public HashMap<Transition, HashSet<UsageControl>> getUsageControlMap() {
+		return usageControlMap;
+	}
+	
+	public boolean hasUsageControl(Transition transition) {
+		if (this.usageControlMap.containsKey(transition)) return true;
+		return false;
+	}
 	
 }

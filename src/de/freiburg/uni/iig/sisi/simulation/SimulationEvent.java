@@ -1,19 +1,20 @@
 package de.freiburg.uni.iig.sisi.simulation;
 
 import java.sql.Timestamp;
-import java.util.LinkedList;
+import java.util.HashSet;
 
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
+import de.freiburg.uni.iig.sisi.model.resource.WorkObject;
 
 public class SimulationEvent {
 	
 	private final Transition transition;
 	private final Subject subject;
-	private final LinkedList<String> usedObjects;
+	private final HashSet<WorkObject> usedObjects;
 	private final Timestamp timestamp;
 	
-	public SimulationEvent(Transition transition, Subject subject, LinkedList<String> usedObjects) {
+	public SimulationEvent(Transition transition, Subject subject, HashSet<WorkObject> usedObjects) {
 		super();
 		
 		this.transition = transition;
@@ -32,7 +33,7 @@ public class SimulationEvent {
 		return subject;
 	}
 
-	public LinkedList<String> getUsedObjects() {
+	public HashSet<WorkObject> getUsedObjects() {
 		return usedObjects;
 	}
 

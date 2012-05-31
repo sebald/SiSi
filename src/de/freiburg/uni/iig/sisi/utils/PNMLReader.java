@@ -3,6 +3,7 @@ package de.freiburg.uni.iig.sisi.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,7 +20,9 @@ import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.Role;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
+import de.freiburg.uni.iig.sisi.model.resource.WorkObject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.simulation.SimulationModel;
 
 public class PNMLReader {
@@ -38,7 +41,7 @@ public class PNMLReader {
 
 		// check for correct type
 		if (!((Element) doc.getElementsByTagName("pnml").item(0)).getAttribute("type").equals("de.freiburg.uni.iig.sisi"))
-			throw new IOException("Can not read, because of wrong PNML type.");
+			throw new IOException("Can not read. Wrong PNML type. Can only read 'de.freiburg.uni.iig.sisi'.");
 
 		setNetAttributes((Element) doc.getElementsByTagName("net").item(0));
 
@@ -50,20 +53,30 @@ public class PNMLReader {
 		// set up resource model
 		setRoles(doc.getElementsByTagName("role"));
 		setSubjects(doc.getElementsByTagName("subject"));
+		setWorkObjects(doc.getElementsByTagName("object"));
 
 		// set up safety requirements
 		setDelegations(doc.getElementsByTagName("delegation"));
 		setPolicies(doc.getElementsByTagName("policy"));
+		setUsageControl(doc.getElementsByTagName("usageControl"));
 
 		return sm;
+	}
+
+	private void setUsageControl(NodeList nodeList) {
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Element e = (Element) nodeList.item(i);
+			UsageControl usageControl = new UsageControl(e.getAttribute("id"), "", e.getAttribute("type"), (Transition) sm.getNet().getNode(
+					e.getAttribute("objective")), (Transition) sm.getNet().getNode(e.getAttribute("eventually")));
+			sm.getSafetyRequirements().addUsageControl(usageControl);
+		}
 	}
 
 	private void setPolicies(NodeList nodeList) {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element e = (Element) nodeList.item(i);
-			Policy policy = new Policy(e.getAttribute("id"), "", e.getAttribute("type"));
-			policy.setObjective((Transition) sm.getNet().getNode(e.getAttribute("objective")));
-			policy.setEventually((Transition) sm.getNet().getNode(e.getAttribute("eventually")));
+			Policy policy = new Policy(e.getAttribute("id"), "", e.getAttribute("type"), (Transition) sm.getNet().getNode(
+					e.getAttribute("objective")), (Transition) sm.getNet().getNode(e.getAttribute("eventually")));
 			sm.getSafetyRequirements().addPolicy(policy);
 		}
 	}
@@ -73,6 +86,21 @@ public class PNMLReader {
 			Element e = (Element) nodeList.item(i);
 			sm.getSafetyRequirements().addDelegation((Transition) sm.getNet().getNode(e.getAttribute("transRef")),
 					sm.getResourceModel().getRole(e.getAttribute("roleRef")));
+		}
+	}
+
+	private void setWorkObjects(NodeList nodeList) {
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Element e = (Element) nodeList.item(i);
+			NodeList usedByList = e.getElementsByTagName("usedBy");
+			HashSet<Transition> usedBySet = new HashSet<Transition>();
+			for (int j = 0; j < usedByList.getLength(); j++) {
+				Element usedBy = (Element) usedByList.item(j);
+				usedBySet.add((Transition) sm.getNet().getNode(usedBy.getAttribute("transRef")));
+			}
+			WorkObject workObject = new WorkObject(e.getAttribute("id"), e.getElementsByTagName("name").item(0).getTextContent().trim(),
+					usedBySet);
+			sm.getResourceModel().addWorkObject(workObject);
 		}
 	}
 
@@ -134,14 +162,14 @@ public class PNMLReader {
 			Element node = (Element) nodeList.item(i);
 			Transition transition = new Transition(node.getAttribute("id"), node.getElementsByTagName("name").item(0).getTextContent()
 					.trim());
-			if (node.getElementsByTagName("usedObject").getLength() != 0) {
-				NodeList objects = node.getElementsByTagName("usedObject");
-				for (int j = 0; j < objects.getLength(); j++) {
-					transition.addUsedObject(node.getElementsByTagName("usedObject").item(j).getTextContent().trim());
-					sm.getNet().addWorkObject(transition,
-							node.getElementsByTagName("usedObject").item(j).getTextContent().trim());
-				}
-			}
+			// if (node.getElementsByTagName("usedObject").getLength() != 0) {
+			// NodeList objects = node.getElementsByTagName("usedObject");
+			// for (int j = 0; j < objects.getLength(); j++) {
+			// transition.addUsedObject(node.getElementsByTagName("usedObject").item(j).getTextContent().trim());
+			// sm.getNet().addWorkObject(transition,
+			// node.getElementsByTagName("usedObject").item(j).getTextContent().trim());
+			// }
+			// }
 			sm.getNet().addTransition(transition);
 		}
 	}
