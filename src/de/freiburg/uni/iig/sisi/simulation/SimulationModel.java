@@ -14,7 +14,7 @@ import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 public class SimulationModel {
 	
 	private PTNet net = new PTNet();
-	private ResourceModel rm = new ResourceModel();
+	private ResourceModel resourceModel = new ResourceModel();
 	private SafetyRequirements safetyRequirements = new SafetyRequirements();
 			
 	public SimulationModel(String uri) throws ParserConfigurationException, SAXException, IOException {
@@ -27,7 +27,7 @@ public class SimulationModel {
 	}
 	
 	public ResourceModel getResourceModel() {
-		return rm;
+		return resourceModel;
 	}
 
 	public SafetyRequirements getSafetyRequirements() {
