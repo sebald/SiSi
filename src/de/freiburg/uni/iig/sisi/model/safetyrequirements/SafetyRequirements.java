@@ -1,4 +1,4 @@
-package de.freiburg.uni.iig.sisi.model.policies;
+package de.freiburg.uni.iig.sisi.model.safetyrequirements;
 
 import java.util.HashMap;
 import java.util.HashSet;

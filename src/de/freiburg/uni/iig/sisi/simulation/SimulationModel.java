@@ -7,8 +7,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.model.net.PTNet;
-import de.freiburg.uni.iig.sisi.model.policies.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.model.resource.ResourceModel;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class SimulationModel {

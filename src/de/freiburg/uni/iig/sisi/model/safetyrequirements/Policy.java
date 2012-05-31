@@ -1,4 +1,4 @@
-package de.freiburg.uni.iig.sisi.model.policies;
+package de.freiburg.uni.iig.sisi.model.safetyrequirements;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
