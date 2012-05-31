@@ -1,5 +1,9 @@
 package de.freiburg.uni.iig.sisi;
 
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -13,10 +17,14 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.xml.sax.SAXException;
+
+import de.freiburg.uni.iig.sisi.simulation.SimulationModel;
 
 public class SiSi {
 
 	private Shell shell;
+	private SimulationModel simulationModel = null;
 
 	public SiSi(Display display) {
 
@@ -25,7 +33,7 @@ public class SiSi {
 		shell.setSize(800, 600);
 
 		this.init();
-		this.center(shell);
+		//this.center(shell);
 
 		shell.open();
 
@@ -49,10 +57,10 @@ public class SiSi {
 		// open file
 		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
 		openItem.setText("Open File");
-		openItem.setImage(new Image(shell.getDisplay(), "img/glyphicons_144_folder_open.png"));
+		openItem.setImage(new Image(shell.getDisplay(), "imgs/open.png"));
 		openItem.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent evt) {
 				FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 
 				String[] filterNames = new String[] { "PNML", "All Files (*)" };
@@ -63,14 +71,18 @@ public class SiSi {
 				dialog.setFilterExtensions(filterExtensions);
 
 				String path = dialog.open();
-				System.out.println(path);
+				try {
+					simulationModel = new SimulationModel(path);
+				} catch (ParserConfigurationException | SAXException | IOException exception) {
+					exception.printStackTrace();
+				}
 			}
 		});
 
 		// exit program
 		MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
 		exitItem.setText("Exit");
-		exitItem.setImage(new Image(shell.getDisplay(), "img/glyphicons_063_power.png"));
+		exitItem.setImage(new Image(shell.getDisplay(), "imgs/close.png"));
 		exitItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
