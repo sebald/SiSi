@@ -71,26 +71,11 @@
 		   		<name>
 		   			<text>Gutachten erstellen</text>
 		    	</name>
-		    	<usedObject>
-		    		<name>
-		    			<text>Stellungnahme</text>
-		    		</name>
-		    	</usedObject>
-		    	<usedObject>
-		    		<name>
-		    			<text>Kundenangaben</text>
-		    		</name>
-		    	</usedObject>
 		   	</transition>
 		   	<transition id="t05">
 		   		<name>
 		   			<text>Gutachten beurteilen</text>
 		    	</name>
-		    	<usedObject>
-		    		<name>
-		    			<text>Gutachten</text>
-		    		</name>
-		    	</usedObject>
 		   	</transition>
 		   	<transition id="t06">
 		   		<name>
@@ -105,12 +90,7 @@
 		   	<transition id="t08">
 		   		<name>
 		   			<text>Beschwerde archvieren</text>
-		    	</name>
-				<usedObject>
-		    		<name>
-		    			<text>Beschwerde</text>
-		    		</name>
-		    	</usedObject>		    	
+		    	</name>	    	
 		   	</transition>
 		   	<arc id="a01" source="p01" target="t01">
 		    	<inscription>
@@ -265,12 +245,36 @@
 			</name>
 			<assigned roleRef="r03" />
 		</subject>
+		<object id="o01">
+			<name>
+				<text>Stellungnahme</text>
+			</name>
+			<usedBy transRef="t04" />		
+		</object>
+		<object id="o02">
+			<name>
+				<text>Kundenangaben</text>
+			</name>
+			<usedBy transRef="t04" />		
+		</object>
+		<object id="o03">
+			<name>
+				<text>Gutachten</text>
+			</name>
+			<usedBy transRef="t05" />		
+		</object>
+		<object id="o04">
+			<name>
+				<text>Gutachten</text>
+			</name>
+			<usedBy transRef="t08" />		
+		</object>	
 	</resourceModel>
 	<safetyRequirements>
 		<delegations>
 			<delegation roleRef="r02" transRef="t07" />
 		</delegations>
 		<policy id="sr01" type="sod" objective="t04" eventually="t05" />
-		<policy id="sr03" type="ar"	objective="t01" eventually="t08" />
+		<usageControl id="sr02" type="ar" condition="t01" eventually="t08" />
 	</safetyRequirements>
 </pnml>
