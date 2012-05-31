@@ -20,4 +20,21 @@ public class Subject extends ModelObject {
 		this.roles.add(role);
 	}
 
+	@Override
+	public String toString() {
+		return "[" + getId() + "," + getName() + "]";
+	}
+
+	/**
+	 * Roles are compatible if the {@link Subject}'s roles are a sublist 
+	 * of the {@value otherSubject}'s roles. E.g., the {@link Subject}
+	 * has only roles the {@value otherSubject} has also.
+	 * 
+	 * @param otherSubject
+	 * @return true, iff roles are a sublist
+	 */
+	public boolean hasCompatibleRoles(Subject otherSubject) {
+		return otherSubject.getRoles().containsAll(roles);
+	}
+
 }
