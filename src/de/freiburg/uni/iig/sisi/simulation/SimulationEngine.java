@@ -2,7 +2,6 @@ package de.freiburg.uni.iig.sisi.simulation;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
 
 import de.freiburg.uni.iig.sisi.model.NarratorObject;
@@ -14,6 +13,7 @@ import de.freiburg.uni.iig.sisi.model.resource.Subject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy.PolicyType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
 
 public class SimulationEngine extends NarratorObject {
 
@@ -29,9 +29,9 @@ public class SimulationEngine extends NarratorObject {
 	private final SimulationModel simulationModel;
 
 	// important vars while simulation
-	private HashMap<String, Transition> fireableTransitions = new HashMap<String, Transition>();
+	private HashSet<Transition> fireableTransitions = new HashSet<Transition>();
 	private HashMap<Transition, HashSet<Policy>> policiesToSatisfy = new HashMap<Transition, HashSet<Policy>>();
-	private HashMap<Transition, UsageControl> usaceControlsToSatisfy = new HashMap<Transition, UsageControl>();
+	private HashMap<Transition, HashSet<UsageControl>> usageControlsToSatisfy = new HashMap<Transition, HashSet<UsageControl>>();
 	private HashMap<Transition, SimulationEvent> internalEventMap = new HashMap<Transition, SimulationEvent>();
 
 	public SimulationEngine(SimulationModel simulationModel) {
@@ -52,44 +52,45 @@ public class SimulationEngine extends NarratorObject {
 		updateFireableTransitions();
 	}
 
+	public void run() {
+		while (!fireableTransitions.isEmpty()) {
+			Transition transition = getRandomFireableTransition();
+			// internal (not observable operations)
+			fire(transition);
+			Subject subject = firedby(transition);
+			// generate event
+			SimulationEvent event = new SimulationEvent(transition, subject, simulationModel.getResourceModel().getWorkObjectFor(transition));
+			internalEventMap.put(transition, event);
+			// the event is observable, if the transition has a label (no silent transition)
+			if (transition.getName() != null)
+				notifyListeners(this, PROPERTY_TRANSITION_FIRED, event);
+		}
+	}	
+	
 	private void updateFireableTransitions() {
-		HashMap<String, Transition> fireableTransitions = new HashMap<String, Transition>();
+		HashSet<Transition> fireableTransitions = new HashSet<Transition>();
+		// add every transition that could be fired (ignore safety requirements for now)
 		for (Transition transition : simulationModel.getNet().getTransitions()) {
-			if (transition.isFireable()) {
-
-				// is enabled usage control rules will be considered
-				if(considerSafetyRequirements) {
-					
-				}
-				
-				fireableTransitions.put(transition.getId(), transition);
+			if (transition.isFireable()) {				
+				fireableTransitions.add(transition);
 			}
+		}
+		// adapt the fireable set according to usage control rules
+		if( considerSafetyRequirements && (fireableTransitions.size() > 0) ) {
+					/* fireableTransitions = */ try {
+						satisfyUsageControl(fireableTransitions);
+					} catch (SimulationExcpetion e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 		}
 		this.fireableTransitions = fireableTransitions;
 	}
 
 	private Transition getRandomFireableTransition() {
 		Random generator = new Random();
-		Object[] values = fireableTransitions.values().toArray();
+		Object[] values = fireableTransitions.toArray();
 		return (Transition) values[generator.nextInt(values.length)];
-	}
-
-	public void run() {
-		while (!fireableTransitions.isEmpty()) {
-			Transition transition = getRandomFireableTransition();
-
-			// internal (not observable operations)
-			fire(transition);
-			Subject subject = firedby(transition);
-
-			// generate event
-			SimulationEvent event = new SimulationEvent(transition, subject, simulationModel.getResourceModel().getWorkObjectFor(transition));
-			internalEventMap.put(transition, event);
-			
-			// the event is observable, if the transition has a label (no silent transition)
-			if (transition.getName() != null)
-				notifyListeners(this, PROPERTY_TRANSITION_FIRED, event);
-		}
 	}
 
 	private void fire(Transition transition) {
@@ -106,10 +107,19 @@ public class SimulationEngine extends NarratorObject {
 			p.setMarking(p.getMarking() + 1);
 		}
 		// is the fired transition part of a usage control rule?
-//		if ( considerSafetyRequirements && simulationModel.getSafetyRequirements().hasUsageControl(transition) ) {
-//			UsageControl uc = simulationModel.getSafetyRequirements().getUsageControlMap().get(transition);
-//			usaceControlsToSatisfy.put(key, value)
-//		}
+		if ( considerSafetyRequirements && simulationModel.getSafetyRequirements().hasUsageControl(transition) ) {
+			HashSet<UsageControl> uc = simulationModel.getSafetyRequirements().getUsageControlMap().get(transition);
+			for (UsageControl usageControl : uc) {
+				// is eventually-transition already registers?
+				if( usageControlsToSatisfy.containsKey(usageControl.getEventually()) ) {
+					usageControlsToSatisfy.get(usageControl.getEventually()).add(usageControl);
+				} else {
+					HashSet<UsageControl> newusageControls = new HashSet<UsageControl>();
+					newusageControls.add(usageControl);
+					usageControlsToSatisfy.put(usageControl.getEventually(), newusageControls);
+				}
+			}
+		}
 		// check what is now fireable
 		updateFireableTransitions();
 	}
@@ -132,11 +142,9 @@ public class SimulationEngine extends NarratorObject {
 			// check if transition is an eventually part of one or more policies
 			if (policiesToSatisfy.containsKey(transition)) {
 				HashSet<Policy> policies = policiesToSatisfy.get(transition);
-				for (Iterator iterator = policies.iterator(); iterator.hasNext();) {
-					Policy policy = (Policy) iterator.next();
+				for (Policy policy : policies) {
 					subjects = satisfyPolicy(policy, subjects);
 				}
-				
 			}
 
 			// check if transition is an objective of one or more policies
@@ -156,6 +164,8 @@ public class SimulationEngine extends NarratorObject {
 			}
 
 		}
+		
+		//TODO check that subjects is NOT empty!
 
 		// resource selection
 		if (resourceSelectionMode == ResourceSelectionMode.LIST) {
@@ -170,8 +180,8 @@ public class SimulationEngine extends NarratorObject {
 	}
 	
 	private HashSet<Subject> satisfyPolicy(Policy policy, HashSet<Subject> subjectSet) {
+		// get event to check who has executed the task
 		SimulationEvent event = internalEventMap.get(policy.getObjective());
-		
 		// set the available subjects according to the policy rules
 		if( policy.getType() == PolicyType.SEPERATION_OF_DUTY ) {
 			subjectSet.remove(event.getSubject());
@@ -190,4 +200,51 @@ public class SimulationEngine extends NarratorObject {
 		return subjectSet;
 	}
 
+	private HashSet<Transition> satisfyUsageControl(HashSet<Transition> fireableTransitions) throws SimulationExcpetion {
+		// TODO: Same transition can not be eventually part of AR + UR
+		
+		// set of transitions that can only be fired now
+		HashSet<Transition> needToBeFired = new HashSet<Transition>();
+		
+		for (Transition transition : fireableTransitions) {
+			if(usageControlsToSatisfy.containsKey(transition)) {
+				HashSet<UsageControl> usageControlSet = usageControlsToSatisfy.get(transition);
+				
+				// check if transition is not part of action requirement AND usage restriction
+				boolean isAR = false;
+				boolean isUR = false;
+				for (UsageControl usageControl : usageControlSet) {
+					if( usageControl.getType() == UsageControlType.ACTION_REQUIREMENT )
+						isAR = true;
+					if( usageControl.getType() == UsageControlType.USAGE_RESTRICTION )
+						isUR = true;
+				}
+				if( isAR && isUR )
+					throw new SimulationExcpetion(transition);
+				
+				for (UsageControl usageControl : usageControlSet) {
+					// transition is part of an action requirement and can only be fired now
+					if( usageControl.getType() == UsageControlType.ACTION_REQUIREMENT && !transition.canFireLater() ) {
+						needToBeFired.add(transition);
+					} else if ( usageControl.getType() == UsageControlType.USAGE_RESTRICTION ) {
+						fireableTransitions.remove(transition);
+					}
+				}				
+			}
+		}
+		
+		// more than one transitions can only be fired now that are part of an action requirement
+		if ( needToBeFired.size() > 1 )
+			throw new SimulationExcpetion(needToBeFired);
+		// fireableTransitions are empty
+		if ( fireableTransitions.size() < 1 )
+			throw new SimulationExcpetion(usageControlsToSatisfy);
+		
+		// there is one transition that has to be fired now
+		if ( needToBeFired.size() == 1 )
+			fireableTransitions = needToBeFired;
+
+		return fireableTransitions;
+	}
+	
 }
