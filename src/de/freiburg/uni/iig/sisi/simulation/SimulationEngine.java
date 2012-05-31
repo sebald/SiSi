@@ -23,6 +23,10 @@ public class SimulationEngine extends NarratorObject {
 		LIST, RANDOM
 	}
 
+	public enum ModelState {
+		VIOLATED, TEMPORALY_VIOLATED, SATISFIED
+	}
+	
 	// engine config vars
 	private final ResourceSelectionMode resourceSelectionMode;
 	private boolean considerSafetyRequirements;
@@ -155,6 +159,9 @@ public class SimulationEngine extends NarratorObject {
 				HashSet<Policy> policies = policiesToSatisfy.get(transition);
 				for (Policy policy : policies) {
 					subjects = satisfyPolicy(policy, subjects);
+					policiesToSatisfy.get(transition).remove(policy);
+					if( policiesToSatisfy.get(transition).isEmpty() )
+						policiesToSatisfy.remove(transition);
 				}
 			}
 
@@ -209,8 +216,6 @@ public class SimulationEngine extends NarratorObject {
 		if ( subjectSet.isEmpty() )
 			throw new SimulationExcpetion(policy);
 		
-		policiesToSatisfy.remove(policy);
-		
 		return subjectSet;
 	}
 
@@ -257,6 +262,11 @@ public class SimulationEngine extends NarratorObject {
 			fireableTransitions = needToBeFired;
 
 		return fireableTransitions;
+	}
+	
+	private ModelState evaluateModel(){
+
+		return ModelState.VIOLATED;
 	}
 	
 }
