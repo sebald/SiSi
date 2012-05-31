@@ -278,7 +278,8 @@ public class SimulationEngine extends NarratorObject {
 	}
 	
 	private ModelState evaluateModel(){
-		
+		if( policiesToSatisfy.isEmpty() && usageControlsToSatisfy.isEmpty() )
+			return ModelState.SATISFIED;
 		
 		return ModelState.VIOLATED;
 	}

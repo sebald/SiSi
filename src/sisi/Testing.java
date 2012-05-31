@@ -8,6 +8,7 @@ import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.log.LogGenerator;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
+import de.freiburg.uni.iig.sisi.simulation.SimulationEngine.ModelState;
 import de.freiburg.uni.iig.sisi.simulation.SimulationExcpetion;
 import de.freiburg.uni.iig.sisi.simulation.SimulationModel;
 
@@ -21,12 +22,11 @@ public class Testing {
 			
 			SimulationEngine se = new SimulationEngine(sm);
 			LogGenerator lg = new LogGenerator(se);
-			se.run();
+			ModelState modelState = se.run();
 			String log = lg.generateLog();
 			
-			
 			System.out.println(log);
-			
+			System.out.println(modelState);
 			
 		} catch (ParserConfigurationException | SAXException | IOException | SimulationExcpetion e) {
 			// TODO Auto-generated catch block
