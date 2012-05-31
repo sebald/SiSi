@@ -271,7 +271,6 @@
 			<delegation roleRef="r02" transRef="t07" />
 		</delegations>
 		<policy id="sr01" type="sod" objective="t04" eventually="t05" />
-		<policy id="sr02" type="bod" objective="t01" eventually="t08" />
-		<policy id="sr03" type="ar"	objective="t01" eventually="t09" />
+		<policy id="sr03" type="ar"	objective="t01" eventually="t08" />
 	</safetyRequirements>
 </pnml>
