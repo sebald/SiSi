@@ -14,7 +14,7 @@ public class SafetyRequirements {
 	private LinkedList<Policy> policies= new LinkedList<Policy>();
 	
 	// maps for quick reference
-	private HashSet<Transition> policyMap = new HashSet<Transition>();
+	private HashMap<Transition, HashSet<Policy>> policyMap = new HashMap<Transition, HashSet<Policy>>();
 
 	public HashMap<Transition, HashSet<Role>> getDelegations() {
 		return delegations;
@@ -36,7 +36,13 @@ public class SafetyRequirements {
 	
 	public void addPolicy(Policy policy) {
 		this.policies.add(policy);
-		this.policyMap.add(policy.getEventually());
+		if ( this.policyMap.containsKey(policy.getObjective()) ){
+			this.policyMap.get(policy.getObjective()).add(policy);
+		} else {
+			HashSet<Policy> policySet = new HashSet<Policy>();
+			policySet.add(policy);
+			this.policyMap.put(policy.getObjective(), policySet);
+		}		
 	}
 	
 	public boolean hasDelegation(Transition transition) {
@@ -45,8 +51,12 @@ public class SafetyRequirements {
 	}
 	
 	public boolean hasPolicy(Transition transition) {
-		if  (policyMap.contains(transition) ) return true;
+		if  (policyMap.containsKey(transition) ) return true;
 		return false;		
 	}
+	
+	public HashMap<Transition, HashSet<Policy>> getPolicyMap() {
+		return policyMap;
+	}	
 	
 }
