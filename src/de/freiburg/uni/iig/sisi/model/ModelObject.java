@@ -37,4 +37,13 @@ public abstract class ModelObject {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		if (name != null) return name;
+		if (id != null) return id;
+		return super.toString();
+	}
+
+	
+	
 }
