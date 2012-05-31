@@ -193,6 +193,8 @@ public class SimulationEngine extends NarratorObject {
 		if ( subjectSet.isEmpty() )
 			throw new SimulationExcpetion(policy);
 		
+		policiesToSatisfy.remove(policy);
+		
 		return subjectSet;
 	}
 
