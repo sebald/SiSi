@@ -13,7 +13,7 @@ public class Policy extends ModelObject {
 		ACTION_REQUIREMENT,
 		UNKNOWN
 	}
-	public final PolicyType type;
+	private final PolicyType type;
 	
 	private Transition objective;
 	private Transition eventually;
@@ -57,6 +57,10 @@ public class Policy extends ModelObject {
 
 	public void setEventually(Transition eventually) {
 		this.eventually = eventually;
+	}
+
+	public PolicyType getType() {
+		return type;
 	}
 	
 }
