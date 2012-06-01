@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
+import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.NarratorObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Arc;
@@ -15,6 +16,7 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy.PolicyType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelectionMode;
 
 public class SimulationEngine extends NarratorObject {
@@ -33,6 +35,7 @@ public class SimulationEngine extends NarratorObject {
 	private HashSet<Transition> fireableTransitions = new HashSet<Transition>();
 	private HashMap<Transition, HashSet<Policy>> policiesToSatisfy = new HashMap<Transition, HashSet<Policy>>();
 	private HashMap<Transition, HashSet<UsageControl>> usageControlsToSatisfy = new HashMap<Transition, HashSet<UsageControl>>();
+	private HashMap<MutantObject, Transition> executedMutants = new HashMap<MutantObject, Transition>();
 	private HashMap<Transition, SimulationEvent> internalEventMap = new HashMap<Transition, SimulationEvent>();
 
 	public SimulationEngine(ProcessModel simulationModel, SimulationConfiguration simulationConfiguration) throws SimulationExcpetion {
@@ -97,14 +100,18 @@ public class SimulationEngine extends NarratorObject {
 	}
 
 	private Subject firedby(Transition transition) throws SimulationExcpetion {
+		// this will later be the subjects that fires the transition
 		Subject subject = null;
 		// get subjects which are authorized (implied through domain assignment)
 		HashSet<Subject> subjects = processModel.getResourceModel().getDomainFor(transition).getMembers();
 		
 		// check if safetyRquirements should be considered
 		if (simulationConfiguration.isConsiderSafetyRequirements()) {
-			// get delegations and add subjects that are authorized through the delegations
-			if (processModel.getSafetyRequirements().hasDelegation(transition)) {
+			
+			if( simulationConfiguration.getMutantMap().containsKey(transition) ) {
+				subjects = executeAuthorizationMutant(transition, subjects);
+			} else if (processModel.getSafetyRequirements().hasDelegation(transition)) {
+				// get delegations and add subjects that are authorized through the delegations
 				HashSet<Role> delegationRoles = processModel.getSafetyRequirements().getDelegations().get(transition);
 				for (Role role : delegationRoles) {
 					subjects.addAll(role.getMembers());
@@ -112,7 +119,7 @@ public class SimulationEngine extends NarratorObject {
 			}
 
 			/**
-			 * 		Eventually part of an policy/usage control that has to be satisfied found.
+			 * 		Eventually part of an policy/usage control found that has to be satisfied.
 			 */
 			
 			// check if transition is an eventually part of one or more policies
@@ -174,6 +181,7 @@ public class SimulationEngine extends NarratorObject {
 
 		// resource selection
 		if (simulationConfiguration.getResourceSelectionMode() == ResourceSelectionMode.LIST) {
+			// first
 			subject = subjects.iterator().next();
 		} else {
 			// random
@@ -224,9 +232,19 @@ public class SimulationEngine extends NarratorObject {
 		
 		return subjectSet;
 	}
+
+	private HashSet<Subject> executeAuthorizationMutant(Transition transition, HashSet<Subject> subjects) {
+		for (MutantObject mutant : simulationConfiguration.getMutantMap().get(transition)) {
+			if( mutant instanceof AuthorizationMutant ) {
+				executedMutants.put(mutant, transition);
+				subjects = mutant.getMutation();
+			}
+		}
+		return subjects;
+	}	
 	
 	private ModelState evaluateModel(){
-		if( policiesToSatisfy.isEmpty() && usageControlsToSatisfy.isEmpty() )
+		if( policiesToSatisfy.isEmpty() && usageControlsToSatisfy.isEmpty() && executedMutants.isEmpty() )
 			return ModelState.SATISFIED;
 		
 		return ModelState.VIOLATED;
