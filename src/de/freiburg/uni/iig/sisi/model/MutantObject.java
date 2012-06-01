@@ -51,6 +51,6 @@ public abstract class MutantObject extends ModelObject {
 	 * 
 	 * @return {@link Transition} when the {@link MutantObject} should be executed
 	 */
-	protected abstract Transition getActivator();
+	public abstract Transition getActivator();
 	
 }

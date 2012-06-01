@@ -43,7 +43,7 @@ public class AuthorizationMutant extends MutantObject {
 	}
 
 	@Override
-	protected Transition getActivator() {
+	public Transition getActivator() {
 		return this.activator;
 	}
 
