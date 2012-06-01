@@ -83,23 +83,7 @@ public class SimulationEngine extends NarratorObject {
 			if (transition.isFireable()) {				
 				fireableTransitions.add(transition);
 			}
-		}
-		// adapt the fireable set according to usage control rules
-		if( considerSafetyRequirements && !fireableTransitions.isEmpty() ) {
-			fireableTransitions = satisfyUsageControl(fireableTransitions);
-		}
-		// remove usage restrictions, b/c they are now (finished the simulation) satisfied
-		if( considerSafetyRequirements && fireableTransitions.isEmpty() ) {
-			for (Transition transition : usageControlsToSatisfy.keySet()) {
-				for (UsageControl usageControl : usageControlsToSatisfy.get(transition)) {
-					if( usageControl.getType() == UsageControlType.USAGE_RESTRICTION )
-						usageControlsToSatisfy.get(transition).remove(usageControl);
-					if ( usageControlsToSatisfy.get(transition).isEmpty() )
-						usageControlsToSatisfy.remove(transition);
-				}
-			}
-		}
-		
+		}		
 		this.fireableTransitions = fireableTransitions;
 	}
 
@@ -122,31 +106,6 @@ public class SimulationEngine extends NarratorObject {
 			Place p = ((Place) arc.getTarget());
 			p.setMarking(p.getMarking() + 1);
 		}
-		// is the fired transition part of a usage control rule?
-		if ( considerSafetyRequirements && simulationModel.getSafetyRequirements().hasUsageControl(transition) ) {
-			HashSet<UsageControl> uc = simulationModel.getSafetyRequirements().getUsageControlMap().get(transition);
-			for (UsageControl usageControl : uc) {
-				// is eventually-transition already registers?
-				if( usageControlsToSatisfy.containsKey(usageControl.getEventually()) ) {
-					usageControlsToSatisfy.get(usageControl.getEventually()).add(usageControl);
-				} else {
-					HashSet<UsageControl> newusageControls = new HashSet<UsageControl>();
-					newusageControls.add(usageControl);
-					usageControlsToSatisfy.put(usageControl.getEventually(), newusageControls);
-				}
-			}
-		}
-		// is the fire transition the eventually part of an action requirement?
-		if ( considerSafetyRequirements && usageControlsToSatisfy.containsKey(transition) ) {
-			for (UsageControl usageControl : usageControlsToSatisfy.get(transition)) {
-				// if so => remove it, b/c it is satisfied
-				if( usageControl.getType() == UsageControlType.ACTION_REQUIREMENT )
-					usageControlsToSatisfy.get(transition).remove(usageControl);
-				if ( usageControlsToSatisfy.get(transition).isEmpty() )
-					usageControlsToSatisfy.remove(transition);
-			}
-			
-		}
 		
 		// check what is now fireable
 		updateFireableTransitions();
@@ -167,6 +126,10 @@ public class SimulationEngine extends NarratorObject {
 				}
 			}
 
+			/**
+			 * 		Eventually part of an policy/usage control that has to be satisfied found.
+			 */
+			
 			// check if transition is an eventually part of one or more policies
 			if (policiesToSatisfy.containsKey(transition)) {
 				HashSet<Policy> policies = policiesToSatisfy.get(transition);
@@ -177,7 +140,21 @@ public class SimulationEngine extends NarratorObject {
 						policiesToSatisfy.remove(transition);
 				}
 			}
-
+			// adapt the fireable set according to usage control rules
+			if (usageControlsToSatisfy.containsKey(transition)) {
+				HashSet<UsageControl> usageControls = usageControlsToSatisfy.get(transition);
+				for (UsageControl usageControl : usageControls) {
+					subjects = satisfyUsageControl(usageControl, subjects);
+					usageControlsToSatisfy.get(transition).remove(usageControl);
+					if( usageControlsToSatisfy.get(transition).isEmpty() )
+						usageControlsToSatisfy.remove(transition);
+				}
+			}			
+			
+			/**
+			 * 		Objective of a policy/usage control spottted.
+			 */
+			
 			// check if transition is an objective of one or more policies
 			if (simulationModel.getSafetyRequirements().hasPolicy(transition)) {
 				HashSet<Policy> policies = simulationModel.getSafetyRequirements().getPolicyMap().get(transition);
@@ -193,6 +170,20 @@ public class SimulationEngine extends NarratorObject {
 					}
 				}
 			}
+			// check if transition is an objective of one or more usage controls
+			if ( simulationModel.getSafetyRequirements().hasUsageControl(transition) ) {
+				HashSet<UsageControl> uc = simulationModel.getSafetyRequirements().getUsageControlMap().get(transition);
+				for (UsageControl usageControl : uc) {
+					// is eventually-transition already registers?
+					if( usageControlsToSatisfy.containsKey(usageControl.getEventually()) ) {
+						usageControlsToSatisfy.get(usageControl.getEventually()).add(usageControl);
+					} else {
+						HashSet<UsageControl> newusageControls = new HashSet<UsageControl>();
+						newusageControls.add(usageControl);
+						usageControlsToSatisfy.put(usageControl.getEventually(), newusageControls);
+					}
+				}
+			}		
 
 		}
 
@@ -207,7 +198,7 @@ public class SimulationEngine extends NarratorObject {
 		}
 		return subject;
 	}
-	
+
 	private HashSet<Subject> satisfyPolicy(Policy policy, HashSet<Subject> subjectSet) throws SimulationExcpetion {
 		// get event to check who has executed the task
 		SimulationEvent event = internalEventMap.get(policy.getObjective());
@@ -232,49 +223,21 @@ public class SimulationEngine extends NarratorObject {
 		return subjectSet;
 	}
 
-	private HashSet<Transition> satisfyUsageControl(HashSet<Transition> fireableTransitions) throws SimulationExcpetion {	
-		// set of transitions that can only be fired now
-		HashSet<Transition> needToBeFired = new HashSet<Transition>();
-		
-		for (Transition transition : fireableTransitions) {
-			if(usageControlsToSatisfy.containsKey(transition)) {
-				HashSet<UsageControl> usageControlSet = usageControlsToSatisfy.get(transition);
-				
-				// check if transition is not part of action requirement AND usage restriction
-				boolean isAR = false;
-				boolean isUR = false;
-				for (UsageControl usageControl : usageControlSet) {
-					if( usageControl.getType() == UsageControlType.ACTION_REQUIREMENT )
-						isAR = true;
-					if( usageControl.getType() == UsageControlType.USAGE_RESTRICTION )
-						isUR = true;
-				}
-				if( isAR && isUR )
-					throw new SimulationExcpetion(transition);
-				
-				for (UsageControl usageControl : usageControlSet) {
-					// transition is part of an action requirement and can only be fired now
-					if( usageControl.getType() == UsageControlType.ACTION_REQUIREMENT && !transition.canFireLater() ) {
-						needToBeFired.add(transition);
-					} else if ( usageControl.getType() == UsageControlType.USAGE_RESTRICTION ) {
-						fireableTransitions.remove(transition);
-					}
-				}				
-			}
+	private HashSet<Subject> satisfyUsageControl(UsageControl usageControl, HashSet<Subject> subjectSet) throws SimulationExcpetion {
+		// get event to check who has executed the task
+		SimulationEvent event = internalEventMap.get(usageControl.getObjective());
+		// set the available subjects according to the policy rules
+		if( usageControl.getType() == UsageControlType.USAGE_RESTRICTION ) {
+			subjectSet.remove(event.getSubject());
+		} else if ( usageControl.getType() == UsageControlType.ACTION_REQUIREMENT ) {
+			subjectSet = new HashSet<Subject>();
+			subjectSet.add(event.getSubject());
 		}
 		
-		// more than one transitions can only be fired now that are part of an action requirement
-		if ( needToBeFired.size() > 1 )
-			throw new SimulationExcpetion(needToBeFired);
-		// fireableTransitions are empty
-		if ( fireableTransitions.isEmpty() )
-			throw new SimulationExcpetion(usageControlsToSatisfy);
+		if ( subjectSet.isEmpty() )
+			throw new SimulationExcpetion(usageControl);
 		
-		// there is one transition that has to be fired now
-		if ( needToBeFired.size() == 1 )
-			fireableTransitions = needToBeFired;
-
-		return fireableTransitions;
+		return subjectSet;
 	}
 	
 	private ModelState evaluateModel(){
