@@ -2,8 +2,10 @@ package de.freiburg.uni.iig.sisi.model;
 
 import java.util.HashSet;
 
+import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
+import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
 
 public abstract class MutantObject extends ModelObject {
 
@@ -42,5 +44,13 @@ public abstract class MutantObject extends ModelObject {
 	 * @return
 	 */
 	protected abstract HashSet<Subject> createMutation(ModelObject modelObject);
+	
+	/**
+	 * The activator is a reference for the {@link SimulationEngine} when to consider
+	 * the {@link MutantObject}. E.g. when to execute the mutation.
+	 * 
+	 * @return {@link Transition} when the {@link MutantObject} should be executed
+	 */
+	protected abstract Transition getActivator();
 	
 }
