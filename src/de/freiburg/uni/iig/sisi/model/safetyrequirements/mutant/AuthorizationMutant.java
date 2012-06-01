@@ -18,9 +18,10 @@ public class AuthorizationMutant extends MutantObject {
 
 	@Override
 	protected HashSet<Subject> createMutation(ModelObject modelObject) {
-		// get subjects that are authorized to execute transition
+		// get subjects that are authorized to execute transition + delegation rules
 		HashSet<Subject> authorizedSubjects = getProcessModel().getResourceModel().getDomainFor((Transition) modelObject).getMembers();
 		HashSet<Role> roleSet = getProcessModel().getSafetyRequirements().getDelegations().get(modelObject);
+		roleSet.addAll(getProcessModel().getSafetyRequirements().getDelegations().get(modelObject));
 		if( roleSet != null ) {
 			for (Role role : roleSet) {
 				authorizedSubjects.addAll(role.getMembers());
