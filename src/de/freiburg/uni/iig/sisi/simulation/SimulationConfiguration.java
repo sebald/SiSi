@@ -1,8 +1,10 @@
 package de.freiburg.uni.iig.sisi.simulation;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 import de.freiburg.uni.iig.sisi.model.MutantObject;
+import de.freiburg.uni.iig.sisi.model.net.Transition;
 
 public class SimulationConfiguration {
 
@@ -14,6 +16,8 @@ public class SimulationConfiguration {
 	private final boolean considerSafetyRequirements;
 
 	private HashSet<MutantObject> mutants = new HashSet<MutantObject>();
+	
+	private HashMap<Transition, HashSet<MutantObject>> mutantMap = new HashMap<Transition, HashSet<MutantObject>>();
 	
 	public SimulationConfiguration(ResourceSelectionMode resourceSelectionMode, boolean considerSafetyRequirements) {
 		this.resourceSelectionMode = resourceSelectionMode;
@@ -36,6 +40,17 @@ public class SimulationConfiguration {
 
 	public void addMutant(MutantObject mutant) {
 		this.mutants.add(mutant);
+		if ( this.mutantMap.containsKey(mutant.getActivator()) ){
+			this.mutantMap.get(mutant.getActivator()).add(mutant);
+		} else {
+			HashSet<MutantObject> mutantSet = new HashSet<MutantObject>();
+			mutantSet.add(mutant);
+			this.mutantMap.put(mutant.getActivator(), mutantSet);
+		}		
+	}
+
+	public HashMap<Transition, HashSet<MutantObject>> getMutantMap() {
+		return mutantMap;
 	}
 	
 }
