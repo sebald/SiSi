@@ -7,23 +7,27 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.log.LogGenerator;
+import de.freiburg.uni.iig.sisi.model.ProcessModel;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantFactory;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine.ModelState;
 import de.freiburg.uni.iig.sisi.simulation.SimulationExcpetion;
-import de.freiburg.uni.iig.sisi.simulation.SimulationModel;
 
 public class Testing {
 
 	public static void main(String[] args) {
 
 		try {
-			SimulationModel sm = new SimulationModel("examples/kbv.pnml");
-//			System.out.println(sm.getNet().getName());
+			ProcessModel sm = new ProcessModel("examples/kbv.pnml");
 			
 			SimulationEngine se = new SimulationEngine(sm);
 			LogGenerator lg = new LogGenerator(se);
 			ModelState modelState = se.run();
 			String log = lg.generateLog();
+			
+			
+			MutantFactory.createMutantFrom(sm.getNet().getTransitions().get(0));
+			MutantFactory.createMutantFrom(sm.getNet().getTransitions().get(1));
 			
 			System.out.println(log);
 			System.out.println(modelState);
@@ -32,17 +36,6 @@ public class Testing {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-//		Display display = new Display();
-//
-//		Shell shell = new Shell(display);
-//		shell.open();
-//		while (!shell.isDisposed()) {
-//			if (!display.readAndDispatch())
-//				display.sleep();
-//		}
-//		display.dispose();
+
 	}
 }

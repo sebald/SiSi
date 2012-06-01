@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 import de.freiburg.uni.iig.sisi.model.NarratorObject;
+import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Arc;
 import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
@@ -30,7 +31,7 @@ public class SimulationEngine extends NarratorObject {
 	// engine config vars
 	private final ResourceSelectionMode resourceSelectionMode;
 	private boolean considerSafetyRequirements;
-	private final SimulationModel simulationModel;
+	private final ProcessModel simulationModel;
 
 	// important vars while simulation
 	private HashSet<Transition> fireableTransitions = new HashSet<Transition>();
@@ -38,11 +39,11 @@ public class SimulationEngine extends NarratorObject {
 	private HashMap<Transition, HashSet<UsageControl>> usageControlsToSatisfy = new HashMap<Transition, HashSet<UsageControl>>();
 	private HashMap<Transition, SimulationEvent> internalEventMap = new HashMap<Transition, SimulationEvent>();
 
-	public SimulationEngine(SimulationModel simulationModel) throws SimulationExcpetion {
+	public SimulationEngine(ProcessModel simulationModel) throws SimulationExcpetion {
 		this(simulationModel, ResourceSelectionMode.RANDOM);
 	}
 
-	public SimulationEngine(SimulationModel simulationModel, ResourceSelectionMode mode) throws SimulationExcpetion {
+	public SimulationEngine(ProcessModel simulationModel, ResourceSelectionMode mode) throws SimulationExcpetion {
 		this.simulationModel = simulationModel;
 		this.resourceSelectionMode = mode;
 		this.init();

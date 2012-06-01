@@ -19,12 +19,12 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.xml.sax.SAXException;
 
-import de.freiburg.uni.iig.sisi.simulation.SimulationModel;
+import de.freiburg.uni.iig.sisi.model.ProcessModel;
 
 public class SiSi {
 
 	private Shell shell;
-	private SimulationModel simulationModel = null;
+	private ProcessModel simulationModel = null;
 
 	public SiSi(Display display) {
 
@@ -72,7 +72,7 @@ public class SiSi {
 
 				String path = dialog.open();
 				try {
-					simulationModel = new SimulationModel(path);
+					simulationModel = new ProcessModel(path);
 				} catch (ParserConfigurationException | SAXException | IOException exception) {
 					exception.printStackTrace();
 				}

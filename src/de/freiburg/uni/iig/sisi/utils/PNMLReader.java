@@ -15,6 +15,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Arc;
 import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
@@ -23,13 +24,12 @@ import de.freiburg.uni.iig.sisi.model.resource.Subject;
 import de.freiburg.uni.iig.sisi.model.resource.WorkObject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
-import de.freiburg.uni.iig.sisi.simulation.SimulationModel;
 
 public class PNMLReader {
 
-	SimulationModel sm;
+	ProcessModel sm;
 
-	public SimulationModel createModelFromPNML(SimulationModel sm, String uri) throws ParserConfigurationException, SAXException,
+	public ProcessModel createModelFromPNML(ProcessModel sm, String uri) throws ParserConfigurationException, SAXException,
 			IOException {
 		this.sm = sm;
 
