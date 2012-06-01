@@ -97,6 +97,8 @@ public class SiSi {
 		FillLayout fillLayout = new FillLayout();
 		fillLayout.type = SWT.VERTICAL;
 		shell.setLayout(fillLayout);
+		
+		shell.setImage(new Image(shell.getDisplay(), "imgs/shell.png"));
 
 	}
 
