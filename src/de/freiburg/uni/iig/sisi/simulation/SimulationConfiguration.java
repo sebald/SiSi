@@ -45,7 +45,7 @@ public class SimulationConfiguration {
 		} else {
 			HashSet<MutantObject> mutantSet = new HashSet<MutantObject>();
 			mutantSet.add(mutant);
-			this.mutantMap.put(mutant.getActivator(), mutantSet);
+			this.mutantMap.put((Transition) mutant.getActivator(), mutantSet);
 		}		
 	}
 
