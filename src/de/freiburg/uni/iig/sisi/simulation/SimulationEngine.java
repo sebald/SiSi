@@ -15,23 +15,19 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy.PolicyType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
+import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelectionMode;
 
 public class SimulationEngine extends NarratorObject {
 
 	public static String PROPERTY_TRANSITION_FIRED = "Transition fired";
-
-	public enum ResourceSelectionMode {
-		LIST, RANDOM
-	}
 
 	public enum ModelState {
 		VIOLATED, TEMPORALY_VIOLATED, SATISFIED
 	}
 	
 	// engine config vars
-	private final ResourceSelectionMode resourceSelectionMode;
-	private boolean considerSafetyRequirements;
-	private final ProcessModel simulationModel;
+	private final ProcessModel processModel;
+	private final SimulationConfiguration simulationConfiguration;
 
 	// important vars while simulation
 	private HashSet<Transition> fireableTransitions = new HashSet<Transition>();
@@ -39,24 +35,12 @@ public class SimulationEngine extends NarratorObject {
 	private HashMap<Transition, HashSet<UsageControl>> usageControlsToSatisfy = new HashMap<Transition, HashSet<UsageControl>>();
 	private HashMap<Transition, SimulationEvent> internalEventMap = new HashMap<Transition, SimulationEvent>();
 
-	public SimulationEngine(ProcessModel simulationModel) throws SimulationExcpetion {
-		this(simulationModel, ResourceSelectionMode.RANDOM);
-	}
-
-	public SimulationEngine(ProcessModel simulationModel, ResourceSelectionMode mode) throws SimulationExcpetion {
-		this.simulationModel = simulationModel;
-		this.resourceSelectionMode = mode;
-		this.init();
-	}
-
-	private void init() throws SimulationExcpetion {
-		// should the engine respect safety requirements?
-		considerSafetyRequirements = true;
-
-		// init fireable transitions
+	public SimulationEngine(ProcessModel simulationModel, SimulationConfiguration simulationConfiguration) throws SimulationExcpetion {
+		this.processModel = simulationModel;
+		this.simulationConfiguration = simulationConfiguration;
 		updateFireableTransitions();
 	}
-
+	
 	public ModelState run() throws SimulationExcpetion {
 		while (!fireableTransitions.isEmpty()) {
 			Transition transition = getRandomFireableTransition();
@@ -64,7 +48,7 @@ public class SimulationEngine extends NarratorObject {
 			fire(transition);
 			Subject subject = firedby(transition);
 			// generate event
-			SimulationEvent event = new SimulationEvent(transition, subject, simulationModel.getResourceModel().getWorkObjectFor(transition));
+			SimulationEvent event = new SimulationEvent(transition, subject, processModel.getResourceModel().getWorkObjectFor(transition));
 			internalEventMap.put(transition, event);
 			// the event is observable, if the transition has a label (no silent transition)
 			if (transition.getName() != null)
@@ -74,13 +58,13 @@ public class SimulationEngine extends NarratorObject {
 	}	
 	
 	public void reset() {
-		simulationModel.getNet().rest();
+		processModel.getNet().rest();
 	}
 	
 	private void updateFireableTransitions() throws SimulationExcpetion {
 		HashSet<Transition> fireableTransitions = new HashSet<Transition>();
 		// add every transition that could be fired (ignore safety requirements for now)
-		for (Transition transition : simulationModel.getNet().getTransitions()) {
+		for (Transition transition : processModel.getNet().getTransitions()) {
 			if (transition.isFireable()) {				
 				fireableTransitions.add(transition);
 			}
@@ -115,13 +99,13 @@ public class SimulationEngine extends NarratorObject {
 	private Subject firedby(Transition transition) throws SimulationExcpetion {
 		Subject subject = null;
 		// get subjects which are authorized (implied through domain assignment)
-		HashSet<Subject> subjects = simulationModel.getResourceModel().getDomainFor(transition).getMembers();
+		HashSet<Subject> subjects = processModel.getResourceModel().getDomainFor(transition).getMembers();
 		
 		// check if safetyRquirements should be considered
-		if (considerSafetyRequirements) {
+		if (simulationConfiguration.isConsiderSafetyRequirements()) {
 			// get delegations and add subjects that are authorized through the delegations
-			if (simulationModel.getSafetyRequirements().hasDelegation(transition)) {
-				HashSet<Role> delegationRoles = simulationModel.getSafetyRequirements().getDelegations().get(transition);
+			if (processModel.getSafetyRequirements().hasDelegation(transition)) {
+				HashSet<Role> delegationRoles = processModel.getSafetyRequirements().getDelegations().get(transition);
 				for (Role role : delegationRoles) {
 					subjects.addAll(role.getMembers());
 				}
@@ -157,8 +141,8 @@ public class SimulationEngine extends NarratorObject {
 			 */
 			
 			// check if transition is an objective of one or more policies
-			if (simulationModel.getSafetyRequirements().hasPolicy(transition)) {
-				HashSet<Policy> policies = simulationModel.getSafetyRequirements().getPolicyMap().get(transition);
+			if (processModel.getSafetyRequirements().hasPolicy(transition)) {
+				HashSet<Policy> policies = processModel.getSafetyRequirements().getPolicyMap().get(transition);
 				// add policies to policiesToSatisfy map
 				for (Policy policy : policies) {
 					// is eventually-transition already registers?
@@ -172,8 +156,8 @@ public class SimulationEngine extends NarratorObject {
 				}
 			}
 			// check if transition is an objective of one or more usage controls
-			if ( simulationModel.getSafetyRequirements().hasUsageControl(transition) ) {
-				HashSet<UsageControl> uc = simulationModel.getSafetyRequirements().getUsageControlMap().get(transition);
+			if ( processModel.getSafetyRequirements().hasUsageControl(transition) ) {
+				HashSet<UsageControl> uc = processModel.getSafetyRequirements().getUsageControlMap().get(transition);
 				for (UsageControl usageControl : uc) {
 					// is eventually-transition already registers?
 					if( usageControlsToSatisfy.containsKey(usageControl.getEventually()) ) {
@@ -189,7 +173,7 @@ public class SimulationEngine extends NarratorObject {
 		}
 
 		// resource selection
-		if (resourceSelectionMode == ResourceSelectionMode.LIST) {
+		if (simulationConfiguration.getResourceSelectionMode() == ResourceSelectionMode.LIST) {
 			subject = subjects.iterator().next();
 		} else {
 			// random
