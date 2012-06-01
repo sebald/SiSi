@@ -114,6 +114,7 @@ public class PNMLReader {
 				subject.addRole(sm.getResourceModel().getRole(role.getAttribute("roleRef")));
 				sm.getResourceModel().getRole(role.getAttribute("roleRef")).addMember(subject);
 			}
+			sm.getResourceModel().addSubject(subject);
 		}
 	}
 
