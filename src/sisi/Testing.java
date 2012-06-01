@@ -18,16 +18,17 @@ public class Testing {
 	public static void main(String[] args) {
 
 		try {
-			ProcessModel sm = new ProcessModel("examples/kbv.pnml");
+			ProcessModel pm = new ProcessModel("examples/kbv.pnml");
 			
-			SimulationEngine se = new SimulationEngine(sm);
+			SimulationEngine se = new SimulationEngine(pm);
 			LogGenerator lg = new LogGenerator(se);
 			ModelState modelState = se.run();
 			String log = lg.generateLog();
 			
 			
-			MutantFactory.createMutantFrom(sm.getNet().getTransitions().get(0));
-			MutantFactory.createMutantFrom(sm.getNet().getTransitions().get(1));
+			System.out.println(pm.getResourceModel().getSubjects());
+			
+			MutantFactory.createMutantFrom(pm.getNet().getTransitions().get(0), pm);
 			
 			System.out.println(log);
 			System.out.println(modelState);
