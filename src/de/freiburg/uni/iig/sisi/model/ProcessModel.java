@@ -53,10 +53,23 @@ public class ProcessModel extends ModelObject {
 		reader.createModelFromPNML(this, uri);
 	}
 	
-	public ArrayList<Transition> getNonEventuallyTransitions(){
+	public ArrayList<Transition> getNonEventuallyTransitions() {
 		ArrayList<Transition> transitions = getNet().getTransitions();
 		// remove transitions that are eventually part (silencing it would cause conflicts)	
 		transitions.removeAll(getSafetyRequirements().getEventuallyMap());
+		return transitions;
+	}
+	
+	public ArrayList<Transition> getNonObjetiveTransitions() {
+		ArrayList<Transition> transitions = getNet().getTransitions();
+		// remove transitions that are eventually part (silencing it would cause conflicts)	
+		transitions.removeAll(getSafetyRequirements().getObjectiveMap());
+		return transitions;		
+	}
+	
+	public ArrayList<Transition> getNonSafetryRequirementTransitions() {
+		ArrayList<Transition> transitions = getNonEventuallyTransitions();
+		transitions.removeAll(getNonObjetiveTransitions());
 		return transitions;
 	}
 	
