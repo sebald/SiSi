@@ -39,8 +39,8 @@ public class MutantFactory {
 	 * @param usageControl
 	 * @return mutant for {@link UsageControl}
 	 */
-	public static MutantObject createMutantFrom(UsageControl usageControl) {
-		return null;
+	public static MutantObject createMutantFrom(UsageControl usageControl, ProcessModel processModel) {
+		return new UsageControlMutant(createID(), usageControl, processModel);
 	}
 	
 	private static String createID(){
