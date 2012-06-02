@@ -40,7 +40,7 @@ public class MutantTest {
 	@Test
 	public void testCreateMutantFromPolicy() throws ParserConfigurationException, SAXException, IOException {
 		ProcessModel pm = new ProcessModel("examples/kbv.pnml");
-		SimulationEvent event = new SimulationEvent((Transition) pm.getNet().getNode("t04"), pm.getResourceModel().getSubject("s01"), null);
+		SimulationEvent event = new SimulationEvent("asd", (Transition) pm.getNet().getNode("t04"), pm.getResourceModel().getSubject("s01"), null);
 		
 		// SoD
 		Policy policySoD = new Policy("p01", "", PolicyType.SEPERATION_OF_DUTY, (Transition) pm.getNet().getNode("t04"), (Transition) pm.getNet().getNode("t05"));
