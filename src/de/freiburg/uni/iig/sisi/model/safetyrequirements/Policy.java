@@ -16,6 +16,13 @@ public class Policy extends ModelObject {
 	private final Transition objective;
 	private final Transition eventually;
 	
+	public Policy (String id, String name, PolicyType type, Transition objective, Transition eventually) {
+		super(id, name);
+		this.type = type;
+		this.objective = objective;
+		this.eventually = eventually;
+	}
+	
 	public Policy(String id, String name, String type, Transition objective, Transition eventually) {
 		super(id, name);
 		
