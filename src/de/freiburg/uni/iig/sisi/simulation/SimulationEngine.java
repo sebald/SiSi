@@ -154,7 +154,7 @@ public class SimulationEngine extends NarratorObject {
 		SimulationEvent event = new SimulationEvent(simulationRunID, transition, subject, getCurrentProcessModel().getResourceModel().getWorkObjectFor(transition));
 		internalEventMap.put(transition, event);
 		// the event is observable, if the transition has a label (no silent transition)
-		if (transition.getName() != null)
+		if ( !transition.isSilent() )
 			notifyListeners(this, PROPERTY_TRANSITION_FIRED, event);		
 		
 		// check what is now fireable

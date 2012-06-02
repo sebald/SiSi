@@ -2,9 +2,29 @@ package de.freiburg.uni.iig.sisi.model.net;
 
 public class Transition extends Node {
 	
+	public enum TransitionType {
+		NORMAL, SILENT
+	}
+	
+	private TransitionType type;
+	
 	public Transition(String id, String name) {
 		super(id, name);
-	}	
+		this.setType(TransitionType.NORMAL);
+	}
+	
+	public Transition(String id, String name, TransitionType type) {
+		super(id, name);
+		this.setType(type);
+	}
+
+	public TransitionType getType() {
+		return type;
+	}
+
+	public void setType(TransitionType type) {
+		this.type = type;
+	}
 
 	public boolean isFireable() {
 		for (Arc arc : getIncomingArcs()) {
@@ -29,7 +49,7 @@ public class Transition extends Node {
 	}
 
 	public boolean isSilent() {
-		if( getName().isEmpty() ) return true;
+		if( getType() == TransitionType.SILENT ) return true;
 		return false;
 	}
 }

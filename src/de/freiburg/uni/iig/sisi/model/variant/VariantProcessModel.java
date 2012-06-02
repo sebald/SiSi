@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
+import de.freiburg.uni.iig.sisi.model.net.Transition.TransitionType;
 import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 
 public class VariantProcessModel extends ProcessModel {
@@ -84,7 +85,7 @@ public class VariantProcessModel extends ProcessModel {
 		Object[] values = getNonEventuallyTransitions().toArray();
 		Transition transition = ((Transition) values[generator.nextInt(values.length)]);
 		getDeviation().addOldValue(transition);
-		transition.setName("");
+		transition.setType(TransitionType.SILENT);
 		getDeviation().addNewValue(transition);
 	}
 	
