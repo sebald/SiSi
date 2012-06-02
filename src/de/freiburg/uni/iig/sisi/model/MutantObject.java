@@ -51,23 +51,22 @@ public abstract class MutantObject extends ModelObject {
 	}
 
 	/**
-	 * Getter used by static mutants.
+	 * Getter used by static mutants. Returns {@value mutation}
+	 * per default.
 	 * 
 	 * @return mutation
 	 */
 	protected HashSet<Subject> getMutation() {
-		return mutation;
+		return this.mutation;
 	}
 	
 	/**
-	 * Getter method used by dynamic mutants.
+	 * Abstract getter method used by dynamic mutants. Static mutants don't have to
+	 * implement this method.
 	 * 
-	 * @param object
-	 * @return mutation
+	 * @param object some dynamic content that is used to generate the mutation
 	 */
-	protected HashSet<Subject> getMutation(Object object) {
-		return mutation;
-	}	
+	protected abstract HashSet<Subject> getMutation(Object object);
 
 	/**
 	 * Created the mutation. E.g. the property that will violates the

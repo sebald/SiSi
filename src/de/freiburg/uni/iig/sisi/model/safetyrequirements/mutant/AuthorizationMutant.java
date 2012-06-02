@@ -46,4 +46,9 @@ public class AuthorizationMutant extends MutantObject {
 		return super.getMutation();
 	}
 
+	@Override
+	protected HashSet<Subject> getMutation(Object o) {
+		return null;
+	}
+
 }
