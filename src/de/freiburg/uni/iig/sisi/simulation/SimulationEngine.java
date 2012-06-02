@@ -34,7 +34,7 @@ public class SimulationEngine extends NarratorObject {
 	}
 	
 	// engine config vars
-	private final ProcessModel processModel;
+	
 	private final SimulationConfiguration simulationConfiguration;
 
 	// important vars while simulation
@@ -45,15 +45,24 @@ public class SimulationEngine extends NarratorObject {
 	private HashMap<Transition, SimulationEvent> internalEventMap = new HashMap<Transition, SimulationEvent>();
 	
 	// vars for multiple runs
+	private ProcessModel currentProcessModel;
 	private MutantObject mutantToExecute;
 	private String simulationRunID;
 
 	public SimulationEngine(ProcessModel simulationModel, SimulationConfiguration simulationConfiguration) throws SimulationExcpetion {
-		this.processModel = simulationModel;
+		this.currentProcessModel = simulationModel;
 		this.simulationConfiguration = simulationConfiguration;
 		updateFireableTransitions();
 	}
 	
+	protected ProcessModel getCurrentProcessModel() {
+		return currentProcessModel;
+	}
+
+	protected void setCurrentProcessModel(ProcessModel currentProcessModel) {
+		this.currentProcessModel = currentProcessModel;
+	}
+
 	protected MutantObject getMutantToExecute() {
 		return mutantToExecute;
 	}
@@ -83,7 +92,7 @@ public class SimulationEngine extends NarratorObject {
 	
 	public void reset() throws SimulationExcpetion {
 		// reset net
-		processModel.getNet().reset();
+		getCurrentProcessModel().getNet().reset();
 		updateFireableTransitions();
 		
 		// notify log
@@ -99,7 +108,7 @@ public class SimulationEngine extends NarratorObject {
 	private void updateFireableTransitions() throws SimulationExcpetion {
 		HashSet<Transition> fireableTransitions = new HashSet<Transition>();
 		// add every transition that could be fired (ignore safety requirements for now)
-		for (Transition transition : processModel.getNet().getTransitions()) {
+		for (Transition transition : getCurrentProcessModel().getNet().getTransitions()) {
 			if (transition.isFireable()) {				
 				fireableTransitions.add(transition);
 			}
@@ -129,7 +138,7 @@ public class SimulationEngine extends NarratorObject {
 		
 		Subject subject = firedby(transition);
 		// generate event
-		SimulationEvent event = new SimulationEvent(simulationRunID, transition, subject, processModel.getResourceModel().getWorkObjectFor(transition));
+		SimulationEvent event = new SimulationEvent(simulationRunID, transition, subject, getCurrentProcessModel().getResourceModel().getWorkObjectFor(transition));
 		internalEventMap.put(transition, event);
 		// the event is observable, if the transition has a label (no silent transition)
 		if (transition.getName() != null)
@@ -144,7 +153,7 @@ public class SimulationEngine extends NarratorObject {
 		Subject subject = null;
 		// get subjects which are authorized (implied through domain assignment)
 		HashSet<Subject> subjects = new HashSet<Subject>();
-		for (Role role : processModel.getResourceModel().getDomainFor(transition)) {
+		for (Role role : getCurrentProcessModel().getResourceModel().getDomainFor(transition)) {
 			subjects.addAll(role.getMembers());
 		}
 		
@@ -153,9 +162,9 @@ public class SimulationEngine extends NarratorObject {
 			
 			if( simulationConfiguration.isActivator(transition) && !transition.isSilent() ) {
 				subjects = executeAuthorizationMutant(transition, subjects);
-			} else if (processModel.getSafetyRequirements().hasDelegation(transition)) {
+			} else if (getCurrentProcessModel().getSafetyRequirements().hasDelegation(transition)) {
 				// get delegations and add subjects that are authorized through the delegations
-				HashSet<Role> delegationRoles = processModel.getSafetyRequirements().getDelegations().get(transition);
+				HashSet<Role> delegationRoles = getCurrentProcessModel().getSafetyRequirements().getDelegations().get(transition);
 				for (Role role : delegationRoles) {
 					subjects.addAll(role.getMembers());
 				}
@@ -190,8 +199,8 @@ public class SimulationEngine extends NarratorObject {
 			 */
 			
 			// check if transition is an objective of one or more policies/usage controls
-			if (processModel.getSafetyRequirements().hasPolicy(transition)) {
-				HashSet<Policy> policies = processModel.getSafetyRequirements().getPolicyMap().get(transition);
+			if (getCurrentProcessModel().getSafetyRequirements().hasPolicy(transition)) {
+				HashSet<Policy> policies = getCurrentProcessModel().getSafetyRequirements().getPolicyMap().get(transition);
 				// add policies to policiesToSatisfy map
 				for (Policy policy : policies) {
 					// is eventually-transition already registers?
@@ -204,8 +213,8 @@ public class SimulationEngine extends NarratorObject {
 					}
 				}
 			}
-			if ( processModel.getSafetyRequirements().hasUsageControl(transition) ) {
-				HashSet<UsageControl> uc = processModel.getSafetyRequirements().getUsageControlMap().get(transition);
+			if ( getCurrentProcessModel().getSafetyRequirements().hasUsageControl(transition) ) {
+				HashSet<UsageControl> uc = getCurrentProcessModel().getSafetyRequirements().getUsageControlMap().get(transition);
 				for (UsageControl usageControl : uc) {
 					// is eventually-transition already registers?
 					if( usageControlsToSatisfy.containsKey(usageControl.getEventually()) ) {
