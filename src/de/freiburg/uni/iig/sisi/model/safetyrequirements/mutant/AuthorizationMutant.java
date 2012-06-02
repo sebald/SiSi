@@ -11,12 +11,10 @@ import de.freiburg.uni.iig.sisi.model.resource.Role;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
 
 public class AuthorizationMutant extends MutantObject {
-	
-	private Transition activator;
 
-	public AuthorizationMutant(String id, Transition transition, ProcessModel processModel) {
-		super(id, transition, processModel);
-		this.activator = transition;
+	public AuthorizationMutant(String id, ModelObject activator, ProcessModel processModel) {
+		super(id, activator, processModel);
+		this.mutation = createMutation(activator);
 	}
 
 	@Override
@@ -43,10 +41,9 @@ public class AuthorizationMutant extends MutantObject {
 		
 		return returnSet;
 	}
-
-	@Override
-	public Transition getActivator() {
-		return this.activator;
+	
+	public HashSet<Subject> getMutation(){
+		return super.getMutation();
 	}
 
 }

@@ -237,7 +237,7 @@ public class SimulationEngine extends NarratorObject {
 		for (MutantObject mutant : simulationConfiguration.getMutantMap().get(transition)) {
 			if( mutant instanceof AuthorizationMutant ) {
 				executedMutants.put(mutant, transition);
-				subjects = mutant.getMutation();
+				return ((AuthorizationMutant) mutant).getMutation();
 			}
 		}
 		return subjects;
