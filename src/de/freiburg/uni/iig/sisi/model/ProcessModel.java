@@ -54,22 +54,20 @@ public class ProcessModel extends ModelObject {
 	}
 	
 	public ArrayList<Transition> getNonEventuallyTransitions() {
-		ArrayList<Transition> transitions = getNet().getTransitions();
-		// remove transitions that are eventually part (silencing it would cause conflicts)	
+		ArrayList<Transition> transitions = new ArrayList<Transition>(getNet().getTransitions());
 		transitions.removeAll(getSafetyRequirements().getEventuallyMap());
 		return transitions;
 	}
 	
 	public ArrayList<Transition> getNonObjetiveTransitions() {
-		ArrayList<Transition> transitions = getNet().getTransitions();
-		// remove transitions that are eventually part (silencing it would cause conflicts)	
+		ArrayList<Transition> transitions = new ArrayList<Transition>(getNet().getTransitions());
 		transitions.removeAll(getSafetyRequirements().getObjectiveMap());
 		return transitions;		
 	}
 	
 	public ArrayList<Transition> getNonSafetryRequirementTransitions() {
-		ArrayList<Transition> nonEventuallyTransitions = getNonEventuallyTransitions();
-		ArrayList<Transition> nonObjectiveTransitions = getNonObjetiveTransitions();
+		ArrayList<Transition> nonEventuallyTransitions = new ArrayList<Transition>(getNonEventuallyTransitions());
+		ArrayList<Transition> nonObjectiveTransitions = new ArrayList<Transition>(getNonObjetiveTransitions());
 		nonEventuallyTransitions.retainAll(nonObjectiveTransitions);
 		return nonEventuallyTransitions;
 	}
