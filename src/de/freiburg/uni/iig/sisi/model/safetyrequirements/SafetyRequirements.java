@@ -17,6 +17,7 @@ public class SafetyRequirements {
 	// maps for quick reference
 	private HashMap<Transition, HashSet<Policy>> policyMap = new HashMap<Transition, HashSet<Policy>>();
 	private HashMap<Transition, HashSet<UsageControl>> usageControlMap = new HashMap<Transition, HashSet<UsageControl>>();
+	private HashSet<Transition> objectiveMap = new HashSet<Transition>();
 	private HashSet<Transition> eventuallyMap = new HashSet<Transition>();
 	
 	public HashMap<Transition, HashSet<Role>> getDelegations() {
@@ -46,6 +47,7 @@ public class SafetyRequirements {
 			policySet.add(policy);
 			this.policyMap.put(policy.getObjective(), policySet);
 		}
+		this.objectiveMap.add(policy.getObjective());
 		this.eventuallyMap.add(policy.getEventually());
 	}
 
@@ -76,6 +78,7 @@ public class SafetyRequirements {
 			policySet.add(usageControl);
 			this.usageControlMap.put(usageControl.getObjective(), policySet);
 		}
+		this.objectiveMap.add(usageControl.getObjective());
 		this.eventuallyMap.add(usageControl.getEventually());
 	}
 
@@ -90,6 +93,10 @@ public class SafetyRequirements {
 
 	public HashSet<Transition> getEventuallyMap() {
 		return eventuallyMap;
+	}
+
+	public HashSet<Transition> getObjectiveMap() {
+		return objectiveMap;
 	}
 	
 }
