@@ -29,7 +29,7 @@ public class VariantProcessModel extends ProcessModel {
 		setId("variant#"+unixTime);
 		setName("Variant for "+getName());
 		
-		// after clonig everything the transform the net
+		// after "cloning" everything transform the net
 		createDeviation(type);
 		
 	}
@@ -37,20 +37,46 @@ public class VariantProcessModel extends ProcessModel {
 	private void createDeviation(VariantType type) {
 		if( type == VariantType.SKIPPING ) {
 			silenceTransition();
+		} else if ( type == VariantType.SWAPPING ) {
+			swapTransitions();
 		}
 		
 	}
 
-	private void silenceTransition() {
-		ArrayList<Transition> transitions = getNet().getTransitions();
-		// remove transitions that are eventually part (silencing it would cause conflicts)	
-		transitions.removeAll(getSafetyRequirements().getEventuallyMap());
-		
-		// silence
+	private void swapTransitions() {
+		// only swap transitions not involved in safetryrequirements
+		ArrayList<Transition> transitions = getNonSafetryRequirementTransitions();
 		Random generator = new Random();
 		Object[] values = transitions.toArray();
-		((Transition) values[generator.nextInt(values.length)]).setName("");
+		Transition transition1 = ((Transition) values[generator.nextInt(values.length)]);
+		// find another to swap
+		transitions.remove(transition1);
+		Transition transition2 = null;
+		// don't swap if the transitions are part of small concurrency
+		do {
+			values = transitions.toArray();
+			transition2 = ((Transition) values[generator.nextInt(values.length)]);			
+		} while ( !getNet().partofSmallConcurrency(transition1, transition2) );
+
+		System.out.println("Voher: "+transition1.getName());
+		
+		// swap
+		String tmpID = transition1.getId();
+		String tmpName = transition1.getName();
+		transition1.setId(transition2.getId());
+		transition1.setName(transition2.getName());
+		transition2.setId(tmpID);
+		transition2.setName(tmpName);
+		
+		System.out.println("nachher: "+transition1.getName());
 		
 	}
 
+	private void silenceTransition() {
+		Random generator = new Random();
+		Object[] values = getNonEventuallyTransitions().toArray();
+		((Transition) values[generator.nextInt(values.length)]).setName("");
+	}
+	
+	
 }
