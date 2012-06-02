@@ -49,12 +49,14 @@ public class SimulationEngine extends NarratorObject {
 	private MutantObject mutantToExecute;
 	private String simulationRunID;
 
-	public SimulationEngine(ProcessModel simulationModel, SimulationConfiguration simulationConfiguration) throws SimulationExcpetion {
-		this.currentProcessModel = simulationModel;
+	public SimulationEngine(SimulationConfiguration simulationConfiguration) throws SimulationExcpetion {
 		this.simulationConfiguration = simulationConfiguration;
-		updateFireableTransitions();
 	}
 	
+	protected SimulationConfiguration getSimulationConfiguration() {
+		return simulationConfiguration;
+	}
+
 	protected ProcessModel getCurrentProcessModel() {
 		return currentProcessModel;
 	}
@@ -78,19 +80,27 @@ public class SimulationEngine extends NarratorObject {
 	 * @throws SimulationExcpetion
 	 */
 	public void run() throws SimulationExcpetion {
-		for (int i = 0; i < simulationConfiguration.getMutants().size(); i++) {
-			setMutantToExecute(simulationConfiguration.getMutants().get(i));
+		
+		// for every process model
+		for (int i = 0; i < getSimulationConfiguration().getProcessModels().size(); i++) {
+			setCurrentProcessModel(getSimulationConfiguration().getProcessModels().get(i));
+			updateFireableTransitions();
 			
-			DecimalFormat df = new DecimalFormat("#000");
-			simulationRunID = "sim#"+df.format(i);
-			
-			notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
-			while (!fireableTransitions.isEmpty()) {
-				Transition transition = getRandomFireableTransition();
-				fire(transition);
+			// for every mutation
+			for (int j = 0; j < getSimulationConfiguration().getMutants().size(); j++) {
+				setMutantToExecute(getSimulationConfiguration().getMutants().get(j));
+
+				DecimalFormat df = new DecimalFormat("#000");
+				simulationRunID = "sim#"+df.format(j);
+				
+				notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
+				while (!fireableTransitions.isEmpty()) {
+					Transition transition = getRandomFireableTransition();
+					fire(transition);
+				}
+				notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
+				reset();
 			}
-			
-			reset();
 		}
 		
 		evaluateModel();
@@ -100,9 +110,6 @@ public class SimulationEngine extends NarratorObject {
 		// reset net
 		getCurrentProcessModel().getNet().reset();
 		updateFireableTransitions();
-		
-		// notify log
-		notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
 		
 		// clear internal vars
 		policiesToSatisfy.clear();
@@ -164,9 +171,9 @@ public class SimulationEngine extends NarratorObject {
 		}
 		
 		// check if safetyRquirements should be considered
-		if (simulationConfiguration.isConsiderSafetyRequirements()) {
+		if (getSimulationConfiguration().isConsiderSafetyRequirements()) {
 			
-			if( simulationConfiguration.isActivator(transition) && !transition.isSilent() ) {
+			if( getSimulationConfiguration().isActivator(transition) && !transition.isSilent() ) {
 				subjects = executeAuthorizationMutant(transition, subjects);
 			} else if (getCurrentProcessModel().getSafetyRequirements().hasDelegation(transition)) {
 				// get delegations and add subjects that are authorized through the delegations
@@ -236,7 +243,7 @@ public class SimulationEngine extends NarratorObject {
 		}
 
 		// resource selection
-		if (simulationConfiguration.getResourceSelectionMode() == ResourceSelectionMode.LIST) {
+		if (getSimulationConfiguration().getResourceSelectionMode() == ResourceSelectionMode.LIST) {
 			// first
 			subject = subjects.iterator().next();
 		} else {
@@ -253,8 +260,8 @@ public class SimulationEngine extends NarratorObject {
 		SimulationEvent event = internalEventMap.get(policy.getObjective());
 		
 		// check if we rather should violate the policy than satisfy it
-		if( simulationConfiguration.isActivator(policy) ) {
-			for (MutantObject mutant : simulationConfiguration.getActivatorMap().get(policy)) {
+		if( getSimulationConfiguration().isActivator(policy) ) {
+			for (MutantObject mutant : getSimulationConfiguration().getActivatorMap().get(policy)) {
 				if( mutant instanceof PolicyMutant ) {
 					executedMutants.put(mutant, policy);
 					subjectSet = ((PolicyMutant) mutant).getMutation(event);
@@ -287,8 +294,8 @@ public class SimulationEngine extends NarratorObject {
 		// get event to check who has executed the task
 		SimulationEvent event = internalEventMap.get(usageControl.getObjective());
 		
-		if( simulationConfiguration.isActivator(usageControl) ) {
-			for (MutantObject mutant : simulationConfiguration.getActivatorMap().get(usageControl)) {
+		if( getSimulationConfiguration().isActivator(usageControl) ) {
+			for (MutantObject mutant : getSimulationConfiguration().getActivatorMap().get(usageControl)) {
 				if( mutant instanceof UsageControlMutant ) {
 					executedMutants.put(mutant, usageControl);
 					subjectSet = ((UsageControlMutant) mutant).getMutation(event);
@@ -311,7 +318,7 @@ public class SimulationEngine extends NarratorObject {
 	}
 
 	private HashSet<Subject> executeAuthorizationMutant(Transition transition, HashSet<Subject> subjects) {
-		for (MutantObject mutant : simulationConfiguration.getActivatorMap().get(transition)) {
+		for (MutantObject mutant : getSimulationConfiguration().getActivatorMap().get(transition)) {
 			if( mutant instanceof AuthorizationMutant ) {
 				executedMutants.put(mutant, transition);
 				return ((AuthorizationMutant) mutant).getMutation();

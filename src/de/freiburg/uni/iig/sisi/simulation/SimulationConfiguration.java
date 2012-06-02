@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
+import de.freiburg.uni.iig.sisi.model.ProcessModel;
 
 public class SimulationConfiguration {
 
@@ -16,6 +17,7 @@ public class SimulationConfiguration {
 	private final ResourceSelectionMode resourceSelectionMode;
 	private final boolean considerSafetyRequirements;
 
+	private LinkedList<ProcessModel> processModels = new LinkedList<ProcessModel>();
 	private LinkedList<MutantObject> mutants = new LinkedList<MutantObject>();
 	
 	private HashMap<ModelObject, HashSet<MutantObject>> activatorMap = new HashMap<ModelObject, HashSet<MutantObject>>();
@@ -32,6 +34,16 @@ public class SimulationConfiguration {
 
 	public boolean isConsiderSafetyRequirements() {
 		return considerSafetyRequirements;
+	}
+
+
+	public LinkedList<ProcessModel> getProcessModels() {
+		return processModels;
+	}
+
+
+	public void addProcessModel(ProcessModel processModel) {
+		this.processModels.add(processModel);
 	}
 
 
