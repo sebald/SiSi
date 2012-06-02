@@ -10,19 +10,18 @@ import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
+import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 
 public class VariantProcessModel extends ProcessModel {
 
-	public enum VariantType {
-		SKIPPING, SWAPPING, AND2XOR, XOR2AND
-	}
+	private NetDeviation deviation;
 	
 	public VariantProcessModel(String uri) throws ParserConfigurationException, SAXException, IOException {
 		super(uri);
-		createDeviation(VariantType.SKIPPING);
+		createDeviation(DeviationType.SKIPPING);
 	}
 
-	public VariantProcessModel(String uri, VariantType type) throws ParserConfigurationException, SAXException, IOException {
+	public VariantProcessModel(String uri, DeviationType type) throws ParserConfigurationException, SAXException, IOException {
 		super(uri);
 		
 		long unixTime = System.currentTimeMillis() / 1000L;
@@ -31,20 +30,28 @@ public class VariantProcessModel extends ProcessModel {
 		
 		// after "cloning" everything transform the net
 		createDeviation(type);
-		
 	}
 	
-	private void createDeviation(VariantType type) {
-		if( type == VariantType.SKIPPING ) {
+	public NetDeviation getDeviation() {
+		return deviation;
+	}
+
+	public void setDeviation(NetDeviation deviation) {
+		this.deviation = deviation;
+	}
+
+	private void createDeviation(DeviationType type) {
+		deviation = new NetDeviation(type);
+		
+		if( type == DeviationType.SKIPPING ) {
 			silenceTransition();
-		} else if ( type == VariantType.SWAPPING ) {
+		} else if ( type == DeviationType.SWAPPING ) {
 			swapTransitions();
 		}
-		
 	}
 
 	private void swapTransitions() {
-		// only swap transitions not involved in safetryrequirements
+		// only swap transitions not involved in safety requirements
 		ArrayList<Transition> transitions = getNonSafetryRequirementTransitions();
 		Random generator = new Random();
 		Object[] values = transitions.toArray();
@@ -57,9 +64,9 @@ public class VariantProcessModel extends ProcessModel {
 			values = transitions.toArray();
 			transition2 = ((Transition) values[generator.nextInt(values.length)]);			
 		} while ( !getNet().partofSmallConcurrency(transition1, transition2) );
-
-		System.out.println("Voher: "+transition1.getName());
-		
+		// old values
+		getDeviation().addOldValue(transition1);
+		getDeviation().addOldValue(transition2);
 		// swap
 		String tmpID = transition1.getId();
 		String tmpName = transition1.getName();
@@ -67,16 +74,18 @@ public class VariantProcessModel extends ProcessModel {
 		transition1.setName(transition2.getName());
 		transition2.setId(tmpID);
 		transition2.setName(tmpName);
-		
-		System.out.println("nachher: "+transition1.getName());
-		
+		// new values
+		getDeviation().addNewValue(transition1);
+		getDeviation().addNewValue(transition2);
 	}
 
 	private void silenceTransition() {
 		Random generator = new Random();
 		Object[] values = getNonEventuallyTransitions().toArray();
-		((Transition) values[generator.nextInt(values.length)]).setName("");
+		Transition transition = ((Transition) values[generator.nextInt(values.length)]);
+		getDeviation().addOldValue(transition);
+		transition.setName("");
+		getDeviation().addNewValue(transition);
 	}
-	
 	
 }
