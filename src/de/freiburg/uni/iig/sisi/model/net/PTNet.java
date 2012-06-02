@@ -79,4 +79,41 @@ public class PTNet extends ModelObject {
 		}
 	}
 	
+	/**
+	 * Check if the {@link Transition}s are part of a small concurrency. Meaning every parallel
+	 * path consists of only one {@link Transition}.
+	 * 
+	 * @param transition
+	 * @return
+	 */
+	public boolean partofSmallConcurrency(Transition transition1, Transition transition2) {
+		// preset of preset (T <- P <- T)
+		ArrayList<Node> prePreSet1 = new ArrayList<Node>();
+		for (Node node : transition1.getPreSet()) {
+			prePreSet1.addAll(node.getPreSet());
+		}
+		ArrayList<Node> prePreSet2 = new ArrayList<Node>();
+		for (Node node : transition1.getPreSet()) {
+			prePreSet2.addAll(node.getPreSet());
+		}
+		// have common prepre transition
+		prePreSet1.retainAll(prePreSet2);
+		if ( prePreSet1.isEmpty() ) return false;
+		
+		// postset of postset (T -> P -> T)
+		ArrayList<Node> postPostSet1 = new ArrayList<Node>();
+		for (Node node : transition1.getPreSet()) {
+			postPostSet1.addAll(node.getPreSet());
+		}
+		ArrayList<Node> postPostSet2 = new ArrayList<Node>();
+		for (Node node : transition1.getPreSet()) {
+			postPostSet2.addAll(node.getPreSet());
+		}
+		// have common prepre transition
+		postPostSet1.retainAll(postPostSet2);
+		if ( postPostSet1.isEmpty() ) return false;
+		
+		return true;
+	}	
+	
 }
