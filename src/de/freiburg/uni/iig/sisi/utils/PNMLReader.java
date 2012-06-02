@@ -43,7 +43,7 @@ public class PNMLReader {
 		if (!((Element) doc.getElementsByTagName("pnml").item(0)).getAttribute("type").equals("de.freiburg.uni.iig.sisi"))
 			throw new IOException("Can not read. Wrong PNML type. Can only read PNML from type 'de.freiburg.uni.iig.sisi'.");
 
-		setNetAttributes((Element) doc.getElementsByTagName("net").item(0));
+		setPMAttributes((Element) doc.getElementsByTagName("net").item(0));
 
 		// set up control flow
 		setPlaces(doc.getElementsByTagName("place"));
@@ -132,13 +132,13 @@ public class PNMLReader {
 		}
 	}
 
-	private void setNetAttributes(Element e) {
-		sm.getNet().setId(e.getAttribute("id"));
+	private void setPMAttributes(Element e) {
+		sm.setId(e.getAttribute("id"));
 		NodeList nodeList = e.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node childNode = nodeList.item(i);
 			if ((childNode.getNodeType() == 1) && (childNode.getNodeName().equals("name"))) {
-				sm.getNet().setName(childNode.getTextContent().trim());
+				sm.setName(childNode.getTextContent().trim());
 				break;
 			}
 		}
