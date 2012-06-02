@@ -33,6 +33,7 @@ public class SiSi {
 	private ProcessModel simulationModel = null;
 	
 	private Label nothingLoadedLabel;
+	private Label bigNotificationLabel;
 
 	public SiSi(Display display) {
 
@@ -58,9 +59,10 @@ public class SiSi {
 		
 		// info that no model is loaded
 		shell.setSize(300, 200);
+		
 		nothingLoadedLabel = new Label(shell, SWT.CENTER);
-		nothingLoadedLabel.setText("No worries!");
-		nothingLoadedLabel.setBounds(30, 30, 200, 30);
+		nothingLoadedLabel.setText("No Process Model loaded." + System.lineSeparator() + "Load a Model to start.");
+		nothingLoadedLabel.setBounds(45, 45, 200, 30);
 	
 	}
 
