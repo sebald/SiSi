@@ -17,7 +17,8 @@ public class SafetyRequirements {
 	// maps for quick reference
 	private HashMap<Transition, HashSet<Policy>> policyMap = new HashMap<Transition, HashSet<Policy>>();
 	private HashMap<Transition, HashSet<UsageControl>> usageControlMap = new HashMap<Transition, HashSet<UsageControl>>();
-
+	private HashSet<Transition> eventuallyMap = new HashSet<Transition>();
+	
 	public HashMap<Transition, HashSet<Role>> getDelegations() {
 		return delegations;
 	}
@@ -44,7 +45,8 @@ public class SafetyRequirements {
 			HashSet<Policy> policySet = new HashSet<Policy>();
 			policySet.add(policy);
 			this.policyMap.put(policy.getObjective(), policySet);
-		}		
+		}
+		this.eventuallyMap.add(policy.getEventually());
 	}
 
 	public boolean hasDelegation(Transition transition) {
@@ -74,6 +76,7 @@ public class SafetyRequirements {
 			policySet.add(usageControl);
 			this.usageControlMap.put(usageControl.getObjective(), policySet);
 		}
+		this.eventuallyMap.add(usageControl.getEventually());
 	}
 
 	public HashMap<Transition, HashSet<UsageControl>> getUsageControlMap() {
@@ -83,6 +86,10 @@ public class SafetyRequirements {
 	public boolean hasUsageControl(Transition transition) {
 		if (this.usageControlMap.containsKey(transition)) return true;
 		return false;
+	}
+
+	public HashSet<Transition> getEventuallyMap() {
+		return eventuallyMap;
 	}
 	
 }
