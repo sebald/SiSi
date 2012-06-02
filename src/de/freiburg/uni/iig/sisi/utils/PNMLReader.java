@@ -173,8 +173,6 @@ public class PNMLReader {
 			Arc arc = new Arc(node.getAttribute("id"), sm.getNet().getNode(node.getAttribute("source")), sm.getNet().getNode(
 					node.getAttribute("target")));
 			sm.getNet().addArc(arc);
-			sm.getNet().getNode(node.getAttribute("source")).addOutgoingArc(arc);
-			sm.getNet().getNode(node.getAttribute("target")).addIncomingArc(arc);
 		}
 	}
 

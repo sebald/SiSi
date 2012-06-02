@@ -9,8 +9,8 @@ public class Arc extends ModelObject {
 
 	public Arc(String id, Node source, Node target) {
 		super(id, null);
-		this.source = source;
-		this.target = target;
+		setSource(source);
+		setTarget(target);
 	}
 
 	public Node getSource() {
@@ -19,6 +19,7 @@ public class Arc extends ModelObject {
 
 	public void setSource(Node source) {
 		this.source = source;
+		source.addOutgoingArc(this);
 	}
 
 	public Node getTarget() {
@@ -27,6 +28,7 @@ public class Arc extends ModelObject {
 
 	public void setTarget(Node target) {
 		this.target = target;
+		target.addIncomingArc(this);
 	}
 
 }
