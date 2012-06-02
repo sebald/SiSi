@@ -41,7 +41,7 @@ public class Testing {
 			
 			SimulationEngine se = new SimulationEngine(conf);
 			LogGenerator lg = new LogGenerator(se, FileMode.CSV);
-			se.run();
+			se.runFor(2);
 			String log = lg.generateLog(false);
 			System.out.println(log);
 			

@@ -73,13 +73,23 @@ public class SimulationEngine extends NarratorObject {
 		this.mutantToExecute = mutantToExecute;
 	}
 
+	public void runFor(int numerOfRuns) throws SimulationExcpetion {
+		for (int i = 0; i < numerOfRuns; i++) {
+			run(i);
+		}
+	}	
+	
+	public void run() throws SimulationExcpetion {
+		run(0);
+	}
+	
 	/**
 	 * Run the simulation once. Each {@link ProcessModel} will be simulated {@code n}-times, where {@code n} is the number of
 	 * {@link MutantObject}s in the {@link SimulationConfiguration}.
 	 * 
 	 * @throws SimulationExcpetion
 	 */
-	public void run() throws SimulationExcpetion {
+	public void run(int singleRunID) throws SimulationExcpetion {
 		
 		// for every process model
 		for (int i = 0; i < getSimulationConfiguration().getProcessModels().size(); i++) {
@@ -91,7 +101,7 @@ public class SimulationEngine extends NarratorObject {
 				setMutantToExecute(getSimulationConfiguration().getMutants().get(j));
 
 				DecimalFormat df = new DecimalFormat("#00");
-				simulationRunID = "sim#"+df.format(i)+"-"+df.format(j);
+				simulationRunID = df.format(singleRunID)+"-"+df.format(i)+"-"+df.format(j);
 				
 				notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
 				while (!fireableTransitions.isEmpty()) {
