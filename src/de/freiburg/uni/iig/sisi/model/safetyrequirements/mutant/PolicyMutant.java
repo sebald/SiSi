@@ -32,7 +32,9 @@ public class PolicyMutant extends MutantObject {
 			subjects.add(subject);		
 		} else if ( policy.getType() == PolicyType.BINDING_OF_DUTY ) {
 			// BOD => SOD
-			subjects = getProcessModel().getResourceModel().getDomainFor(policy.getEventually()).getMembers();
+			for (Role role : getProcessModel().getResourceModel().getDomainFor(policy.getEventually())) {
+				subjects.addAll(role.getMembers());
+			}			
 			subjects.remove(subject);
 		} else if ( policy.getType() == PolicyType.CONFLICT_OF_INTEREST ) {
 			// only subjects that don't share a role with the subject that executed the objective transitions

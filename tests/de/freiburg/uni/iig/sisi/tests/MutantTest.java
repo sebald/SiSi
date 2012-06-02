@@ -28,8 +28,11 @@ public class MutantTest {
 	public void testCreateMutantFromTransitionProcessModel() throws ParserConfigurationException, SAXException, IOException {
 		ProcessModel pm = new ProcessModel("examples/kbv.pnml");
 		Transition t = pm.getNet().getTransitions().get(0);
-		AuthorizationMutant mutant = (AuthorizationMutant) MutantFactory.createMutantFrom(t, pm);		
-		HashSet<Subject> intersection = pm.getResourceModel().getDomainFor(t).getMembers();
+		AuthorizationMutant mutant = (AuthorizationMutant) MutantFactory.createMutantFrom(t, pm);
+		HashSet<Subject> intersection = new HashSet<Subject>();
+		for (Role role : pm.getResourceModel().getDomainFor(t)) {
+			intersection.addAll(role.getMembers());
+		}
 		intersection.retainAll(mutant.getMutation());
 		assertEquals("Is mutant", true, intersection.isEmpty());
 	}
@@ -52,7 +55,10 @@ public class MutantTest {
 		badSubjects = mBoD.getMutation(event);
 		
 		badSubjects.add(pm.getResourceModel().getSubject("s01"));
-		HashSet<Subject> tmpSubjects = pm.getResourceModel().getDomainFor((Transition) pm.getNet().getNode("t05")).getMembers();
+		HashSet<Subject> tmpSubjects = new HashSet<Subject>();
+		for (Role role :pm.getResourceModel().getDomainFor((Transition) pm.getNet().getNode("t05"))) {
+			tmpSubjects.addAll(role.getMembers());
+		}
 		tmpSubjects.removeAll(badSubjects);
 		
 		assertEquals("Is mutant", false, tmpSubjects.contains(pm.getResourceModel().getSubject("s01")));

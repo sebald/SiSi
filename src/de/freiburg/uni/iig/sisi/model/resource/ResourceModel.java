@@ -15,7 +15,7 @@ public class ResourceModel implements PropertyChangeListener {
 	public HashSet<WorkObject> workObjects = new HashSet<WorkObject>();
 	
 	// maps for quick reference
-	public HashMap<Transition, Role> domainMap = new HashMap<Transition, Role>();
+	public HashMap<Transition, HashSet<Role>> domainMap = new HashMap<Transition, HashSet<Role>>();
 	public HashMap<Transition, HashSet<WorkObject>> workObjectsMap = new HashMap<Transition, HashSet<WorkObject>>();
 	
 	public Collection<Subject> getSubjects() {
@@ -43,11 +43,11 @@ public class ResourceModel implements PropertyChangeListener {
 		return this.roles.get(id);
 	}
 	
-	public HashMap<Transition, Role> getDomainMap() {
+	public HashMap<Transition, HashSet<Role>> getDomainMap() {
 		return this.domainMap;
 	}
 
-	public Role getDomainFor(Transition transition) {
+	public HashSet<Role> getDomainFor(Transition transition) {
 		return this.domainMap.get(transition);
 	}
 	
@@ -74,8 +74,15 @@ public class ResourceModel implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if( evt.getPropertyName() == Role.PROPERTY_ADD_DOMAIN )
-			domainMap.put((Transition) evt.getNewValue(), (Role) evt.getSource());
+		if( evt.getPropertyName() == Role.PROPERTY_ADD_DOMAIN ) {
+			if( domainMap.containsKey((Transition) evt.getNewValue()) ) {
+				domainMap.get((Transition) evt.getNewValue()).add((Role) evt.getSource());
+			} else {
+				HashSet<Role> roles = new HashSet<Role>();
+				roles.add((Role) evt.getSource());
+				domainMap.put((Transition) evt.getNewValue(), roles);
+			}
+		}
 	}
 	
 }

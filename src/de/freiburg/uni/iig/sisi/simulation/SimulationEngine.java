@@ -105,7 +105,10 @@ public class SimulationEngine extends NarratorObject {
 		// this will later be the subjects that fires the transition
 		Subject subject = null;
 		// get subjects which are authorized (implied through domain assignment)
-		HashSet<Subject> subjects = processModel.getResourceModel().getDomainFor(transition).getMembers();
+		HashSet<Subject> subjects = new HashSet<Subject>();
+		for (Role role : processModel.getResourceModel().getDomainFor(transition)) {
+			subjects.addAll(role.getMembers());
+		}
 		
 		// check if safetyRquirements should be considered
 		if (simulationConfiguration.isConsiderSafetyRequirements()) {
