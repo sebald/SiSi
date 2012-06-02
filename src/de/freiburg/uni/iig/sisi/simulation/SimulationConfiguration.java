@@ -3,8 +3,8 @@ package de.freiburg.uni.iig.sisi.simulation;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
-import de.freiburg.uni.iig.sisi.model.net.Transition;
 
 public class SimulationConfiguration {
 
@@ -17,7 +17,7 @@ public class SimulationConfiguration {
 
 	private HashSet<MutantObject> mutants = new HashSet<MutantObject>();
 	
-	private HashMap<Transition, HashSet<MutantObject>> mutantMap = new HashMap<Transition, HashSet<MutantObject>>();
+	private HashMap<ModelObject, HashSet<MutantObject>> activatorMap = new HashMap<ModelObject, HashSet<MutantObject>>();
 	
 	public SimulationConfiguration(ResourceSelectionMode resourceSelectionMode, boolean considerSafetyRequirements) {
 		this.resourceSelectionMode = resourceSelectionMode;
@@ -40,17 +40,21 @@ public class SimulationConfiguration {
 
 	public void addMutant(MutantObject mutant) {
 		this.mutants.add(mutant);
-		if ( this.mutantMap.containsKey(mutant.getActivator()) ){
-			this.mutantMap.get(mutant.getActivator()).add(mutant);
+		if ( this.activatorMap.containsKey(mutant.getActivator()) ){
+			this.activatorMap.get(mutant.getActivator()).add(mutant);
 		} else {
 			HashSet<MutantObject> mutantSet = new HashSet<MutantObject>();
 			mutantSet.add(mutant);
-			this.mutantMap.put((Transition) mutant.getActivator(), mutantSet);
+			this.activatorMap.put(mutant.getActivator(), mutantSet);
 		}		
 	}
 
-	public HashMap<Transition, HashSet<MutantObject>> getMutantMap() {
-		return mutantMap;
+	public HashMap<ModelObject, HashSet<MutantObject>> getActivatorMap() {
+		return activatorMap;
+	}
+	
+	public boolean isActivator(ModelObject modelObject){
+		return activatorMap.containsKey(modelObject);
 	}
 	
 }

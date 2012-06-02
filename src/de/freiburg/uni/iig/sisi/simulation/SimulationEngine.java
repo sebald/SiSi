@@ -108,7 +108,7 @@ public class SimulationEngine extends NarratorObject {
 		// check if safetyRquirements should be considered
 		if (simulationConfiguration.isConsiderSafetyRequirements()) {
 			
-			if( simulationConfiguration.getMutantMap().containsKey(transition) ) {
+			if( simulationConfiguration.isActivator(transition) ) {
 				subjects = executeAuthorizationMutant(transition, subjects);
 			} else if (processModel.getSafetyRequirements().hasDelegation(transition)) {
 				// get delegations and add subjects that are authorized through the delegations
@@ -234,7 +234,7 @@ public class SimulationEngine extends NarratorObject {
 	}
 
 	private HashSet<Subject> executeAuthorizationMutant(Transition transition, HashSet<Subject> subjects) {
-		for (MutantObject mutant : simulationConfiguration.getMutantMap().get(transition)) {
+		for (MutantObject mutant : simulationConfiguration.getActivatorMap().get(transition)) {
 			if( mutant instanceof AuthorizationMutant ) {
 				executedMutants.put(mutant, transition);
 				return ((AuthorizationMutant) mutant).getMutation();
