@@ -10,13 +10,19 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
@@ -25,16 +31,19 @@ public class SiSi {
 
 	private Shell shell;
 	private ProcessModel simulationModel = null;
+	
+	private Label nothingLoadedLabel;
 
 	public SiSi(Display display) {
 
 		this.shell = new Shell(display);
 		shell.setText("SiSi");
-		shell.setSize(800, 600);
+		shell.setImage(new Image(shell.getDisplay(), "imgs/shell.png"));
+		
+		init();
+		//center(shell);
 
-		this.init();
-		//this.center(shell);
-
+		//shell.pack();
 		shell.open();
 
 		while (!shell.isDisposed()) {
@@ -45,8 +54,17 @@ public class SiSi {
 	}
 
 	protected void init() {
+		createMenu();
+		
+		// info that no model is loaded
+		shell.setSize(300, 200);
+		nothingLoadedLabel = new Label(shell, SWT.CENTER);
+		nothingLoadedLabel.setText("No worries!");
+		nothingLoadedLabel.setBounds(30, 30, 200, 30);
+	
+	}
 
-		// create menu bar
+	protected void createMenu() {
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		MenuItem cascadeFileMenu = new MenuItem(menuBar, SWT.CASCADE);
 		cascadeFileMenu.setText("File");
@@ -71,14 +89,31 @@ public class SiSi {
 				dialog.setFilterExtensions(filterExtensions);
 
 				String path = dialog.open();
-				try {
-					simulationModel = new ProcessModel(path);
-				} catch (ParserConfigurationException | SAXException | IOException exception) {
-					exception.printStackTrace();
+				if( path != null ) {
+					try {
+						loadModel(path);
+					} catch (ParserConfigurationException | SAXException | IOException e) {
+						errorMessageBox("Could not load File.", e);
+					}
 				}
 			}
 		});
 
+		// load KBV example
+		MenuItem exampleItem = new MenuItem(fileMenu, SWT.PUSH);
+		exampleItem.setText("Load Example");
+		exampleItem.setImage(new Image(shell.getDisplay(), "imgs/example.png"));
+		exampleItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+					try {
+						loadModel("examples/kbv.pnml");
+					} catch (ParserConfigurationException | SAXException | IOException e) {
+						errorMessageBox("Could not load Example.", e);
+					}
+			}
+		});		
+		
 		// exit program
 		MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
 		exitItem.setText("Exit");
@@ -91,17 +126,9 @@ public class SiSi {
 			}
 		});
 
-		shell.setMenuBar(menuBar);
-
-		// set layout vertical
-		FillLayout fillLayout = new FillLayout();
-		fillLayout.type = SWT.VERTICAL;
-		shell.setLayout(fillLayout);
-		
-		shell.setImage(new Image(shell.getDisplay(), "imgs/shell.png"));
-
+		shell.setMenuBar(menuBar);		
 	}
-
+	
 	protected void createCheckBoxes() {
 		for (int i = 0; i < 10; i++) {
 			Button b = new Button(shell, SWT.CHECK);
@@ -125,6 +152,44 @@ public class SiSi {
 		shell.setBounds(nLeft, nTop, p.x, p.y);
 	}
 
+	protected void errorMessageBox(String msg, Exception e) {
+		MessageBox mb = new MessageBox(shell, SWT.ERROR);
+        mb.setText("SiSi Error: " + e.getClass().getSimpleName());
+        mb.setMessage(e.getMessage());
+        mb.open();
+	}
+	
+	private void loadModel(String path) throws ParserConfigurationException, SAXException, IOException{
+		simulationModel = new ProcessModel(path);
+		
+		// hide info label
+		nothingLoadedLabel.dispose();
+		
+		// set new layout
+		GridLayout layout = new GridLayout(2, false);
+		shell.setLayout(layout);
+		
+		Group group = new Group(shell, SWT.NONE);
+		group.setText("Config Mutations");
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		gridData.horizontalSpan= 2;
+		group.setLayoutData(gridData);
+		group.setLayout(new RowLayout(SWT.VERTICAL));
+		Text text = new Text(group, SWT.NONE);
+		text.setText("Another test");
+	
+		group = new Group(shell, SWT.NONE);
+		group.setText("Config Variations");
+		gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		gridData.horizontalSpan= 2;
+		group.setLayoutData(gridData);
+		group.setLayout(new RowLayout(SWT.VERTICAL));
+		text = new Text(group, SWT.NONE);
+		text.setText("Another test");
+		
+		shell.pack();
+	}
+	
 	public static void main(String[] args) {
 		Display display = new Display();
 		new SiSi(display);

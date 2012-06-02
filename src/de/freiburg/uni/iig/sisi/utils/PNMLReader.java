@@ -41,7 +41,7 @@ public class PNMLReader {
 
 		// check for correct type
 		if (!((Element) doc.getElementsByTagName("pnml").item(0)).getAttribute("type").equals("de.freiburg.uni.iig.sisi"))
-			throw new IOException("Can not read. Wrong PNML type. Can only read 'de.freiburg.uni.iig.sisi'.");
+			throw new IOException("Can not read. Wrong PNML type. Can only read PNML from type 'de.freiburg.uni.iig.sisi'.");
 
 		setNetAttributes((Element) doc.getElementsByTagName("net").item(0));
 
