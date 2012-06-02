@@ -90,8 +90,8 @@ public class SimulationEngine extends NarratorObject {
 			for (int j = 0; j < getSimulationConfiguration().getMutants().size(); j++) {
 				setMutantToExecute(getSimulationConfiguration().getMutants().get(j));
 
-				DecimalFormat df = new DecimalFormat("#000");
-				simulationRunID = "sim#"+df.format(j);
+				DecimalFormat df = new DecimalFormat("#00");
+				simulationRunID = "sim#"+df.format(i)+"-"+df.format(j);
 				
 				notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
 				while (!fireableTransitions.isEmpty()) {
