@@ -143,7 +143,7 @@ public class SimulationEngine extends NarratorObject {
 		// check if safetyRquirements should be considered
 		if (simulationConfiguration.isConsiderSafetyRequirements()) {
 			
-			if( simulationConfiguration.isActivator(transition) ) {
+			if( simulationConfiguration.isActivator(transition) && !transition.isSilent() ) {
 				subjects = executeAuthorizationMutant(transition, subjects);
 			} else if (processModel.getSafetyRequirements().hasDelegation(transition)) {
 				// get delegations and add subjects that are authorized through the delegations

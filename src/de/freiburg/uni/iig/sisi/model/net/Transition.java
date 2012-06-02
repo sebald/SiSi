@@ -27,4 +27,9 @@ public class Transition extends Node {
 		}
 		return false;
 	}
+
+	public boolean isSilent() {
+		if( getName().isEmpty() ) return true;
+		return false;
+	}
 }
