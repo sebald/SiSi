@@ -2,7 +2,11 @@ package de.freiburg.uni.iig.sisi.log;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,7 +25,7 @@ public class LogGenerator implements PropertyChangeListener {
 		LIST, COMPOSITE
 	}
 	
-	private FileMode fileMode;
+	private final FileMode fileMode;
 	private TreeMap<String, EventLog> eventLogs = new TreeMap<String, EventLog>();
 
 	private String currentSimulation = null;
@@ -35,7 +39,7 @@ public class LogGenerator implements PropertyChangeListener {
 		se.addChangeListener(this);
 		this.fileMode = fileMode;
 	}
-
+	
 	public TreeMap<String, EventLog> getEventLogs() {
 		return eventLogs;
 	}	
@@ -61,10 +65,20 @@ public class LogGenerator implements PropertyChangeListener {
 	}
 
 	public String generateLog(String uri) throws IOException {
-		return generateLog(uri, LogMode.LIST );
+		return generateLog(uri, LogMode.LIST, true);
 	}
 	
-	public String generateLog(String uri, LogMode logMode) throws IOException {
+	public String generateLog(boolean createFile) throws IOException {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH-mm-ss");
+		Date date = new Date();
+		return generateLog("logs/SiSiLog_"+ dateFormat.format(date)  + ".log", LogMode.LIST, createFile);
+	}
+	
+	public String geStringLog(String uri, LogMode logMode) throws IOException {
+		return generateLog(uri, logMode, true);
+	}
+	
+	public String generateLog(String uri, LogMode logMode, boolean createFile) throws IOException {
 		// parse log
 		String log = "";
 		if ( fileMode == FileMode.MXML ) {
@@ -75,13 +89,16 @@ public class LogGenerator implements PropertyChangeListener {
 		
 		
 		// create file
-//		Writer output = null;
-//		File file = new File(uri);
-//		if ( !file.exists() )
-//			file.createNewFile();
-//		output = new BufferedWriter(new FileWriter(file));
-//		output.write(log);
-//		output.close();
+		if ( createFile ) {
+			Writer output = null;
+			File file = new File(uri);
+			if ( !file.exists() )
+				file.createNewFile();
+			output = new BufferedWriter(new FileWriter(file));
+			output.write(log);
+			output.close();			
+		}
+
 
 		return log;
 	}
