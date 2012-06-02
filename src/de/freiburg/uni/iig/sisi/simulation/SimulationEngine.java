@@ -1,5 +1,6 @@
 package de.freiburg.uni.iig.sisi.simulation;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -25,7 +26,9 @@ import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelec
 public class SimulationEngine extends NarratorObject {
 
 	public static String PROPERTY_TRANSITION_FIRED = "Transition fired";
-
+	public static String PORPERTY_SIMULATION_COMPLETE = "Simulation complete";
+	public static String PORPERTY_SIMULATION_START = "Simulation start";
+	
 	public enum ModelState {
 		VIOLATED, TEMPORALY_VIOLATED, SATISFIED
 	}
@@ -40,6 +43,10 @@ public class SimulationEngine extends NarratorObject {
 	private HashMap<Transition, HashSet<UsageControl>> usageControlsToSatisfy = new HashMap<Transition, HashSet<UsageControl>>();
 	private HashMap<MutantObject, ModelObject> executedMutants = new HashMap<MutantObject, ModelObject>();
 	private HashMap<Transition, SimulationEvent> internalEventMap = new HashMap<Transition, SimulationEvent>();
+	
+	// vars for multiple runs
+	private MutantObject mutantToExecute;
+	private String simulationRunID;
 
 	public SimulationEngine(ProcessModel simulationModel, SimulationConfiguration simulationConfiguration) throws SimulationExcpetion {
 		this.processModel = simulationModel;
@@ -47,24 +54,38 @@ public class SimulationEngine extends NarratorObject {
 		updateFireableTransitions();
 	}
 	
-	public ModelState run() throws SimulationExcpetion {
-		while (!fireableTransitions.isEmpty()) {
-			Transition transition = getRandomFireableTransition();
-			// internal (not observable operations)
-			fire(transition);
-			Subject subject = firedby(transition);
-			// generate event
-			SimulationEvent event = new SimulationEvent(transition, subject, processModel.getResourceModel().getWorkObjectFor(transition));
-			internalEventMap.put(transition, event);
-			// the event is observable, if the transition has a label (no silent transition)
-			if (transition.getName() != null)
-				notifyListeners(this, PROPERTY_TRANSITION_FIRED, event);
+	public void run() throws SimulationExcpetion {
+		for (int i = 0; i < simulationConfiguration.getMutants().size(); i++) {
+			mutantToExecute = simulationConfiguration.getMutants().get(i);
+			
+			DecimalFormat df = new DecimalFormat("#000");
+			simulationRunID = "sim#"+df.format(i);
+			
+			notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
+			while (!fireableTransitions.isEmpty()) {
+				Transition transition = getRandomFireableTransition();
+				fire(transition);
+			}
+			
+			reset();
 		}
-		return evaluateModel();
+		
+		evaluateModel();
 	}	
 	
-	public void reset() {
-		processModel.getNet().rest();
+	public void reset() throws SimulationExcpetion {
+		// reset net
+		processModel.getNet().reset();
+		updateFireableTransitions();
+		
+		// notify log
+		notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
+		
+		// clear internal vars
+		policiesToSatisfy.clear();
+		usageControlsToSatisfy.clear();
+		executedMutants.clear();
+		internalEventMap.clear();
 	}
 	
 	private void updateFireableTransitions() throws SimulationExcpetion {
@@ -97,6 +118,14 @@ public class SimulationEngine extends NarratorObject {
 			Place p = ((Place) arc.getTarget());
 			p.setMarking(p.getMarking() + 1);
 		}
+		
+		Subject subject = firedby(transition);
+		// generate event
+		SimulationEvent event = new SimulationEvent(simulationRunID, transition, subject, processModel.getResourceModel().getWorkObjectFor(transition));
+		internalEventMap.put(transition, event);
+		// the event is observable, if the transition has a label (no silent transition)
+		if (transition.getName() != null)
+			notifyListeners(this, PROPERTY_TRANSITION_FIRED, event);		
 		
 		// check what is now fireable
 		updateFireableTransitions();

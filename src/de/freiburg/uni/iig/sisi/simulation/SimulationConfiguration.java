@@ -2,6 +2,7 @@ package de.freiburg.uni.iig.sisi.simulation;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
@@ -15,7 +16,7 @@ public class SimulationConfiguration {
 	private final ResourceSelectionMode resourceSelectionMode;
 	private final boolean considerSafetyRequirements;
 
-	private HashSet<MutantObject> mutants = new HashSet<MutantObject>();
+	private LinkedList<MutantObject> mutants = new LinkedList<MutantObject>();
 	
 	private HashMap<ModelObject, HashSet<MutantObject>> activatorMap = new HashMap<ModelObject, HashSet<MutantObject>>();
 	
@@ -34,7 +35,7 @@ public class SimulationConfiguration {
 	}
 
 
-	public HashSet<MutantObject> getMutants() {
+	public LinkedList<MutantObject> getMutants() {
 		return mutants;
 	}
 
