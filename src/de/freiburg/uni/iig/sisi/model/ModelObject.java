@@ -12,8 +12,8 @@ public abstract class ModelObject {
 	private String name;
 	
 	public ModelObject() {
-		this.id = null;
-		this.name = null;
+		this.id = "";
+		this.name = "";
 	}
 	
 	public ModelObject(String id, String name) {
