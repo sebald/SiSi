@@ -26,9 +26,10 @@ public class Testing {
 			// this will be later generated through the UI
 			SimulationConfiguration conf = new SimulationConfiguration(ResourceSelectionMode.RANDOM, true);			
 //			MutantObject mutant = MutantFactory.createMutantFrom(pm.getNet().getTransitions().get(1), pm);
-			MutantObject mutant2 = MutantFactory.createMutantFrom(pm.getSafetyRequirements().getPolicies().get(0), pm);
+//			MutantObject mutant2 = MutantFactory.createMutantFrom(pm.getSafetyRequirements().getPolicies().get(0), pm);
+			MutantObject mutant3 = MutantFactory.createMutantFrom(pm.getSafetyRequirements().getUsageControls().get(0), pm);
 			
-			conf.addMutant(mutant2);
+			conf.addMutant(mutant3);
 			
 			SimulationEngine se = new SimulationEngine(pm, conf);
 			LogGenerator lg = new LogGenerator(se);

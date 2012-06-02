@@ -19,6 +19,7 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelectionMode;
 
 public class SimulationEngine extends NarratorObject {
@@ -233,12 +234,22 @@ public class SimulationEngine extends NarratorObject {
 	private HashSet<Subject> satisfyUsageControl(UsageControl usageControl, HashSet<Subject> subjectSet) throws SimulationExcpetion {
 		// get event to check who has executed the task
 		SimulationEvent event = internalEventMap.get(usageControl.getObjective());
-		// set the available subjects according to the policy rules
-		if( usageControl.getType() == UsageControlType.USAGE_RESTRICTION ) {
-			subjectSet.remove(event.getSubject());
-		} else if ( usageControl.getType() == UsageControlType.ACTION_REQUIREMENT ) {
-			subjectSet = new HashSet<Subject>();
-			subjectSet.add(event.getSubject());
+		
+		if( simulationConfiguration.isActivator(usageControl) ) {
+			for (MutantObject mutant : simulationConfiguration.getActivatorMap().get(usageControl)) {
+				if( mutant instanceof UsageControlMutant ) {
+					executedMutants.put(mutant, usageControl);
+					subjectSet = ((UsageControlMutant) mutant).getMutation(event);
+				}
+			}			
+		} else {
+			// set the available subjects according to the policy rules
+			if( usageControl.getType() == UsageControlType.USAGE_RESTRICTION ) {
+				subjectSet.remove(event.getSubject());
+			} else if ( usageControl.getType() == UsageControlType.ACTION_REQUIREMENT ) {
+				subjectSet = new HashSet<Subject>();
+				subjectSet.add(event.getSubject());
+			}
 		}
 		
 		if ( subjectSet.isEmpty() )
