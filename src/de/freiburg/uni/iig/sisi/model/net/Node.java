@@ -1,5 +1,6 @@
 package de.freiburg.uni.iig.sisi.model.net;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
@@ -37,4 +38,20 @@ public class Node extends ModelObject {
 		this.outgoingArcs.remove(arc);
 	}	
 
+	public ArrayList<Node> getPreSet(){
+		ArrayList<Node> preSet = new ArrayList<Node>();
+		for (Arc arc : getIncomingArcs()) {
+			preSet.add(arc.getSource());
+		}
+		return preSet;
+	}
+	
+	public ArrayList<Node> getPostSet(){
+		ArrayList<Node> posSet = new ArrayList<Node>();
+		for (Arc arc : getOutgoingArcs()) {
+			posSet.add(arc.getTarget());
+		}
+		return posSet;
+	}	
+	
 }
