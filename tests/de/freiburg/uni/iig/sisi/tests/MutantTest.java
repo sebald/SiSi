@@ -13,9 +13,14 @@ import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
+import de.freiburg.uni.iig.sisi.model.resource.Role;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy.PolicyType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantFactory;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
+import de.freiburg.uni.iig.sisi.simulation.SimulationEvent;
 
 public class MutantTest {
 
@@ -30,8 +35,42 @@ public class MutantTest {
 	}
 
 	@Test
-	public void testCreateMutantFromPolicy() {
-		fail("Not yet implemented"); // TODO
+	public void testCreateMutantFromPolicy() throws ParserConfigurationException, SAXException, IOException {
+		ProcessModel pm = new ProcessModel("examples/kbv.pnml");
+		SimulationEvent event = new SimulationEvent((Transition) pm.getNet().getNode("t04"), pm.getResourceModel().getSubject("s01"), null);
+		
+		// SoD
+		Policy policySoD = new Policy("p01", "", PolicyType.SEPERATION_OF_DUTY, (Transition) pm.getNet().getNode("t04"), (Transition) pm.getNet().getNode("t05"));
+		PolicyMutant mSoD = (PolicyMutant) MutantFactory.createMutantFrom(policySoD, pm);
+		HashSet<Subject> badSubjects = mSoD.getMutation(event);
+		badSubjects.remove(pm.getResourceModel().getSubject("s01"));
+		assertEquals("Is mutant", true, badSubjects.isEmpty());
+		
+		//BoD
+		Policy policyBoD = new Policy("p01", "", PolicyType.BINDING_OF_DUTY, (Transition) pm.getNet().getNode("t04"), (Transition) pm.getNet().getNode("t05"));
+		PolicyMutant mBoD = (PolicyMutant) MutantFactory.createMutantFrom(policyBoD, pm);
+		badSubjects = mBoD.getMutation(event);
+		
+		badSubjects.add(pm.getResourceModel().getSubject("s01"));
+		HashSet<Subject> tmpSubjects = pm.getResourceModel().getDomainFor((Transition) pm.getNet().getNode("t05")).getMembers();
+		tmpSubjects.removeAll(badSubjects);
+		
+		assertEquals("Is mutant", false, tmpSubjects.contains(pm.getResourceModel().getSubject("s01")));
+		
+		//CoI
+		Policy policyCoI = new Policy("p01", "", PolicyType.CONFLICT_OF_INTEREST, (Transition) pm.getNet().getNode("t04"), (Transition) pm.getNet().getNode("t05"));
+		PolicyMutant mCoI = (PolicyMutant) MutantFactory.createMutantFrom(policyCoI, pm);
+		badSubjects = mCoI.getMutation(event);
+		
+		boolean commonSubject = false;
+		for (Subject subject : badSubjects) {
+			for (Role role : pm.getResourceModel().getSubject("s01").getRoles()) {
+				if( subject.getRoles().contains(role) )
+					commonSubject = true;
+			}	
+		}
+		assertEquals("Is mutant", false, commonSubject);
+		
 	}
 
 	@Test

@@ -29,8 +29,8 @@ public class MutantFactory {
 	 * @param policy
 	 * @return mutant for {@link Policy}
 	 */
-	public static MutantObject createMutantFrom(Policy policy) {
-		return null;
+	public static MutantObject createMutantFrom(Policy policy, ProcessModel processModel) {
+		return new PolicyMutant(createID(), policy, processModel);
 	}
 	
 	/**
