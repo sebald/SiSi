@@ -44,14 +44,22 @@ public class LogGenerator implements PropertyChangeListener {
 		return eventLogs;
 	}	
 	
+	protected String getCurrentSimulation() {
+		return currentSimulation;
+	}
+
+	protected void setCurrentSimulation(String currentSimulation) {
+		this.currentSimulation = currentSimulation;
+	}
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName() == SimulationEngine.PORPERTY_SIMULATION_START) {
-			currentSimulation = (String) evt.getNewValue();
-			eventLogs.put((String) evt.getNewValue(), new EventLog());
+			setCurrentSimulation((String) evt.getNewValue());
+			eventLogs.put(getCurrentSimulation(), new EventLog());
 		}
 		if (evt.getPropertyName() == SimulationEngine.PROPERTY_TRANSITION_FIRED) {
-			eventLogs.get(currentSimulation).addEvent((SimulationEvent) evt.getNewValue());
+			eventLogs.get(getCurrentSimulation()).addEvent((SimulationEvent) evt.getNewValue());
 		}
 		if (evt.getPropertyName() == SimulationEngine.PORPERTY_SIMULATION_COMPLETE) {
 			//nothing yet
