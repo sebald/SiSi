@@ -73,7 +73,7 @@ public class PTNet extends ModelObject {
 		}
 	}
 	
-	public void rest(){
+	public void reset(){
 		for (Place place : places) {
 			place.setMarking(initialMarking.get(place));
 		}
