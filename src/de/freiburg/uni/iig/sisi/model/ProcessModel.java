@@ -17,10 +17,6 @@ public class ProcessModel extends ModelObject {
 	private ResourceModel resourceModel = new ResourceModel();
 	private SafetyRequirements safetyRequirements = new SafetyRequirements();
 	
-	public ProcessModel() {
-		
-	}
-	
 	public ProcessModel(String uri) throws ParserConfigurationException, SAXException, IOException {
 		PNMLReader reader = new PNMLReader();
 		reader.createModelFromPNML(this, uri);
