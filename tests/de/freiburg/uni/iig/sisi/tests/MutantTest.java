@@ -63,19 +63,12 @@ public class MutantTest {
 		
 		assertEquals("Is mutant", false, tmpSubjects.contains(pm.getResourceModel().getSubject("s01")));
 		
-		//CoI
+		//CoI	
 		Policy policyCoI = new Policy("p01", "", PolicyType.CONFLICT_OF_INTEREST, (Transition) pm.getNet().getNode("t04"), (Transition) pm.getNet().getNode("t05"));
 		PolicyMutant mCoI = (PolicyMutant) MutantFactory.createMutantFrom(policyCoI, pm);
 		badSubjects = mCoI.getMutation(event);
 		
-		boolean commonSubject = false;
-		for (Subject subject : badSubjects) {
-			for (Role role : pm.getResourceModel().getSubject("s01").getRoles()) {
-				if( subject.getRoles().contains(role) )
-					commonSubject = true;
-			}	
-		}
-		assertEquals("Is mutant", false, commonSubject);
+		assertEquals("Is mutant", true, badSubjects.isEmpty());
 		
 	}
 

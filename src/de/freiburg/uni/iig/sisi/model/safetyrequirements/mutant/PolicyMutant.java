@@ -38,8 +38,9 @@ public class PolicyMutant extends MutantObject {
 			subjects.remove(subject);
 		} else if ( policy.getType() == PolicyType.CONFLICT_OF_INTEREST ) {
 			// only subjects that don't share a role with the subject that executed the objective transitions
-			Collection<Role> allRoles = getProcessModel().getResourceModel().getRoles();
-			// remove all good roles (= roles that are allowed to execute the eventually transition)
+			// but the should be authorized to execute the transition
+			Collection<Role> allRoles = getProcessModel().getResourceModel().getDomainFor(policy.getEventually());
+			// remove all good roles (= roles that have the subjects as member)
 			for (Role role : subject.getRoles()) {
 				allRoles.remove(role);
 			}
