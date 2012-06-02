@@ -54,9 +54,17 @@ public class SimulationEngine extends NarratorObject {
 		updateFireableTransitions();
 	}
 	
+	protected MutantObject getMutantToExecute() {
+		return mutantToExecute;
+	}
+
+	protected void setMutantToExecute(MutantObject mutantToExecute) {
+		this.mutantToExecute = mutantToExecute;
+	}
+
 	public void run() throws SimulationExcpetion {
 		for (int i = 0; i < simulationConfiguration.getMutants().size(); i++) {
-			mutantToExecute = simulationConfiguration.getMutants().get(i);
+			setMutantToExecute(simulationConfiguration.getMutants().get(i));
 			
 			DecimalFormat df = new DecimalFormat("#000");
 			simulationRunID = "sim#"+df.format(i);
