@@ -71,6 +71,12 @@ public class SimulationEngine extends NarratorObject {
 		this.mutantToExecute = mutantToExecute;
 	}
 
+	/**
+	 * Run the simulation once. Each {@link ProcessModel} will be simulated {@code n}-times, where {@code n} is the number of
+	 * {@link MutantObject}s in the {@link SimulationConfiguration}.
+	 * 
+	 * @throws SimulationExcpetion
+	 */
 	public void run() throws SimulationExcpetion {
 		for (int i = 0; i < simulationConfiguration.getMutants().size(); i++) {
 			setMutantToExecute(simulationConfiguration.getMutants().get(i));
