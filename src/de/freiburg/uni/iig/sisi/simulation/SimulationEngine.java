@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
+import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.NarratorObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
@@ -17,6 +18,7 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy.PolicyType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelectionMode;
 
 public class SimulationEngine extends NarratorObject {
@@ -35,7 +37,7 @@ public class SimulationEngine extends NarratorObject {
 	private HashSet<Transition> fireableTransitions = new HashSet<Transition>();
 	private HashMap<Transition, HashSet<Policy>> policiesToSatisfy = new HashMap<Transition, HashSet<Policy>>();
 	private HashMap<Transition, HashSet<UsageControl>> usageControlsToSatisfy = new HashMap<Transition, HashSet<UsageControl>>();
-	private HashMap<MutantObject, Transition> executedMutants = new HashMap<MutantObject, Transition>();
+	private HashMap<MutantObject, ModelObject> executedMutants = new HashMap<MutantObject, ModelObject>();
 	private HashMap<Transition, SimulationEvent> internalEventMap = new HashMap<Transition, SimulationEvent>();
 
 	public SimulationEngine(ProcessModel simulationModel, SimulationConfiguration simulationConfiguration) throws SimulationExcpetion {
@@ -122,7 +124,7 @@ public class SimulationEngine extends NarratorObject {
 			 * 		Eventually part of an policy/usage control found that has to be satisfied.
 			 */
 			
-			// check if transition is an eventually part of one or more policies
+			// check if transition is an eventually part of one or more policies/usage controls
 			if (policiesToSatisfy.containsKey(transition)) {
 				HashSet<Policy> policies = policiesToSatisfy.get(transition);
 				for (Policy policy : policies) {
@@ -132,7 +134,6 @@ public class SimulationEngine extends NarratorObject {
 						policiesToSatisfy.remove(transition);
 				}
 			}
-			// adapt the fireable set according to usage control rules
 			if (usageControlsToSatisfy.containsKey(transition)) {
 				HashSet<UsageControl> usageControls = usageControlsToSatisfy.get(transition);
 				for (UsageControl usageControl : usageControls) {
@@ -144,10 +145,10 @@ public class SimulationEngine extends NarratorObject {
 			}			
 			
 			/**
-			 * 		Objective of a policy/usage control spottted.
+			 * 		Objective of a policy/usage control spotted.
 			 */
 			
-			// check if transition is an objective of one or more policies
+			// check if transition is an objective of one or more policies/usage controls
 			if (processModel.getSafetyRequirements().hasPolicy(transition)) {
 				HashSet<Policy> policies = processModel.getSafetyRequirements().getPolicyMap().get(transition);
 				// add policies to policiesToSatisfy map
@@ -162,7 +163,6 @@ public class SimulationEngine extends NarratorObject {
 					}
 				}
 			}
-			// check if transition is an objective of one or more usage controls
 			if ( processModel.getSafetyRequirements().hasUsageControl(transition) ) {
 				HashSet<UsageControl> uc = processModel.getSafetyRequirements().getUsageControlMap().get(transition);
 				for (UsageControl usageControl : uc) {
@@ -195,17 +195,28 @@ public class SimulationEngine extends NarratorObject {
 	private HashSet<Subject> satisfyPolicy(Policy policy, HashSet<Subject> subjectSet) throws SimulationExcpetion {
 		// get event to check who has executed the task
 		SimulationEvent event = internalEventMap.get(policy.getObjective());
-		// set the available subjects according to the policy rules
-		if( policy.getType() == PolicyType.SEPERATION_OF_DUTY ) {
-			subjectSet.remove(event.getSubject());
-		} else if ( policy.getType() == PolicyType.BINDING_OF_DUTY  ) {
-			subjectSet = new HashSet<Subject>();
-			subjectSet.add(event.getSubject());
-		} else if ( policy.getType() == PolicyType.CONFLICT_OF_INTEREST ) {
-			// remove subjects if they have a role, which is not a role of the subject that executed the objective task
-			for (Subject subject : subjectSet) {
-				if( !subject.hasCompatibleRoles(event.getSubject()) ) {
-					subjectSet.remove(subject);
+		
+		// check if we rather should violate the policy than satisfy it
+		if( simulationConfiguration.isActivator(policy) ) {
+			for (MutantObject mutant : simulationConfiguration.getActivatorMap().get(policy)) {
+				if( mutant instanceof PolicyMutant ) {
+					executedMutants.put(mutant, policy);
+					subjectSet = ((PolicyMutant) mutant).getMutation(event);
+				}
+			}
+		} else {
+			// set the available subjects according to the policy rules
+			if( policy.getType() == PolicyType.SEPERATION_OF_DUTY ) {
+				subjectSet.remove(event.getSubject());
+			} else if ( policy.getType() == PolicyType.BINDING_OF_DUTY  ) {
+				subjectSet = new HashSet<Subject>();
+				subjectSet.add(event.getSubject());
+			} else if ( policy.getType() == PolicyType.CONFLICT_OF_INTEREST ) {
+				// remove subjects if they have a role, which is not a role of the subject that executed the objective task
+				for (Subject subject : subjectSet) {
+					if( !subject.hasCompatibleRoles(event.getSubject()) ) {
+						subjectSet.remove(subject);
+					}
 				}
 			}
 		}
