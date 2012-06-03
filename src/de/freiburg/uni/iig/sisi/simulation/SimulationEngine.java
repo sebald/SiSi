@@ -96,6 +96,19 @@ public class SimulationEngine extends NarratorObject {
 			setCurrentProcessModel(getSimulationConfiguration().getProcessModels().get(i));
 			updateFireableTransitions();
 			
+			// run once if no mutation is there
+			if ( simulationConfiguration.getMutants().isEmpty() ) {
+				DecimalFormat df = new DecimalFormat("#00");
+				simulationRunID = df.format(singleRunID)+"-"+df.format(i)+"-"+df.format(0);
+				
+				notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
+				while (!fireableTransitions.isEmpty()) {
+					Transition transition = getRandomFireableTransition();
+					fire(transition);
+				}
+				notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
+			}
+			
 			// for every mutation
 			for (int j = 0; j < getSimulationConfiguration().getMutants().size(); j++) {
 				setMutantToExecute(getSimulationConfiguration().getMutants().get(j));
