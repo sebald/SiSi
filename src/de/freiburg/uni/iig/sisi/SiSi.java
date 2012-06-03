@@ -22,18 +22,21 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.xml.sax.SAXException;
 
+import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 
 public class SiSi {
 
 	private Shell shell;
-	private ProcessModel simulationModel = null;
+	private ProcessModel processModel = null;
 	
 	private Label nothingLoadedLabel;
-	private Label bigNotificationLabel;
 
 	public SiSi(Display display) {
 
@@ -54,6 +57,15 @@ public class SiSi {
 		}
 	}
 
+	public ProcessModel getProcessModel() {
+		return processModel;
+	}
+
+	public void setProcessModel(ProcessModel processModel) {
+		this.processModel = processModel;
+	}	
+		
+	
 	protected void init() {
 		createMenu();
 		
@@ -131,19 +143,16 @@ public class SiSi {
 		shell.setMenuBar(menuBar);		
 	}
 	
-	protected void createCheckBoxes() {
-		for (int i = 0; i < 10; i++) {
-			Button b = new Button(shell, SWT.CHECK);
-			b.setText("This is cb #" + i);
-			b.pack();
-
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					System.out.println(e);
-				}
-			});
-		}
+	protected void createCheckBox(ModelObject modelObject) {
+		Button b = new Button(shell, SWT.CHECK);
+		b.setText("Requirement #"+modelObject.getId()+":");
+		b.pack();
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println(e);
+			}
+		});
 	}
 
 	protected void center(Shell shell) {
@@ -162,7 +171,7 @@ public class SiSi {
 	}
 	
 	private void loadModel(String path) throws ParserConfigurationException, SAXException, IOException{
-		simulationModel = new ProcessModel(path);
+		setProcessModel(new ProcessModel(path));
 		
 		// hide info label
 		nothingLoadedLabel.dispose();
@@ -171,31 +180,52 @@ public class SiSi {
 		GridLayout layout = new GridLayout(2, false);
 		shell.setLayout(layout);
 		
-		Group group = new Group(shell, SWT.NONE);
-		group.setText("Config Mutations");
+		Group mutationGroup = new Group(shell, SWT.NONE);
+		mutationGroup.setText("Config Mutations");
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gridData.horizontalSpan= 2;
-		group.setLayoutData(gridData);
-		group.setLayout(new RowLayout(SWT.VERTICAL));
-		Text text = new Text(group, SWT.NONE);
-		text.setText("Another test");
+		mutationGroup.setLayoutData(gridData);
+		mutationGroup.setLayout(new RowLayout(SWT.VERTICAL));
+		createMutationConfig(mutationGroup);
 	
-		group = new Group(shell, SWT.NONE);
-		group.setText("Config Variations");
+		Group variantGroup = new Group(shell, SWT.NONE);
+		variantGroup.setText("Config Variations");
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gridData.horizontalSpan= 2;
-		group.setLayoutData(gridData);
-		group.setLayout(new RowLayout(SWT.VERTICAL));
-		text = new Text(group, SWT.NONE);
-		text.setText("Another test");
+		variantGroup.setLayoutData(gridData);
+		variantGroup.setLayout(new RowLayout(SWT.VERTICAL));
+		createVariantConfig(variantGroup);
 		
 		shell.pack();
 	}
+	
+	private void createMutationConfig(Group group) {
+		Label maxMutationLabel = new Label(group, SWT.LEFT);
+		maxMutationLabel.setText("Max. # Authorization Mutants:");
+		
+		Spinner spinner = new Spinner (group, SWT.BORDER);
+		spinner.setMinimum(0);
+		spinner.setMaximum(100);
+		spinner.setSelection(0);
+		spinner.setIncrement(1);
+		spinner.setPageIncrement(10);
+		
+		for (Policy policy : getProcessModel().getSafetyRequirements().getPolicies()) {
+			createCheckBox(policy);
+		}
+		for (UsageControl uc : getProcessModel().getSafetyRequirements().getUsageControls()) {
+			createCheckBox(uc);
+		}
+	}
+
+	private void createVariantConfig(Group variantGroup) {
+		Text text = new Text(variantGroup, SWT.NONE);
+		text.setText("Another test");
+	}	
 	
 	public static void main(String[] args) {
 		Display display = new Display();
 		new SiSi(display);
 		display.dispose();
-	}	
-	
+	}
 }

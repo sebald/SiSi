@@ -14,8 +14,8 @@ public class SimulationConfiguration {
 		LIST, RANDOM
 	}
 	
-	private final ResourceSelectionMode resourceSelectionMode;
-	private final boolean considerSafetyRequirements;
+	private ResourceSelectionMode resourceSelectionMode;
+	private boolean considerSafetyRequirements;
 
 	private LinkedList<ProcessModel> processModels = new LinkedList<ProcessModel>();
 	private LinkedList<MutantObject> mutants = new LinkedList<MutantObject>();
@@ -27,10 +27,18 @@ public class SimulationConfiguration {
 		this.considerSafetyRequirements = considerSafetyRequirements;
 	}
 	
-		
+	protected void setResourceSelectionMode(ResourceSelectionMode resourceSelectionMode) {
+		this.resourceSelectionMode = resourceSelectionMode;
+	}
+	
 	public ResourceSelectionMode getResourceSelectionMode() {
 		return resourceSelectionMode;
 	}
+
+	protected void setConsiderSafetyRequirements(boolean considerSafetyRequirements) {
+		this.considerSafetyRequirements = considerSafetyRequirements;
+	}
+
 
 	public boolean isConsiderSafetyRequirements() {
 		return considerSafetyRequirements;
