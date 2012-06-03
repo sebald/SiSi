@@ -107,6 +107,7 @@ public class SimulationEngine extends NarratorObject {
 					fire(transition);
 				}
 				notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
+				reset();
 			}
 			
 			// for every mutation
