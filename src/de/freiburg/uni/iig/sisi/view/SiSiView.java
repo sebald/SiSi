@@ -93,7 +93,7 @@ public class SiSiView {
 	 */
 	protected void createContents(Display display) {
 		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
-		shell.setSize(513, 574);
+		shell.setSize(513, 559);
 		shell.setText("SiSi - Security-aware Event Log Generator");
 		shell.setImage(new Image(shell.getDisplay(), "imgs/shell.png"));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -374,12 +374,10 @@ public class SiSiView {
 		btnSelectLogSaveDir.setText("Select...");
 		
 		Button btnSeperateLogFile = new Button(activeComposite, SWT.CHECK);
-		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
+		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
 		gd_btnSeperateLogFile.horizontalIndent = 10;
 		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
 		btnSeperateLogFile.setText("Seperate Log Files");
-		new Label(activeComposite, SWT.NONE);
-		new Label(activeComposite, SWT.NONE);
 		
 		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
 		btnRunSimulation.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
@@ -432,6 +430,64 @@ public class SiSiView {
 		// create model configuration
 		createProcessModelConfiguration();
 		
+		Label lblLogConfiguration = new Label(activeComposite, SWT.NONE);
+		GridData gd_lblLogConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 1, 1);
+		gd_lblLogConfiguration.verticalIndent = 20;
+		lblLogConfiguration.setLayoutData(gd_lblLogConfiguration);
+		lblLogConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		lblLogConfiguration.setText("Log Configuration");
+		new Label(activeComposite, SWT.NONE);
+		
+		// log configuration
+		Composite selectLogModeComposite = new Composite(activeComposite, SWT.NONE);
+		selectLogModeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		selectLogModeComposite.setLayout(new GridLayout(2, false));
+		
+		Label lblSelectLogMode = new Label(selectLogModeComposite, SWT.NONE);
+		GridData gd_lblSelectLogMode = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblSelectLogMode.horizontalIndent = 5;
+		lblSelectLogMode.setLayoutData(gd_lblSelectLogMode);
+		lblSelectLogMode.setText("Select Log Mode:");
+		
+		Combo combo = new Combo(selectLogModeComposite, SWT.READ_ONLY);
+		combo.setItems(new String[] {"CSV", "MXML"});
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		combo.select(0);
+
+		Composite saveLogComposite = new Composite(activeComposite, SWT.NONE);
+		saveLogComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		GridLayout gl_saveLogComposite = new GridLayout(2, false);
+		gl_saveLogComposite.horizontalSpacing = 0;
+		saveLogComposite.setLayout(gl_saveLogComposite);		
+		
+		Text saveLogPathText = new Text(saveLogComposite, SWT.BORDER);
+		saveLogPathText.setText("logs/");
+		saveLogPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		Button btnSelectLogSaveDir = new Button(saveLogComposite, SWT.CENTER);
+		GridData gd_btnSelectLogSaveDir = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_btnSelectLogSaveDir.minimumWidth = 70;
+		gd_btnSelectLogSaveDir.widthHint = 70;
+		btnSelectLogSaveDir.setLayoutData(gd_btnSelectLogSaveDir);
+		btnSelectLogSaveDir.setText("Select...");		
+
+		Button btnSeperateLogFile = new Button(activeComposite, SWT.CHECK);
+		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
+		gd_btnSeperateLogFile.horizontalIndent = 10;
+		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
+		btnSeperateLogFile.setText("Seperate Log Files");
+		
+		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
+		btnRunSimulation.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+		GridData gd_btnRunSimulation = new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 2);
+		gd_btnRunSimulation.minimumWidth = 180;
+		gd_btnRunSimulation.heightHint = 50;
+		gd_btnRunSimulation.widthHint = 180;
+		gd_btnRunSimulation.minimumHeight = 50;
+		gd_btnRunSimulation.verticalIndent = 20;
+		btnRunSimulation.setLayoutData(gd_btnRunSimulation);
+		btnRunSimulation.setText("Run Simulation");		
+		
 		mainComposite.setContent(activeComposite);
 		mainComposite.setMinSize(activeComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
@@ -458,7 +514,10 @@ public class SiSiView {
 			}
 		});
 		
-//		createCheckBoxSpinnerCombo()
+		createCheckBoxSpinnerCombo(DeviationType.SKIPPING, "Create Skipping Deviations", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.SWAPPING, "Create Swapping Deviations", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.AND2XOR, "Create AND2XOR Deviations", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.XOR2AND, "Create XOR2AND Deviations", grpDeviationConfiguration);
 	}
 
 	protected void createViolationConfigurationComposite(SafetyRequirements safetyRequirements) {
@@ -558,7 +617,7 @@ public class SiSiView {
 		Label lblLoadingInformation = new Label(loadingInfoComposite, SWT.CENTER);
 		lblLoadingInformation.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		lblLoadingInformation.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.ITALIC));
-		lblLoadingInformation.setText("Loaded the Process Modell \""+modelName+"\".");
+		lblLoadingInformation.setText("Loaded the Process Model \""+modelName+"\".");
 		
 	}
 
