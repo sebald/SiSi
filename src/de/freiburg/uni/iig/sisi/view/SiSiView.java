@@ -1,13 +1,16 @@
 package de.freiburg.uni.iig.sisi.view;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
@@ -40,7 +43,7 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 
 public class SiSiView {
-	private DataBindingContext bindingContext;
+	private ArrayList<DataBindingContext> bindingContext = new ArrayList<DataBindingContext>();
 
 	protected Shell shell;
 	protected SiSiViewController controller;
@@ -48,6 +51,7 @@ public class SiSiView {
 	private ScrolledComposite mainComposite;
 	private Composite activeComposite;
 	private Text saveLogPathText;
+	private Spinner spinner_1;
 
 	/**
 	 * Launch the application.
@@ -244,7 +248,7 @@ public class SiSiView {
 		Spinner spinnerRunsWithoutViolations = new Spinner(grpViolationConfiguration, SWT.BORDER);
 		spinnerRunsWithoutViolations.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				System.out.println(((Spinner) e.getSource()).getText());
+				
 			}
 		});
 		spinnerRunsWithoutViolations.setMinimum(1);
@@ -283,9 +287,9 @@ public class SiSiView {
 		lblRunsWithOriginal.setLayoutData(gd_lblRunsWithOriginal);
 		lblRunsWithOriginal.setText("Runs with original Model");
 		
-		Spinner spinner_8 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
-		spinner_8.setMinimum(1);
-		spinner_8.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		spinner_1 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
+		spinner_1.setMinimum(1);
+		spinner_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
 		Button btnCreateSkippingDeviation = new Button(grpDeviationConfiguration, SWT.CHECK);
 		GridData gd_btnCreateSkippingDeviation = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
@@ -427,6 +431,7 @@ public class SiSiView {
 		// create violation configuration
 		createViolationConfigurationComposite(controller.getProcessModel().getSafetyRequirements());
 		
+		// create model configuration
 		createProcessModelConfiguration();
 		
 		mainComposite.setContent(activeComposite);
@@ -460,7 +465,7 @@ public class SiSiView {
 		spinnerRunsWithoutViolations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		spinnerRunsWithoutViolations.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				controller.getSimulationConfiguration().setRunsWithoutViolations(Integer.parseInt(((Spinner) e.getSource()).getText()));
+				controller.updateRunsWihtoutViolations(Integer.parseInt(((Spinner) e.getSource()).getText()));
 			}
 		});
 		
@@ -475,7 +480,7 @@ public class SiSiView {
 		spinnerAuthorizationViolations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		spinnerAuthorizationViolations.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				controller.getSimulationConfiguration().setRunsViolatingAuthorizations(Integer.parseInt(((Spinner) e.getSource()).getText()));
+				controller.updateRunsViolatingAuthorizations(Integer.parseInt(((Spinner) e.getSource()).getText()));
 			}
 		});
 		
@@ -521,7 +526,7 @@ public class SiSiView {
 		btnConsiderSafety.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-					controller.getSimulationConfiguration().setConsiderSafetyRequirements(!((Button) e.getSource()).getSelection());
+					controller.updateConsiderSafetyRequirements(!((Button) e.getSource()).getSelection());
 			}
 		});		
 	}
@@ -551,10 +556,50 @@ public class SiSiView {
 		Spinner spinner = new Spinner(grp, SWT.BORDER);
 		spinner.setMinimum(1);
 		spinner.setEnabled(false);
-		spinner.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));		
+		spinner.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
-		bindingContext = bindCheckToSpinner(btnCheckButton, spinner);
-		controller.addModelObjectSpinnerMap(modelObject, spinner);
+		// add references
+		btnCheckButton.setData(modelObject);
+		spinner.setData(modelObject);		
+		
+		// bind
+		bindingContext.add(bindCheckToSpinner(btnCheckButton, spinner));
+		
+		
+		// add listener
+		btnCheckButton.addSelectionListener(new SelectionAdapter() {
+			@SuppressWarnings("restriction")
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// add to configuration
+				if( ((Button) e.getSource()).getSelection() ) {
+					for (DataBindingContext o : bindingContext) {
+						Binding b = (Binding) o.getBindings().get(0);
+						if( ((SWTObservableValueDecorator) b.getModel()).getWidget() instanceof Spinner ) {
+							Spinner s = (Spinner) ((SWTObservableValueDecorator) b.getModel()).getWidget();
+							if( e.getSource() == ((SWTObservableValueDecorator) b.getTarget()).getWidget() )
+								controller.updateConfigParameter((ModelObject) s.getData(), Integer.parseInt(s.getText()));
+						}
+					}
+				// remove from configuration
+				} else {
+					for (DataBindingContext o : bindingContext) {
+						Binding b = (Binding) o.getBindings().get(0);
+						if( ((SWTObservableValueDecorator) b.getModel()).getWidget() instanceof Spinner ) {
+							Spinner s = (Spinner) ((SWTObservableValueDecorator) b.getModel()).getWidget();
+							if( e.getSource() == ((SWTObservableValueDecorator) b.getTarget()).getWidget() )
+								controller.updateConfigParameter((ModelObject) s.getData(), 0);
+						}
+					}					
+				}
+			}
+		});
+		spinner.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {				
+				controller.updateConfigParameter((ModelObject) ((Spinner) e.getSource()).getData(), Integer.parseInt(((Spinner) e.getSource()).getText()));
+			}
+		});			
 	}	
 	
 	protected void errorMessageBox(String msg, Exception e) {
@@ -563,6 +608,7 @@ public class SiSiView {
         mb.setMessage(e.getMessage());
         mb.open();
 	}
+	
 	protected DataBindingContext bindCheckToSpinner(Button button, Spinner spinner) {
 		DataBindingContext bindingContext = new DataBindingContext();
 		IObservableValue observeSelectionObserveWidget = SWTObservables.observeSelection(button);
@@ -570,4 +616,5 @@ public class SiSiView {
 		bindingContext.bindValue(observeSelectionObserveWidget, observeEnabledObserveWidget, null, null);
 		return bindingContext;
 	}
+
 }

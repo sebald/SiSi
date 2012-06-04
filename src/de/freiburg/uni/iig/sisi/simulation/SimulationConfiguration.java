@@ -19,6 +19,7 @@ public class SimulationConfiguration {
 	
 	private int runsWithoutViolations = 0;
 	private int runsViolatingAuthorizations = 0;
+	private HashMap<ModelObject, Integer> configMap = new HashMap<ModelObject, Integer>();
 
 	private LinkedList<ProcessModel> processModels = new LinkedList<ProcessModel>();
 	private LinkedList<MutantObject> mutants = new LinkedList<MutantObject>();
@@ -47,7 +48,6 @@ public class SimulationConfiguration {
 		return considerSafetyRequirements;
 	}
 
-
 	public int getRunsWithoutViolations() {
 		return runsWithoutViolations;
 	}
@@ -64,6 +64,23 @@ public class SimulationConfiguration {
 		this.runsViolatingAuthorizations = runsViolatingAuthorizations;
 	}
 
+	public HashMap<ModelObject, Integer> getConfigMap() {
+		return configMap;
+	}
+
+	public void addToConfigMap(ModelObject modelObject, int i) {
+		this.configMap.put(modelObject, i);
+	}
+
+	public void removeFromConfigMap(ModelObject modelObject) {
+		this.configMap.remove(modelObject);
+	}
+	
+	public void updateConfigMap(ModelObject modelObject, int i) {
+		removeFromConfigMap(modelObject);
+		addToConfigMap(modelObject, i);
+	}
+	
 	public LinkedList<ProcessModel> getProcessModels() {
 		return processModels;
 	}
