@@ -1,5 +1,6 @@
 package de.freiburg.uni.iig.sisi.view;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
@@ -49,9 +51,11 @@ public class SiSiView {
 	protected Shell shell;
 	protected SiSiViewController controller;
 	
+	private String selectedDir = new File("").getAbsolutePath();
+	private Text saveLogPathText;
+	
 	private ScrolledComposite mainComposite;
 	private Composite activeComposite;
-	private Text saveLogPathText;
 
 	/**
 	 * Launch the application.
@@ -353,6 +357,11 @@ public class SiSiView {
 		lblSelectLogMode.setText("Select Log Mode:");
 		
 		Combo combo = new Combo(selectLogModeComposite, SWT.READ_ONLY);
+		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
 		combo.setItems(new String[] {"CSV", "MXML"});
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		combo.select(0);
@@ -368,6 +377,11 @@ public class SiSiView {
 		saveLogPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Button btnSelectLogSaveDir = new Button(saveLogComposite, SWT.CENTER);
+		btnSelectLogSaveDir.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
 		GridData gd_btnSelectLogSaveDir = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		gd_btnSelectLogSaveDir.minimumWidth = 70;
 		gd_btnSelectLogSaveDir.widthHint = 70;
@@ -459,6 +473,12 @@ public class SiSiView {
 		combo.setItems(new String[] {"CSV", "MXML"});
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		combo.select(0);
+		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				controller.setFileMode(((Combo) e.getSource()).getText());
+			}
+		});		
 
 		Composite saveLogComposite = new Composite(activeComposite, SWT.NONE);
 		saveLogComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
@@ -466,7 +486,7 @@ public class SiSiView {
 		gl_saveLogComposite.horizontalSpacing = 0;
 		saveLogComposite.setLayout(gl_saveLogComposite);		
 		
-		Text saveLogPathText = new Text(saveLogComposite, SWT.BORDER);
+		saveLogPathText = new Text(saveLogComposite, SWT.BORDER);
 		saveLogPathText.setText("logs/");
 		saveLogPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -475,13 +495,36 @@ public class SiSiView {
 		gd_btnSelectLogSaveDir.minimumWidth = 70;
 		gd_btnSelectLogSaveDir.widthHint = 70;
 		btnSelectLogSaveDir.setLayoutData(gd_btnSelectLogSaveDir);
-		btnSelectLogSaveDir.setText("Select...");		
+		btnSelectLogSaveDir.setText("Select...");
+		btnSelectLogSaveDir.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+		        DirectoryDialog directoryDialog = new DirectoryDialog(shell);
+		        
+		        System.out.println(selectedDir);
+		        
+		        directoryDialog.setFilterPath(selectedDir);
+		        directoryDialog.setMessage("Please select a directory and click OK");
+		        
+		        String dir = directoryDialog.open();
+		        System.out.println(dir);
+		        if(dir != null) {
+		        	saveLogPathText.setText(dir);
+		        }
+			}
+		});
 
 		Button btnSeperateLogFile = new Button(activeComposite, SWT.CHECK);
 		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
 		gd_btnSeperateLogFile.horizontalIndent = 10;
 		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
 		btnSeperateLogFile.setText("Seperate Log Files");
+		btnSeperateLogFile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+					controller.setSeperateLogs(((Button) e.getSource()).getSelection());
+			}
+		});			
 		
 		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
 		btnRunSimulation.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));

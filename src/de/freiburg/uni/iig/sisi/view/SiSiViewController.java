@@ -84,7 +84,10 @@ public class SiSiViewController {
 		simulationConfiguration.updateDeivationMap(type, i);
 	}
 	
-	public void setFileMode(FileMode mode) {
+	public void setFileMode(String input) {
+		FileMode mode = FileMode.CSV;
+		if( input.equals("MXML") )
+			mode = FileMode.MXML;
 		simulationConfiguration.setFileMode(mode);
 	}
 	
