@@ -66,7 +66,7 @@ public class SiSiViewController {
 			updateDeviationParameter((DeviationType) object, i);
 	}
 	
-	protected void updateViolationParameter(ModelObject modelObject, int i) {
+	public void updateViolationParameter(ModelObject modelObject, int i) {
 		System.out.println(modelObject.getId() + " " + i);
 		if( i == 0 ) {
 			simulationConfiguration.removeFromViolationMap(modelObject);
@@ -75,13 +75,25 @@ public class SiSiViewController {
 		simulationConfiguration.updateViolationMap(modelObject, i);		
 	}
 	
-	protected void updateDeviationParameter(DeviationType type, int i) {
+	public void updateDeviationParameter(DeviationType type, int i) {
 		System.out.println(type + " " + i);
 		if( i == 0 ) {
 			simulationConfiguration.removeFromDeviationMap(type);
 			return;
 		}
 		simulationConfiguration.updateDeivationMap(type, i);
+	}
+	
+	public void setFileMode(FileMode mode) {
+		simulationConfiguration.setFileMode(mode);
+	}
+	
+	public void setSaveLogPath(String path) {
+		simulationConfiguration.setSaveLogPath(path);
+	}
+	
+	public void setSeperateLogs(boolean seperate) {
+		simulationConfiguration.setSeperateLogs(seperate);
 	}
 	
 }

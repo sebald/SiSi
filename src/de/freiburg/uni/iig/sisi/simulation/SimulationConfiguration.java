@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import de.freiburg.uni.iig.sisi.log.LogGenerator.FileMode;
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
@@ -18,10 +19,16 @@ public class SimulationConfiguration {
 	// configuration parameters
 	private ResourceSelectionMode resourceSelectionMode;
 	private boolean considerSafetyRequirements;
+	
 	private int runsWithoutViolations = 0;
 	private int runsViolatingAuthorizations = 0;
 	private HashMap<ModelObject, Integer> violationMap = new HashMap<ModelObject, Integer>();
+	
 	private HashMap<DeviationType, Integer> deviationMap = new HashMap<DeviationType, Integer>();
+	
+	private FileMode fileMode = FileMode.CSV;
+	private String saveLogPath = "";
+	private boolean seperateLogs = false;
 
 	private LinkedList<ProcessModel> processModels = new LinkedList<ProcessModel>();
 	private LinkedList<MutantObject> mutants = new LinkedList<MutantObject>();
@@ -44,7 +51,6 @@ public class SimulationConfiguration {
 	public void setConsiderSafetyRequirements(boolean considerSafetyRequirements) {
 		this.considerSafetyRequirements = considerSafetyRequirements;
 	}
-
 
 	public boolean isConsiderSafetyRequirements() {
 		return considerSafetyRequirements;
@@ -90,10 +96,33 @@ public class SimulationConfiguration {
 		this.deviationMap.put(type, i);
 	}
 	
+	public FileMode getFileMode() {
+		return fileMode;
+	}
+
+	public void setFileMode(FileMode fileMode) {
+		this.fileMode = fileMode;
+	}
+
+	public String getSaveLogPath() {
+		return saveLogPath;
+	}
+
+	public void setSaveLogPath(String saveLogPath) {
+		this.saveLogPath = saveLogPath;
+	}
+
+	public boolean isSeperateLogs() {
+		return seperateLogs;
+	}
+
+	public void setSeperateLogs(boolean seperateLogs) {
+		this.seperateLogs = seperateLogs;
+	}
+
 	public LinkedList<ProcessModel> getProcessModels() {
 		return processModels;
 	}
-
 
 	public void addProcessModel(ProcessModel processModel) {
 		this.processModels.add(processModel);

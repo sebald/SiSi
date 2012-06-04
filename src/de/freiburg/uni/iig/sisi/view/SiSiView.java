@@ -41,6 +41,7 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
+import de.freiburg.uni.iig.sisi.simulation.SimulationExcpetion;
 
 public class SiSiView {
 	private ArrayList<DataBindingContext> bindingContext = new ArrayList<DataBindingContext>();
@@ -380,6 +381,11 @@ public class SiSiView {
 		btnSeperateLogFile.setText("Seperate Log Files");
 		
 		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
+		btnRunSimulation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
 		btnRunSimulation.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
 		GridData gd_btnRunSimulation = new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 2);
 		gd_btnRunSimulation.minimumWidth = 180;
@@ -486,7 +492,17 @@ public class SiSiView {
 		gd_btnRunSimulation.minimumHeight = 50;
 		gd_btnRunSimulation.verticalIndent = 20;
 		btnRunSimulation.setLayoutData(gd_btnRunSimulation);
-		btnRunSimulation.setText("Run Simulation");		
+		btnRunSimulation.setText("Run Simulation");
+		btnRunSimulation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					controller.runSimulation();
+				} catch (SimulationExcpetion | IOException exception) {
+					errorMessageBox("Error during Simulation.", exception);
+				}
+			}
+		});
 		
 		mainComposite.setContent(activeComposite);
 		mainComposite.setMinSize(activeComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
