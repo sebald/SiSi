@@ -386,6 +386,10 @@ public class SiSiView {
 		saveLogComposite.setLayout(gl_saveLogComposite);		
 		
 		saveLogPathText = new Text(saveLogComposite, SWT.BORDER);
+		saveLogPathText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+			}
+		});
 		saveLogPathText.setText("logs/");
 		saveLogPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -521,6 +525,11 @@ public class SiSiView {
 		saveLogPathText = new Text(saveLogComposite, SWT.BORDER);
 		saveLogPathText.setText("logs/");
 		saveLogPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		saveLogPathText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				controller.setSaveLogPath(((Text) e.getSource()).getText());
+			}
+		});		
 
 		Button btnSelectLogSaveDir = new Button(saveLogComposite, SWT.CENTER);
 		GridData gd_btnSelectLogSaveDir = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
