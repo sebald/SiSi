@@ -7,7 +7,7 @@ import de.freiburg.uni.iig.sisi.model.net.Node;
 public class NetDeviation {
 	
 	public enum DeviationType {
-		SKIPPING, SWAPPING, AND2XOR, XOR2AND
+		SKIPPING, SWAPPING, AND2XOR, XOR2AND, NONE
 	}
 	
 	private final DeviationType type;
