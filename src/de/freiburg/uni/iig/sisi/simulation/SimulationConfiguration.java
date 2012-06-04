@@ -20,7 +20,7 @@ public class SimulationConfiguration {
 	private boolean considerSafetyRequirements;
 	private int runsWithoutViolations = 0;
 	private int runsViolatingAuthorizations = 0;
-	private HashMap<ModelObject, Integer> configMap = new HashMap<ModelObject, Integer>();
+	private HashMap<ModelObject, Integer> violationMap = new HashMap<ModelObject, Integer>();
 	private HashMap<DeviationType, Integer> deviationMap = new HashMap<DeviationType, Integer>();
 
 	private LinkedList<ProcessModel> processModels = new LinkedList<ProcessModel>();
@@ -66,16 +66,16 @@ public class SimulationConfiguration {
 		this.runsViolatingAuthorizations = runsViolatingAuthorizations;
 	}
 
-	public HashMap<ModelObject, Integer> getConfigMap() {
-		return configMap;
+	public HashMap<ModelObject, Integer> getViolationMap() {
+		return violationMap;
 	}
 
-	public void removeFromConfigMap(ModelObject modelObject) {
-		this.configMap.remove(modelObject);
+	public void removeFromViolationMap(ModelObject modelObject) {
+		this.violationMap.remove(modelObject);
 	}
 	
-	public void updateConfigMap(ModelObject modelObject, int i) {
-		this.configMap.put(modelObject, i);
+	public void updateViolationMap(ModelObject modelObject, int i) {
+		this.violationMap.put(modelObject, i);
 	}
 	
 	public HashMap<DeviationType, Integer> getDeviationMap() {

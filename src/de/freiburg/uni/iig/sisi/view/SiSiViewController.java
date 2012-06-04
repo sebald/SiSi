@@ -58,15 +58,24 @@ public class SiSiViewController {
 	 * @param mutantObject
 	 * @param i set to {@code 0} will remove the parameter, otherwise it will be added or updated automatically
 	 */
-	public void updateConfigParameter(ModelObject modelObject, int i) {
-		if( i == 0 ) {
-			simulationConfiguration.removeFromConfigMap(modelObject);
-			return;
-		}
-		simulationConfiguration.updateConfigMap(modelObject, i);
+	public void updateConfigParameter(Object object, int i) {
+		// ModelObjects => means its an policy/uc
+		if( object instanceof ModelObject )
+			updateViolationParameter((ModelObject) object, i);
+		if( object instanceof DeviationType )
+			updateDeviationParameter((DeviationType) object, i);
 	}
 	
-	public void updateDeviationParameter(DeviationType type, int i) {
+	protected void updateViolationParameter(ModelObject modelObject, int i) {
+		System.out.println(modelObject.getId() + " " + i);
+		if( i == 0 ) {
+			simulationConfiguration.removeFromViolationMap(modelObject);
+			return;
+		}
+		simulationConfiguration.updateViolationMap(modelObject, i);		
+	}
+	
+	protected void updateDeviationParameter(DeviationType type, int i) {
 		System.out.println(type + " " + i);
 		if( i == 0 ) {
 			simulationConfiguration.removeFromDeviationMap(type);

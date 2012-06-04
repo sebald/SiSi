@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.xml.sax.SAXException;
 
-import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
@@ -296,10 +295,10 @@ public class SiSiView {
 		btnCreateSkippingDeviation.setLayoutData(gd_btnCreateSkippingDeviation);
 		btnCreateSkippingDeviation.setText("Create Skipping Deviations");
 		
-		Spinner spinner_3 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
-		spinner_3.setMinimum(1);
-		spinner_3.setEnabled(false);
-		spinner_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		Spinner spinnerSkippingDeviation = new Spinner(grpDeviationConfiguration, SWT.BORDER);
+		spinnerSkippingDeviation.setMinimum(1);
+		spinnerSkippingDeviation.setEnabled(false);
+		spinnerSkippingDeviation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
 		Button btnCreateSwappingDeviation = new Button(grpDeviationConfiguration, SWT.CHECK);
 		GridData gd_btnCreateSwappingDeviation = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
@@ -459,7 +458,7 @@ public class SiSiView {
 			}
 		});
 		
-		
+//		createCheckBoxSpinnerCombo()
 	}
 
 	protected void createViolationConfigurationComposite(SafetyRequirements safetyRequirements) {
@@ -500,10 +499,12 @@ public class SiSiView {
 		});
 		
 		for (Policy policy : controller.getProcessModel().getSafetyRequirements().getPolicies()) {
-			createSingleSafetyRequirementConfig(policy, grpViolationConfiguration);
+			String text = "Runs violating #"+policy.getId();
+			createCheckBoxSpinnerCombo(policy, text, grpViolationConfiguration);
 		}
 		for (UsageControl uc : controller.getProcessModel().getSafetyRequirements().getUsageControls()) {
-			createSingleSafetyRequirementConfig(uc, grpViolationConfiguration);
+			String text = "Runs violating #"+uc.getId();
+			createCheckBoxSpinnerCombo(uc, text, grpViolationConfiguration);
 		}
 	}
 
@@ -561,12 +562,12 @@ public class SiSiView {
 		
 	}
 
-	protected void createSingleSafetyRequirementConfig(ModelObject modelObject, Group grp) {
+	protected void createCheckBoxSpinnerCombo(Object object, String text, Group grp) {
 		Button btnCheckButton = new Button(grp, SWT.CHECK);
 		GridData gd_btnCheckButton = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_btnCheckButton.horizontalIndent = 3;
 		btnCheckButton.setLayoutData(gd_btnCheckButton);
-		btnCheckButton.setText("Runs violating #"+modelObject.getId());
+		btnCheckButton.setText(text);
 		
 		Spinner spinner = new Spinner(grp, SWT.BORDER);
 		spinner.setMinimum(1);
@@ -574,8 +575,8 @@ public class SiSiView {
 		spinner.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
 		// add references
-		btnCheckButton.setData(modelObject);
-		spinner.setData(modelObject);		
+		btnCheckButton.setData(object);
+		spinner.setData(object);		
 		
 		// bind
 		bindingContext.add(bindCheckToSpinner(btnCheckButton, spinner));
@@ -593,7 +594,7 @@ public class SiSiView {
 						if( ((SWTObservableValueDecorator) b.getModel()).getWidget() instanceof Spinner ) {
 							Spinner s = (Spinner) ((SWTObservableValueDecorator) b.getModel()).getWidget();
 							if( e.getSource() == ((SWTObservableValueDecorator) b.getTarget()).getWidget() )
-								controller.updateConfigParameter((ModelObject) s.getData(), s.getSelection());
+								controller.updateConfigParameter(s.getData(), s.getSelection());
 						}
 					}
 				// remove from configuration
@@ -603,7 +604,7 @@ public class SiSiView {
 						if( ((SWTObservableValueDecorator) b.getModel()).getWidget() instanceof Spinner ) {
 							Spinner s = (Spinner) ((SWTObservableValueDecorator) b.getModel()).getWidget();
 							if( e.getSource() == ((SWTObservableValueDecorator) b.getTarget()).getWidget() )
-								controller.updateConfigParameter((ModelObject) s.getData(), 0);
+								controller.updateConfigParameter(s.getData(), 0);
 						}
 					}					
 				}
@@ -612,7 +613,7 @@ public class SiSiView {
 		spinner.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {				
-				controller.updateConfigParameter((ModelObject) ((Spinner) e.getSource()).getData(), ((Spinner) e.getSource()).getSelection());
+				controller.updateConfigParameter(((Spinner) e.getSource()).getData(), ((Spinner) e.getSource()).getSelection());
 			}
 		});			
 	}	
