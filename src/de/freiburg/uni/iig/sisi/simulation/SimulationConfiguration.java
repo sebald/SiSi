@@ -16,6 +16,9 @@ public class SimulationConfiguration {
 	
 	private ResourceSelectionMode resourceSelectionMode;
 	private boolean considerSafetyRequirements;
+	
+	private int runsWithoutViolations = 0;
+	private int runsViolatingAuthorizations = 0;
 
 	private LinkedList<ProcessModel> processModels = new LinkedList<ProcessModel>();
 	private LinkedList<MutantObject> mutants = new LinkedList<MutantObject>();
@@ -44,6 +47,22 @@ public class SimulationConfiguration {
 		return considerSafetyRequirements;
 	}
 
+
+	public int getRunsWithoutViolations() {
+		return runsWithoutViolations;
+	}
+
+	public void setRunsWithoutViolations(int runsWithoutViolations) {
+		this.runsWithoutViolations = runsWithoutViolations;
+	}
+
+	public int getRunsViolatingAuthorizations() {
+		return runsViolatingAuthorizations;
+	}
+
+	public void setRunsViolatingAuthorizations(int runsViolatingAuthorizations) {
+		this.runsViolatingAuthorizations = runsViolatingAuthorizations;
+	}
 
 	public LinkedList<ProcessModel> getProcessModels() {
 		return processModels;

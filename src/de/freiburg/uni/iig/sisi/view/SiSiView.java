@@ -10,6 +10,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -34,8 +36,8 @@ import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
-import de.freiburg.uni.iig.sisi.simulation.SimulationExcpetion;
 
 public class SiSiView {
 	private DataBindingContext bindingContext;
@@ -43,8 +45,8 @@ public class SiSiView {
 	protected Shell shell;
 	protected SiSiViewController controller;
 	
+	private ScrolledComposite mainComposite;
 	private Composite activeComposite;
-	private Composite mainComposite;
 	private Text saveLogPathText;
 
 	/**
@@ -72,7 +74,7 @@ public class SiSiView {
 		controller = new SiSiViewController();
 		
 		Display display = Display.getDefault();
-		createContents();
+		createContents(display);
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
@@ -84,11 +86,12 @@ public class SiSiView {
 
 	/**
 	 * Create contents of the window.
+	 * @param display 
 	 */
-	protected void createContents() {
-		shell = new Shell();
-		shell.setSize(608, 522);
-		shell.setText("SiSi");
+	protected void createContents(Display display) {
+		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
+		shell.setSize(513, 574);
+		shell.setText("SiSi - Security-aware Event Log Generator");
 		shell.setImage(new Image(shell.getDisplay(), "imgs/shell.png"));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
@@ -154,64 +157,51 @@ public class SiSiView {
 		});
 		mntmExit.setText("Exit");
 		
-		MenuItem mntmStartSimulation = new MenuItem(menu, SWT.NONE);
-		mntmStartSimulation.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					controller.runSimulation();
-				} catch (SimulationExcpetion | IOException exception) {
-					errorMessageBox("Error during Simulation.", exception);
-				}
-			}
-		});
-		mntmStartSimulation.setText("Start Simulation");
+		mainComposite = new ScrolledComposite(shell, SWT.H_SCROLL | SWT.V_SCROLL);
+		mainComposite.setExpandHorizontal(true);
+		mainComposite.setExpandVertical(true);
 		
-		ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.H_SCROLL | SWT.V_SCROLL);
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
+		activeComposite = new Composite(mainComposite, SWT.NONE);
+		GridLayout gl_activeComposite = new GridLayout(2, true);
+		gl_activeComposite.marginWidth = 10;
+		gl_activeComposite.marginHeight = 10;
+		activeComposite.setLayout(gl_activeComposite);
 		
-		mainComposite = new Composite(scrolledComposite, SWT.NONE);
-		GridLayout gl_mainComposite = new GridLayout(2, true);
-		gl_mainComposite.marginWidth = 10;
-		gl_mainComposite.marginHeight = 10;
-		mainComposite.setLayout(gl_mainComposite);
-		
-		Composite loadingInfoComposite = new Composite(mainComposite, SWT.BORDER);
-		loadingInfoComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
+		Composite loadingInfoComposite = new Composite(activeComposite, SWT.BORDER);
+		loadingInfoComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		loadingInfoComposite.setLayout(new GridLayout(2, false));
 		
 		Label imgLoadingInformation = new Label(loadingInfoComposite, SWT.NONE);
 		imgLoadingInformation.setImage(SWTResourceManager.getImage("D:\\Eclipse Workspaces\\MasterThesis\\SiSi\\imgs\\info.png"));
 		
 		Label lblLoadingInformation = new Label(loadingInfoComposite, SWT.CENTER);
-		lblLoadingInformation.setImage(SWTResourceManager.getImage("D:\\Eclipse Workspaces\\MasterThesis\\SiSi\\imgs\\info.png"));
 		lblLoadingInformation.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		lblLoadingInformation.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.ITALIC));
 		lblLoadingInformation.setText("Loading Information");
 		
-		Label lblSimulationConfiguration = new Label(mainComposite, SWT.NONE);
+		Label lblSimulationConfiguration = new Label(activeComposite, SWT.NONE);
 		GridData gd_lblSimulationConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 2, 1);
 		gd_lblSimulationConfiguration.verticalIndent = 10;
 		lblSimulationConfiguration.setLayoutData(gd_lblSimulationConfiguration);
 		lblSimulationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		lblSimulationConfiguration.setText("Simulation Configuration");
 		
-		Composite grpSimulationConfiguration = new Composite(mainComposite, SWT.NONE);
-		grpSimulationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		Composite grpSimulationConfiguration = new Composite(activeComposite, SWT.NONE);
+		grpSimulationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		grpSimulationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
-		GridLayout gl_grpSimulationConfiguration = new GridLayout(3, false);
+		GridLayout gl_grpSimulationConfiguration = new GridLayout(2, false);
 		gl_grpSimulationConfiguration.marginHeight = 0;
 		gl_grpSimulationConfiguration.marginWidth = 0;
 		grpSimulationConfiguration.setLayout(gl_grpSimulationConfiguration);
 		
-		Label lblNumberOfRuns = new Label(grpSimulationConfiguration, SWT.NONE);
-		GridData gd_lblNumberOfRuns = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblNumberOfRuns.horizontalIndent = 3;
-		gd_lblNumberOfRuns.minimumWidth = 85;
-		lblNumberOfRuns.setLayoutData(gd_lblNumberOfRuns);
-		lblNumberOfRuns.setBounds(0, 0, 55, 15);
-		lblNumberOfRuns.setText("Number of Runs:");
+		Label lblNumberOfIterations = new Label(grpSimulationConfiguration, SWT.NONE);
+		lblNumberOfIterations.setToolTipText("Number of Run with the Attacker Specification below");
+		GridData gd_lblNumberOfIterations = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblNumberOfIterations.horizontalIndent = 10;
+		gd_lblNumberOfIterations.minimumWidth = 85;
+		lblNumberOfIterations.setLayoutData(gd_lblNumberOfIterations);
+		lblNumberOfIterations.setBounds(0, 0, 55, 15);
+		lblNumberOfIterations.setText("Number of Iterations");
 		
 		Spinner spinner = new Spinner(grpSimulationConfiguration, SWT.BORDER);
 		spinner.setMaximum(1000);
@@ -221,105 +211,142 @@ public class SiSiView {
 		spinner.setLayoutData(gd_spinner);
 		spinner.setBounds(0, 0, 47, 22);
 		
-		Button btnConsiderSafety = new Button(grpSimulationConfiguration, SWT.CHECK);
-		GridData gd_btnConsiderSafety = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_btnConsiderSafety.verticalIndent = 2;
-		gd_btnConsiderSafety.horizontalIndent = 25;
+		Button btnConsiderSafety = new Button(activeComposite, SWT.CHECK);
+		btnConsiderSafety.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		GridData gd_btnConsiderSafety = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnConsiderSafety.horizontalIndent = 10;
 		btnConsiderSafety.setLayoutData(gd_btnConsiderSafety);
-		btnConsiderSafety.setText("Consider Safety Requirements");
+		btnConsiderSafety.setText("Ignore Safety Requirements");
 		
-		Label lblAttackerSpecification = new Label(mainComposite, SWT.NONE);
+		Label lblAttackerSpecification = new Label(activeComposite, SWT.NONE);
 		GridData gd_lblAttackerSpecification = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 2, 1);
 		gd_lblAttackerSpecification.verticalIndent = 20;
 		lblAttackerSpecification.setLayoutData(gd_lblAttackerSpecification);
 		lblAttackerSpecification.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		lblAttackerSpecification.setText("Attacker Specification");
 		
-		Group grpViolationConfiguration_1 = new Group(mainComposite, SWT.NONE);
-		grpViolationConfiguration_1.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
-		grpViolationConfiguration_1.setLayout(new GridLayout(2, false));
-		grpViolationConfiguration_1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-		grpViolationConfiguration_1.setText("Violation Configuration");
+		Group grpViolationConfiguration = new Group(activeComposite, SWT.NONE);
+		grpViolationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		grpViolationConfiguration.setLayout(new GridLayout(2, false));
+		grpViolationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		grpViolationConfiguration.setText("Violation Configuration");
 		
-		Label lblCreateAuthorizationViolations = new Label(grpViolationConfiguration_1, SWT.NONE);
-		GridData gd_lblCreateAuthorizationViolations = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_lblCreateAuthorizationViolations.horizontalIndent = 3;
-		lblCreateAuthorizationViolations.setLayoutData(gd_lblCreateAuthorizationViolations);
-		lblCreateAuthorizationViolations.setText("Create Authorization Violations");
+		Label lblRunsWithoutViolations = new Label(grpViolationConfiguration, SWT.NONE);
+		GridData gd_lblRunsWithoutViolations = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_lblRunsWithoutViolations.horizontalIndent = 3;
+		lblRunsWithoutViolations.setLayoutData(gd_lblRunsWithoutViolations);
+		lblRunsWithoutViolations.setText("Runs without Violations");
 		
-		Spinner spinner_1 = new Spinner(grpViolationConfiguration_1, SWT.BORDER);
-		spinner_1.setToolTipText("Number of Runs with this Violation");
-		spinner_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		Spinner spinnerRunsWithoutViolations = new Spinner(grpViolationConfiguration, SWT.BORDER);
+		spinnerRunsWithoutViolations.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				System.out.println(((Spinner) e.getSource()).getText());
+			}
+		});
+		spinnerRunsWithoutViolations.setMinimum(1);
+		spinnerRunsWithoutViolations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
-		Button btnCreateVioloationFor = new Button(grpViolationConfiguration_1, SWT.CHECK);
-		GridData gd_btnCreateVioloationFor = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_btnCreateVioloationFor.horizontalIndent = 5;
-		btnCreateVioloationFor.setLayoutData(gd_btnCreateVioloationFor);
-		btnCreateVioloationFor.setText("Create Violoations for #p01");
+		Label lblAuthorizationViolations = new Label(grpViolationConfiguration, SWT.NONE);
+		GridData gd_lblAuthorizationViolations = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_lblAuthorizationViolations.horizontalIndent = 3;
+		lblAuthorizationViolations.setLayoutData(gd_lblAuthorizationViolations);
+		lblAuthorizationViolations.setText("Runs violating Authorizations");
 		
-		Spinner spinner_2 = new Spinner(grpViolationConfiguration_1, SWT.BORDER);
+		Spinner spinnerAuthorizationViolations = new Spinner(grpViolationConfiguration, SWT.BORDER);
+		spinnerAuthorizationViolations.setToolTipText("Number of Runs with this Violation");
+		spinnerAuthorizationViolations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		
+		Button btnVioloationFor = new Button(grpViolationConfiguration, SWT.CHECK);
+		GridData gd_btnVioloationFor = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_btnVioloationFor.horizontalIndent = 3;
+		btnVioloationFor.setLayoutData(gd_btnVioloationFor);
+		btnVioloationFor.setText("Runs violating #p01");
+		
+		Spinner spinner_2 = new Spinner(grpViolationConfiguration, SWT.BORDER);
+		spinner_2.setMinimum(1);
 		spinner_2.setEnabled(false);
 		spinner_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
-		Group grpDeviationConfiguration = new Group(mainComposite, SWT.NONE);
+		Group grpDeviationConfiguration = new Group(activeComposite, SWT.NONE);
 		grpDeviationConfiguration.setLayout(new GridLayout(2, false));
 		grpDeviationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
 		grpDeviationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		grpDeviationConfiguration.setText("Process Model Variants");
 		
+		Label lblRunsWithOriginal = new Label(grpDeviationConfiguration, SWT.NONE);
+		GridData gd_lblRunsWithOriginal = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_lblRunsWithOriginal.horizontalIndent = 3;
+		lblRunsWithOriginal.setLayoutData(gd_lblRunsWithOriginal);
+		lblRunsWithOriginal.setText("Runs with original Model");
+		
+		Spinner spinner_8 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
+		spinner_8.setMinimum(1);
+		spinner_8.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		
 		Button btnCreateSkippingDeviation = new Button(grpDeviationConfiguration, SWT.CHECK);
 		GridData gd_btnCreateSkippingDeviation = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_btnCreateSkippingDeviation.horizontalIndent = 5;
+		gd_btnCreateSkippingDeviation.horizontalIndent = 3;
 		btnCreateSkippingDeviation.setLayoutData(gd_btnCreateSkippingDeviation);
 		btnCreateSkippingDeviation.setText("Create Skipping Deviations");
 		
 		Spinner spinner_3 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
+		spinner_3.setMinimum(1);
 		spinner_3.setEnabled(false);
 		spinner_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
 		Button btnCreateSwappingDeviation = new Button(grpDeviationConfiguration, SWT.CHECK);
 		GridData gd_btnCreateSwappingDeviation = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_btnCreateSwappingDeviation.horizontalIndent = 5;
+		gd_btnCreateSwappingDeviation.horizontalIndent = 3;
 		btnCreateSwappingDeviation.setLayoutData(gd_btnCreateSwappingDeviation);
 		btnCreateSwappingDeviation.setText("Create Swapping Deviations");
 		
 		Spinner spinner_4 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
+		spinner_4.setMinimum(1);
 		spinner_4.setEnabled(false);
 		spinner_4.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
 		Button btnCreateAndxorDeviations = new Button(grpDeviationConfiguration, SWT.CHECK);
 		GridData gd_btnCreateAndxorDeviations = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_btnCreateAndxorDeviations.horizontalIndent = 5;
+		gd_btnCreateAndxorDeviations.horizontalIndent = 3;
 		btnCreateAndxorDeviations.setLayoutData(gd_btnCreateAndxorDeviations);
 		btnCreateAndxorDeviations.setText("Create AND2XOR Deviations");
 		
 		Spinner spinner_5 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
+		spinner_5.setMinimum(1);
 		spinner_5.setEnabled(false);
 		spinner_5.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
 		Button btnCreateXorandDeviations = new Button(grpDeviationConfiguration, SWT.CHECK);
 		GridData gd_btnCreateXorandDeviations = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnCreateXorandDeviations.horizontalIndent = 5;
+		gd_btnCreateXorandDeviations.horizontalIndent = 3;
 		btnCreateXorandDeviations.setLayoutData(gd_btnCreateXorandDeviations);
 		btnCreateXorandDeviations.setText("Create XOR2AND Deviations");
 		
 		Spinner spinner_6 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
+		spinner_6.setMinimum(1);
 		spinner_6.setEnabled(false);
 		spinner_6.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
-		Label lblLogConfiguration = new Label(mainComposite, SWT.NONE);
+		Label lblLogConfiguration = new Label(activeComposite, SWT.NONE);
 		GridData gd_lblLogConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 1, 1);
 		gd_lblLogConfiguration.verticalIndent = 20;
 		lblLogConfiguration.setLayoutData(gd_lblLogConfiguration);
 		lblLogConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		lblLogConfiguration.setText("Log Configuration");
-		new Label(mainComposite, SWT.NONE);
+		new Label(activeComposite, SWT.NONE);
 		
-		Composite selectLogModeComposite = new Composite(mainComposite, SWT.NONE);
+		Composite selectLogModeComposite = new Composite(activeComposite, SWT.NONE);
 		selectLogModeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		selectLogModeComposite.setLayout(new GridLayout(2, false));
 		
 		Label lblSelectLogMode = new Label(selectLogModeComposite, SWT.NONE);
+		GridData gd_lblSelectLogMode = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblSelectLogMode.horizontalIndent = 5;
+		lblSelectLogMode.setLayoutData(gd_lblSelectLogMode);
 		lblSelectLogMode.setText("Select Log Mode:");
 		
 		Combo combo = new Combo(selectLogModeComposite, SWT.READ_ONLY);
@@ -327,14 +354,14 @@ public class SiSiView {
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		combo.select(0);
 		
-		Composite saveLogComposite = new Composite(mainComposite, SWT.NONE);
+		Composite saveLogComposite = new Composite(activeComposite, SWT.NONE);
 		saveLogComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		GridLayout gl_saveLogComposite = new GridLayout(2, false);
 		gl_saveLogComposite.horizontalSpacing = 0;
 		saveLogComposite.setLayout(gl_saveLogComposite);
 		
 		saveLogPathText = new Text(saveLogComposite, SWT.BORDER);
-		saveLogPathText.setText("Select dir to store");
+		saveLogPathText.setText("logs/");
 		saveLogPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Button btnSelectLogSaveDir = new Button(saveLogComposite, SWT.CENTER);
@@ -344,7 +371,15 @@ public class SiSiView {
 		btnSelectLogSaveDir.setLayoutData(gd_btnSelectLogSaveDir);
 		btnSelectLogSaveDir.setText("Select...");
 		
-		Button btnRunSimulation = new Button(mainComposite, SWT.CENTER);
+		Button btnSeperateLogFile = new Button(activeComposite, SWT.CHECK);
+		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
+		gd_btnSeperateLogFile.horizontalIndent = 10;
+		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
+		btnSeperateLogFile.setText("Seperate Log Files");
+		new Label(activeComposite, SWT.NONE);
+		new Label(activeComposite, SWT.NONE);
+		
+		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
 		btnRunSimulation.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
 		GridData gd_btnRunSimulation = new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 2);
 		gd_btnRunSimulation.minimumWidth = 180;
@@ -354,71 +389,172 @@ public class SiSiView {
 		gd_btnRunSimulation.verticalIndent = 20;
 		btnRunSimulation.setLayoutData(gd_btnRunSimulation);
 		btnRunSimulation.setText("Run Simulation");
-		scrolledComposite.setContent(mainComposite);
-		scrolledComposite.setMinSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
+		mainComposite.setContent(activeComposite);
+		mainComposite.setMinSize(activeComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		
 	}
 	
 
 	protected void generateConfigCompositeFor(String path) throws ParserConfigurationException, SAXException, IOException {
 		controller.loadModel(path);
-		activeComposite.dispose();
+		// dispose old view
+		activeComposite = new Composite(mainComposite, SWT.NONE);
+		GridLayout gl_activeComposite = new GridLayout(2, true);
+		gl_activeComposite.marginWidth = 10;
+		gl_activeComposite.marginHeight = 10;
+		activeComposite.setLayout(gl_activeComposite);
 		
-		// create new main composite
-		ScrolledComposite scrolledComposite = new ScrolledComposite(mainComposite, SWT.H_SCROLL | SWT.V_SCROLL);
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
-		activeComposite = scrolledComposite;
+		// create info
+		createLoadinInformationComposite(controller.getProcessModel().getName());
+
+		Label lblSimulationConfiguration = new Label(activeComposite, SWT.NONE);
+		GridData gd_lblSimulationConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 2, 1);
+		gd_lblSimulationConfiguration.verticalIndent = 10;
+		lblSimulationConfiguration.setLayoutData(gd_lblSimulationConfiguration);
+		lblSimulationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		lblSimulationConfiguration.setText("Simulation Configuration");		
 		
-		// config composite
-		Composite ConfigComposite = new Composite(scrolledComposite, SWT.NONE);
-		FillLayout fl_ConfigComposite = new FillLayout(SWT.HORIZONTAL);
-		fl_ConfigComposite.marginWidth = 5;
-		fl_ConfigComposite.marginHeight = 5;
-		fl_ConfigComposite.spacing = 5;
-		ConfigComposite.setLayout(fl_ConfigComposite);
+		// create simulation configuration
+		createSimulationConfigraiotnComposite();
 		
-		// group for the violation configuration (e.g. what mutans should be generated)
-		Group grpViolationConfiguration = new Group(ConfigComposite, SWT.NONE);
+		Label lblAttackerSpecification = new Label(activeComposite, SWT.NONE);
+		GridData gd_lblAttackerSpecification = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 2, 1);
+		gd_lblAttackerSpecification.verticalIndent = 20;
+		lblAttackerSpecification.setLayoutData(gd_lblAttackerSpecification);
+		lblAttackerSpecification.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		lblAttackerSpecification.setText("Attacker Specification");
+		
+		// create violation configuration
+		createViolationConfigurationComposite(controller.getProcessModel().getSafetyRequirements());
+		
+		createProcessModelConfiguration();
+		
+		mainComposite.setContent(activeComposite);
+		mainComposite.setMinSize(activeComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
+	
+	private void createProcessModelConfiguration() {
+		Group grpDeviationConfiguration = new Group(activeComposite, SWT.NONE);
+		grpDeviationConfiguration.setLayout(new GridLayout(2, false));
+		grpDeviationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		grpDeviationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		grpDeviationConfiguration.setText("Process Model Configuration");
+		
+	}
+
+	protected void createViolationConfigurationComposite(SafetyRequirements safetyRequirements) {
+		Group grpViolationConfiguration = new Group(activeComposite, SWT.NONE);
 		grpViolationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
-		grpViolationConfiguration.setText("Violate Safety Requirements");
-		grpViolationConfiguration.setLayout(new GridLayout(1, true));
+		grpViolationConfiguration.setLayout(new GridLayout(2, false));
+		grpViolationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		grpViolationConfiguration.setText("Violation Configuration");
+
+		Label lblRunsWithoutViolations = new Label(grpViolationConfiguration, SWT.NONE);
+		GridData gd_lblRunsWithoutViolations = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_lblRunsWithoutViolations.horizontalIndent = 3;
+		lblRunsWithoutViolations.setLayoutData(gd_lblRunsWithoutViolations);
+		lblRunsWithoutViolations.setText("Runs without Violations");
 		
-		// add an option item for every policy + usage control
+		Spinner spinnerRunsWithoutViolations = new Spinner(grpViolationConfiguration, SWT.BORDER);
+		spinnerRunsWithoutViolations.setMinimum(1);
+		spinnerRunsWithoutViolations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		spinnerRunsWithoutViolations.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				controller.getSimulationConfiguration().setRunsWithoutViolations(Integer.parseInt(((Spinner) e.getSource()).getText()));
+			}
+		});
+		
+		Label lblAuthorizationViolations = new Label(grpViolationConfiguration, SWT.NONE);
+		GridData gd_lblAuthorizationViolations = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_lblAuthorizationViolations.horizontalIndent = 3;
+		lblAuthorizationViolations.setLayoutData(gd_lblAuthorizationViolations);
+		lblAuthorizationViolations.setText("Runs violating Authorizations");
+		
+		Spinner spinnerAuthorizationViolations = new Spinner(grpViolationConfiguration, SWT.BORDER);
+		spinnerAuthorizationViolations.setToolTipText("Number of Runs with this Violation");
+		spinnerAuthorizationViolations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		spinnerAuthorizationViolations.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				controller.getSimulationConfiguration().setRunsViolatingAuthorizations(Integer.parseInt(((Spinner) e.getSource()).getText()));
+			}
+		});
+		
 		for (Policy policy : controller.getProcessModel().getSafetyRequirements().getPolicies()) {
 			createSingleSafetyRequirementConfig(policy, grpViolationConfiguration);
 		}
-		for (UsageControl usageControl : controller.getProcessModel().getSafetyRequirements().getUsageControls()) {
-			createSingleSafetyRequirementConfig(usageControl, grpViolationConfiguration);
-		}		
-		
-		// group for the process model configuration (e.g. what variants should be generated)
-		Group grpProcessModelConfiguration = new Group(ConfigComposite, SWT.NONE);
-		grpProcessModelConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
-		grpProcessModelConfiguration.setText("Process Model Configuration");
-		grpProcessModelConfiguration.setLayout(new FillLayout(SWT.HORIZONTAL));
-		
-		// update the shell
-		shell.layout();
+		for (UsageControl uc : controller.getProcessModel().getSafetyRequirements().getUsageControls()) {
+			createSingleSafetyRequirementConfig(uc, grpViolationConfiguration);
+		}
 	}
-	
+
+	protected void createSimulationConfigraiotnComposite() {
+		Composite grpSimulationConfiguration = new Composite(activeComposite, SWT.NONE);
+		grpSimulationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		grpSimulationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		GridLayout gl_grpSimulationConfiguration = new GridLayout(2, false);
+		gl_grpSimulationConfiguration.marginHeight = 0;
+		gl_grpSimulationConfiguration.marginWidth = 0;
+		grpSimulationConfiguration.setLayout(gl_grpSimulationConfiguration);
+		
+		Label lblNumberOfIterations = new Label(grpSimulationConfiguration, SWT.NONE);
+		lblNumberOfIterations.setToolTipText("Number of Run with the Attacker Specification below");
+		GridData gd_lblNumberOfIterations = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblNumberOfIterations.horizontalIndent = 10;
+		gd_lblNumberOfIterations.minimumWidth = 85;
+		lblNumberOfIterations.setLayoutData(gd_lblNumberOfIterations);
+		lblNumberOfIterations.setBounds(0, 0, 55, 15);
+		lblNumberOfIterations.setText("Number of Iterations");
+		
+		Spinner spinner = new Spinner(grpSimulationConfiguration, SWT.BORDER);
+		spinner.setMaximum(1000);
+		spinner.setMinimum(1);
+		GridData gd_spinner = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_spinner.horizontalIndent = 5;
+		spinner.setLayoutData(gd_spinner);
+		spinner.setBounds(0, 0, 47, 22);
+		
+		Button btnConsiderSafety = new Button(activeComposite, SWT.CHECK);
+		GridData gd_btnConsiderSafety = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnConsiderSafety.horizontalIndent = 10;
+		btnConsiderSafety.setLayoutData(gd_btnConsiderSafety);
+		btnConsiderSafety.setText("Ignore Safety Requirements");
+		btnConsiderSafety.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+					controller.getSimulationConfiguration().setConsiderSafetyRequirements(!((Button) e.getSource()).getSelection());
+			}
+		});		
+	}
+
+	protected void createLoadinInformationComposite(String modelName) {
+		Composite loadingInfoComposite = new Composite(activeComposite, SWT.BORDER);
+		loadingInfoComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		loadingInfoComposite.setLayout(new GridLayout(2, false));
+		
+		Label imgLoadingInformation = new Label(loadingInfoComposite, SWT.NONE);
+		imgLoadingInformation.setImage(new Image(shell.getDisplay(), "imgs/info.png"));
+		
+		Label lblLoadingInformation = new Label(loadingInfoComposite, SWT.CENTER);
+		lblLoadingInformation.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		lblLoadingInformation.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.ITALIC));
+		lblLoadingInformation.setText("Loaded the Process Modell \""+modelName+"\".");
+		
+	}
+
 	protected void createSingleSafetyRequirementConfig(ModelObject modelObject, Group grp) {
-		Composite singleSafetyRequirementComposite = new Composite(grp, SWT.NONE);
-		singleSafetyRequirementComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		GridLayout gl_SafetyRequirementComposite = new GridLayout(2, false);
-		gl_SafetyRequirementComposite.marginWidth = 0;
-		gl_SafetyRequirementComposite.marginHeight = 0;
-		singleSafetyRequirementComposite.setLayout(gl_SafetyRequirementComposite);
+		Button btnCheckButton = new Button(grp, SWT.CHECK);
+		GridData gd_btnCheckButton = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_btnCheckButton.horizontalIndent = 3;
+		btnCheckButton.setLayoutData(gd_btnCheckButton);
+		btnCheckButton.setText("Runs violating #"+modelObject.getId());
 		
-		Button btnCheckButton = new Button(singleSafetyRequirementComposite, SWT.CHECK);
-		btnCheckButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		btnCheckButton.setText("ID: #" + modelObject.getId() + " (Type: " + modelObject.getClass().getSimpleName() + ")");
-		
-		Spinner spinner = new Spinner(singleSafetyRequirementComposite, SWT.BORDER);
-		spinner.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		Spinner spinner = new Spinner(grp, SWT.BORDER);
+		spinner.setMinimum(1);
 		spinner.setEnabled(false);
+		spinner.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));		
 		
 		bindingContext = bindCheckToSpinner(btnCheckButton, spinner);
+		controller.addModelObjectSpinnerMap(modelObject, spinner);
 	}	
 	
 	protected void errorMessageBox(String msg, Exception e) {
