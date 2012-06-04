@@ -2,6 +2,7 @@ package de.freiburg.uni.iig.sisi.model.variant;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -11,6 +12,7 @@ import org.xml.sax.SAXException;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.net.Transition.TransitionType;
+import de.freiburg.uni.iig.sisi.model.resource.WorkObject;
 import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 
 public class VariantProcessModel extends ProcessModel {
@@ -71,13 +73,26 @@ public class VariantProcessModel extends ProcessModel {
 		// swap
 		String tmpID = transition1.getId();
 		String tmpName = transition1.getName();
+		HashSet<WorkObject> tmpWorkObjects = getResourceModel().getWorkObjectFor(transition1);
 		transition1.setId(transition2.getId());
 		transition1.setName(transition2.getName());
+		HashSet<WorkObject> workObjects2 = getResourceModel().getWorkObjectFor(transition2);
+		getResourceModel().setWorkObjectsFor(transition1, workObjects2);
+		for (WorkObject workObject : workObjects2) {
+			workObject.removeTransition(transition2);
+			workObject.addTransition(transition1);
+		}		
 		transition2.setId(tmpID);
 		transition2.setName(tmpName);
+		getResourceModel().setWorkObjectsFor(transition2, tmpWorkObjects);
+		for (WorkObject workObject : tmpWorkObjects) {
+			workObject.removeTransition(transition1);
+			workObject.addTransition(transition2);
+		}
 		// new values
 		getDeviation().addNewValue(transition1);
 		getDeviation().addNewValue(transition2);
+		
 	}
 
 	private void silenceTransition() {

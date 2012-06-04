@@ -72,6 +72,10 @@ public class ResourceModel implements PropertyChangeListener {
 		return workObjectsMap.get(transition);
 	}
 
+	public void setWorkObjectsFor(Transition transition, HashSet<WorkObject> workObjects) {
+		workObjectsMap.put(transition, workObjects);
+	}
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if( evt.getPropertyName() == Role.PROPERTY_ADD_DOMAIN ) {

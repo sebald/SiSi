@@ -18,6 +18,14 @@ public class WorkObject extends ModelObject {
 		return usedBy;
 	}
 
+	public void removeTransition(Transition transition) {
+		usedBy.remove(transition);
+	}
+	
+	public void addTransition(Transition transition) {
+		usedBy.add(transition);
+	}
+	
 	@Override
 	public String toString() {
 		return this.getName();

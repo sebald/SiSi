@@ -11,6 +11,7 @@ public class NetDeviation {
 	}
 	
 	private final DeviationType type;
+	// stores what has changed
 	private ArrayList<Node> oldValues = new ArrayList<Node>();
 	private ArrayList<Node> newValues = new ArrayList<Node>();
 	
