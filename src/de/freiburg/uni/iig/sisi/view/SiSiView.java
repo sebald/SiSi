@@ -98,7 +98,7 @@ public class SiSiView {
 	 */
 	protected void createContents(Display display) {
 		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
-		shell.setSize(513, 559);
+		shell.setSize(513, 571);
 		shell.setText("SiSi - Security-aware Event Log Generator");
 		shell.setImage(new Image(shell.getDisplay(), "imgs/shell.png"));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -357,49 +357,59 @@ public class SiSiView {
 		lblSelectLogMode.setText("Select Log Mode:");
 		
 		Combo combo = new Combo(selectLogModeComposite, SWT.READ_ONLY);
-		combo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
 		combo.setItems(new String[] {"CSV", "MXML"});
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		combo.select(0);
+		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				controller.setFileMode(((Combo) e.getSource()).getText());
+			}
+		});		
+
+		Button btnSeperateLogFile = new Button(activeComposite, SWT.CHECK);
+		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_btnSeperateLogFile.horizontalIndent = 10;
+		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
+		btnSeperateLogFile.setText("Seperate Log Files");
+		btnSeperateLogFile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+					controller.setSeperateLogs(((Button) e.getSource()).getSelection());
+			}
+		});			
 		
 		Composite saveLogComposite = new Composite(activeComposite, SWT.NONE);
-		saveLogComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		saveLogComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		GridLayout gl_saveLogComposite = new GridLayout(2, false);
 		gl_saveLogComposite.horizontalSpacing = 0;
-		saveLogComposite.setLayout(gl_saveLogComposite);
+		saveLogComposite.setLayout(gl_saveLogComposite);		
 		
 		saveLogPathText = new Text(saveLogComposite, SWT.BORDER);
 		saveLogPathText.setText("logs/");
 		saveLogPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		Button btnSelectLogSaveDir = new Button(saveLogComposite, SWT.CENTER);
-		btnSelectLogSaveDir.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
 		GridData gd_btnSelectLogSaveDir = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		gd_btnSelectLogSaveDir.minimumWidth = 70;
 		gd_btnSelectLogSaveDir.widthHint = 70;
 		btnSelectLogSaveDir.setLayoutData(gd_btnSelectLogSaveDir);
 		btnSelectLogSaveDir.setText("Select...");
-		
-		Button btnSeperateLogFile = new Button(activeComposite, SWT.CHECK);
-		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
-		gd_btnSeperateLogFile.horizontalIndent = 10;
-		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
-		btnSeperateLogFile.setText("Seperate Log Files");
-		
-		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
-		btnRunSimulation.addSelectionListener(new SelectionAdapter() {
+		btnSelectLogSaveDir.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+		        DirectoryDialog directoryDialog = new DirectoryDialog(shell);
+		        directoryDialog.setFilterPath(selectedDir);
+		        directoryDialog.setMessage("Please select a directory and click OK");
+		        
+		        String dir = directoryDialog.open();
+		        if(dir != null) {
+		        	saveLogPathText.setText(dir);
+		        }
 			}
-		});
+		});		
+		
+		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
 		btnRunSimulation.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
 		GridData gd_btnRunSimulation = new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 2);
 		gd_btnRunSimulation.minimumWidth = 180;
@@ -409,9 +419,19 @@ public class SiSiView {
 		gd_btnRunSimulation.verticalIndent = 20;
 		btnRunSimulation.setLayoutData(gd_btnRunSimulation);
 		btnRunSimulation.setText("Run Simulation");
+		btnRunSimulation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					controller.runSimulation();
+				} catch (SimulationExcpetion | IOException exception) {
+					errorMessageBox("Error during Simulation.", exception);
+				}
+			}
+		});
+		
 		mainComposite.setContent(activeComposite);
 		mainComposite.setMinSize(activeComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		
 	}
 	
 
@@ -480,8 +500,20 @@ public class SiSiView {
 			}
 		});		
 
+		Button btnSeperateLogFile = new Button(activeComposite, SWT.CHECK);
+		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_btnSeperateLogFile.horizontalIndent = 10;
+		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
+		btnSeperateLogFile.setText("Seperate Log Files");
+		btnSeperateLogFile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+					controller.setSeperateLogs(((Button) e.getSource()).getSelection());
+			}
+		});			
+		
 		Composite saveLogComposite = new Composite(activeComposite, SWT.NONE);
-		saveLogComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		saveLogComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		GridLayout gl_saveLogComposite = new GridLayout(2, false);
 		gl_saveLogComposite.horizontalSpacing = 0;
 		saveLogComposite.setLayout(gl_saveLogComposite);		
@@ -500,31 +532,15 @@ public class SiSiView {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 		        DirectoryDialog directoryDialog = new DirectoryDialog(shell);
-		        
-		        System.out.println(selectedDir);
-		        
 		        directoryDialog.setFilterPath(selectedDir);
 		        directoryDialog.setMessage("Please select a directory and click OK");
 		        
 		        String dir = directoryDialog.open();
-		        System.out.println(dir);
 		        if(dir != null) {
 		        	saveLogPathText.setText(dir);
 		        }
 			}
-		});
-
-		Button btnSeperateLogFile = new Button(activeComposite, SWT.CHECK);
-		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
-		gd_btnSeperateLogFile.horizontalIndent = 10;
-		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
-		btnSeperateLogFile.setText("Seperate Log Files");
-		btnSeperateLogFile.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-					controller.setSeperateLogs(((Button) e.getSource()).getSelection());
-			}
-		});			
+		});		
 		
 		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
 		btnRunSimulation.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
