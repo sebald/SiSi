@@ -6,6 +6,8 @@ import java.util.LinkedList;
 
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.Role;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy.PolicyType;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
 
 public class SafetyRequirements {
 	
@@ -97,6 +99,26 @@ public class SafetyRequirements {
 
 	public HashSet<Transition> getObjectiveMap() {
 		return objectiveMap;
+	}
+	
+	public boolean isPartOf(Transition transition, PolicyType type) {
+		for (Policy policy : policies) {
+			if( policy.getType() == type ) {
+				if( policy.getObjective() ==  transition) return true;
+				if( policy.getEventually() == transition ) return true;		
+			}
+		}
+		return false;
+	}
+	
+	public boolean isPartOf(Transition transition, UsageControlType type) {
+		for (UsageControl uc : usageControls) {
+			if( uc.getType() == type ) {
+				if( uc.getObjective() ==  transition) return true;
+				if( uc.getEventually() == transition ) return true;		
+			}
+		}
+		return false;
 	}
 	
 }
