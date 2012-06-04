@@ -10,6 +10,7 @@ import de.freiburg.uni.iig.sisi.log.LogGenerator;
 import de.freiburg.uni.iig.sisi.log.LogGenerator.FileMode;
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
+import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelectionMode;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
@@ -58,16 +59,20 @@ public class SiSiViewController {
 	 * @param i set to {@code 0} will remove the parameter, otherwise it will be added or updated automatically
 	 */
 	public void updateConfigParameter(ModelObject modelObject, int i) {
-		System.out.println(modelObject.getId() + " "+ i);
 		if( i == 0 ) {
 			simulationConfiguration.removeFromConfigMap(modelObject);
 			return;
 		}
-		if( simulationConfiguration.getConfigMap().containsKey(modelObject) ) {
-			simulationConfiguration.updateConfigMap(modelObject, i);
-		} else {
-			simulationConfiguration.addToConfigMap(modelObject, i);
+		simulationConfiguration.updateConfigMap(modelObject, i);
+	}
+	
+	public void updateDeviationParameter(DeviationType type, int i) {
+		System.out.println(type + " " + i);
+		if( i == 0 ) {
+			simulationConfiguration.removeFromDeviationMap(type);
+			return;
 		}
+		simulationConfiguration.updateDeivationMap(type, i);
 	}
 	
 }

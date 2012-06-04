@@ -41,6 +41,7 @@ import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
+import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 
 public class SiSiView {
 	private ArrayList<DataBindingContext> bindingContext = new ArrayList<DataBindingContext>();
@@ -51,7 +52,6 @@ public class SiSiView {
 	private ScrolledComposite mainComposite;
 	private Composite activeComposite;
 	private Text saveLogPathText;
-	private Spinner spinner_1;
 
 	/**
 	 * Launch the application.
@@ -287,9 +287,8 @@ public class SiSiView {
 		lblRunsWithOriginal.setLayoutData(gd_lblRunsWithOriginal);
 		lblRunsWithOriginal.setText("Runs with original Model");
 		
-		spinner_1 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
-		spinner_1.setMinimum(1);
-		spinner_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		Spinner spinnerRunsWithOriginalModel = new Spinner(grpDeviationConfiguration, SWT.BORDER);
+		spinnerRunsWithOriginalModel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
 		Button btnCreateSkippingDeviation = new Button(grpDeviationConfiguration, SWT.CHECK);
 		GridData gd_btnCreateSkippingDeviation = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
@@ -445,6 +444,22 @@ public class SiSiView {
 		grpDeviationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		grpDeviationConfiguration.setText("Process Model Configuration");
 		
+		Label lblRunsWithOriginal = new Label(grpDeviationConfiguration, SWT.NONE);
+		GridData gd_lblRunsWithOriginal = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_lblRunsWithOriginal.horizontalIndent = 3;
+		lblRunsWithOriginal.setLayoutData(gd_lblRunsWithOriginal);
+		lblRunsWithOriginal.setText("Runs with original Model");
+		
+		Spinner spinnerRunsWithOriginalModel = new Spinner(grpDeviationConfiguration, SWT.BORDER);
+		spinnerRunsWithOriginalModel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		spinnerRunsWithOriginalModel.setSelection(1);
+		spinnerRunsWithOriginalModel.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				controller.updateDeviationParameter(DeviationType.NONE, ((Spinner) e.getSource()).getSelection());
+			}
+		});
+		
+		
 	}
 
 	protected void createViolationConfigurationComposite(SafetyRequirements safetyRequirements) {
@@ -465,7 +480,7 @@ public class SiSiView {
 		spinnerRunsWithoutViolations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		spinnerRunsWithoutViolations.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				controller.updateRunsWihtoutViolations(Integer.parseInt(((Spinner) e.getSource()).getText()));
+				controller.updateRunsWihtoutViolations(((Spinner) e.getSource()).getSelection());
 			}
 		});
 		
@@ -480,7 +495,7 @@ public class SiSiView {
 		spinnerAuthorizationViolations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		spinnerAuthorizationViolations.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				controller.updateRunsViolatingAuthorizations(Integer.parseInt(((Spinner) e.getSource()).getText()));
+				controller.updateRunsViolatingAuthorizations(((Spinner) e.getSource()).getSelection());
 			}
 		});
 		
@@ -578,7 +593,7 @@ public class SiSiView {
 						if( ((SWTObservableValueDecorator) b.getModel()).getWidget() instanceof Spinner ) {
 							Spinner s = (Spinner) ((SWTObservableValueDecorator) b.getModel()).getWidget();
 							if( e.getSource() == ((SWTObservableValueDecorator) b.getTarget()).getWidget() )
-								controller.updateConfigParameter((ModelObject) s.getData(), Integer.parseInt(s.getText()));
+								controller.updateConfigParameter((ModelObject) s.getData(), s.getSelection());
 						}
 					}
 				// remove from configuration
@@ -597,7 +612,7 @@ public class SiSiView {
 		spinner.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {				
-				controller.updateConfigParameter((ModelObject) ((Spinner) e.getSource()).getData(), Integer.parseInt(((Spinner) e.getSource()).getText()));
+				controller.updateConfigParameter((ModelObject) ((Spinner) e.getSource()).getData(), ((Spinner) e.getSource()).getSelection());
 			}
 		});			
 	}	

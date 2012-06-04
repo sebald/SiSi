@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
+import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 
 public class SimulationConfiguration {
 
@@ -14,12 +15,13 @@ public class SimulationConfiguration {
 		LIST, RANDOM
 	}
 	
+	// configuration parameters
 	private ResourceSelectionMode resourceSelectionMode;
 	private boolean considerSafetyRequirements;
-	
 	private int runsWithoutViolations = 0;
 	private int runsViolatingAuthorizations = 0;
 	private HashMap<ModelObject, Integer> configMap = new HashMap<ModelObject, Integer>();
+	private HashMap<DeviationType, Integer> deviationMap = new HashMap<DeviationType, Integer>();
 
 	private LinkedList<ProcessModel> processModels = new LinkedList<ProcessModel>();
 	private LinkedList<MutantObject> mutants = new LinkedList<MutantObject>();
@@ -68,17 +70,24 @@ public class SimulationConfiguration {
 		return configMap;
 	}
 
-	public void addToConfigMap(ModelObject modelObject, int i) {
-		this.configMap.put(modelObject, i);
-	}
-
 	public void removeFromConfigMap(ModelObject modelObject) {
 		this.configMap.remove(modelObject);
 	}
 	
 	public void updateConfigMap(ModelObject modelObject, int i) {
-		removeFromConfigMap(modelObject);
-		addToConfigMap(modelObject, i);
+		this.configMap.put(modelObject, i);
+	}
+	
+	public HashMap<DeviationType, Integer> getDeviationMap() {
+		return deviationMap;
+	}
+
+	public void removeFromDeviationMap(DeviationType type) {
+		this.deviationMap.remove(type);
+	}
+	
+	public void updateDeivationMap(DeviationType type, int i) {
+		this.deviationMap.put(type, i);
 	}
 	
 	public LinkedList<ProcessModel> getProcessModels() {
