@@ -27,7 +27,7 @@ public class SimulationConfiguration {
 		this.considerSafetyRequirements = considerSafetyRequirements;
 	}
 	
-	protected void setResourceSelectionMode(ResourceSelectionMode resourceSelectionMode) {
+	public void setResourceSelectionMode(ResourceSelectionMode resourceSelectionMode) {
 		this.resourceSelectionMode = resourceSelectionMode;
 	}
 	
@@ -35,7 +35,7 @@ public class SimulationConfiguration {
 		return resourceSelectionMode;
 	}
 
-	protected void setConsiderSafetyRequirements(boolean considerSafetyRequirements) {
+	public void setConsiderSafetyRequirements(boolean considerSafetyRequirements) {
 		this.considerSafetyRequirements = considerSafetyRequirements;
 	}
 
