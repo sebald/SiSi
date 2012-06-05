@@ -45,6 +45,7 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.simulation.SimulationExcpetion;
 
+@SuppressWarnings("restriction")
 public class SiSiView {
 	private ArrayList<DataBindingContext> bindingContext = new ArrayList<DataBindingContext>();
 
@@ -727,7 +728,6 @@ public class SiSiView {
 		
 		// add listener
 		btnCheckButton.addSelectionListener(new SelectionAdapter() {
-			@SuppressWarnings("restriction")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// add to configuration
