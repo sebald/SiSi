@@ -100,10 +100,7 @@ public class VariantProcessModel extends ProcessModel {
 		}
 		// new values
 		getDeviation().addNewValue(transition1);
-		getDeviation().addNewValue(transition2);
-		
-		System.out.println(transition1 + "<>" + transition2);
-		
+		getDeviation().addNewValue(transition2);		
 	}
 
 	private void silenceTransition() {
