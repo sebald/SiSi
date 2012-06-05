@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
@@ -20,6 +21,7 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy.PolicyType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantFactory;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
 import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
@@ -52,11 +54,15 @@ public class SimulationEngine extends NarratorObject {
 	private ProcessModel currentProcessModel;
 	private MutantObject mutantToExecute;
 	private String simulationRunID;
+	
+	/**
+	 * This map could later be used to execute multiple safety requirement violations in one simulation.
+	 */
+	private HashMap<ModelObject, HashSet<MutantObject>> activatorMap = new HashMap<ModelObject, HashSet<MutantObject>>();
 
 	public SimulationEngine(SimulationConfiguration simulationConfiguration) throws SimulationExcpetion {
 		this.configuration = simulationConfiguration;
 		initProcessModells();
-		initMutations();
 	}
 
 	protected void setCurrentProcessModel(ProcessModel currentProcessModel) {
@@ -67,14 +73,39 @@ public class SimulationEngine extends NarratorObject {
 		return mutantToExecute;
 	}
 
-	protected void setMutantToExecute(MutantObject mutantToExecute) {
-		this.mutantToExecute = mutantToExecute;
+	/**
+	 * Add an mutant to the mutant(s) that should be executed while simulation the current {@link ProcessModel}.
+	 * The mutant will also be added to the {@code activatorMap}. This map is used to activate mutants when the corresponding action,
+	 * e.g. the action that should be violated, occurs.
+	 * 
+	 * @param mutant 
+	 */
+	protected void setMutantToExecute(MutantObject mutant) {
+		this.mutantToExecute = mutant;
+		if ( activatorMap.containsKey(mutant.getActivator()) ){
+			activatorMap.get(mutant.getActivator()).add(mutant);
+		} else {
+			HashSet<MutantObject> mutantSet = new HashSet<MutantObject>();
+			mutantSet.add(mutant);
+			activatorMap.put(mutant.getActivator(), mutantSet);
+		}
 	}
+
+	protected HashMap<ModelObject, HashSet<MutantObject>> getActivatorMap(){
+		return activatorMap;
+	}
+	
+	protected boolean isActivator(ModelObject modelObject){
+		return activatorMap.containsKey(modelObject);
+	}
+		
 	
 	protected void initProcessModells() {
 		// # of runs with original model
-		for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.NONE); i++) {
-			processModels.add(configuration.getOriginalModel().clone());
+		if( configuration.getDeviationMap().containsKey(DeviationType.NONE) ) {
+			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.NONE); i++) {
+				processModels.add(configuration.getOriginalModel().clone());
+			}
 		}
 		// # of runs with a skipping deviation
 		if( configuration.getDeviationMap().containsKey(DeviationType.SKIPPING) ) {
@@ -101,13 +132,7 @@ public class SimulationEngine extends NarratorObject {
 			}				
 		}		
 	}
-	
-	protected void initMutations() {
-		for (int i = 0; i < configuration.getRunsViolatingAuthorizations(); i++) {
-//			mutations.add(MutantFactory.)
-		}
-	}
-	
+		
 	public void runFor(int numerOfRuns) throws SimulationExcpetion {
 		for (int i = 0; i < numerOfRuns; i++) {
 			run2(i);
@@ -132,10 +157,53 @@ public class SimulationEngine extends NarratorObject {
 		for (int i = 0; i < processModels.size(); i++) {
 			// set and initialize process model
 			setCurrentProcessModel(processModels.get(i));
-			updateFireableTransitions();
 			
-			// run the process model for every mutation
+			// create mutations for this process model
+			createMutationsForCurrentModel();
+			
+			// run the process model for every mutation created
+			for (int j = 0; j < mutations.size(); j++) {
+				setMutantToExecute(mutations.get(j));
+				
+				// create run id
+				DecimalFormat df = new DecimalFormat("#000");
+				simulationRunID = df.format(iterationNumber)+"-"+df.format(i)+"-"+df.format(j);
+				
+				// simulate model with mutation
+				simulateCurrentModel();
+			}
+			
+			// if there are no mutations just run once
+			if( mutations.isEmpty() ) {
+				// create run id
+				DecimalFormat df = new DecimalFormat("#000");
+				simulationRunID = df.format(iterationNumber)+"-"+df.format(i);
+				
+				// simulate model with mutation
+				simulateCurrentModel();				
+			}
 		}
+	}
+	
+	/**
+	 * Simulation the current set {@link ProcessModel} with the current set {@link MutantObject} once.
+	 * 
+	 * @return if the generated trace violates safety requirements or satisfies them.
+	 * @throws SimulationExcpetion
+	 */
+	private ModelState simulateCurrentModel() throws SimulationExcpetion{
+		notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
+		updateFireableTransitions();
+		while (!fireableTransitions.isEmpty()) {
+			Transition transition = getRandomFireableTransition();
+			fire(transition);
+		}
+		notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
+		reset();
+		
+		System.out.println(evaluateModel());
+		
+		return evaluateModel();
 	}
 	
 	/**
@@ -185,6 +253,32 @@ public class SimulationEngine extends NarratorObject {
 		evaluateModel();
 	}	
 	
+	/**
+	 * Create {@link MutantObject}s for the current {@link ProcessModel}. Which {@link MutantObject} are created
+	 * depends on the {@link SimulationConfiguration}.
+	 */
+	private void createMutationsForCurrentModel(){
+		mutations.clear();
+		// create authorization violations
+		for (int i = 0; i < configuration.getRunsViolatingAuthorizations(); i++) {
+			mutations.add(MutantFactory.createAuthorizationMutantFor(currentProcessModel));
+		}
+		// create policy/uc mutants
+		for (Entry<ModelObject, Integer> entry : configuration.getViolationMap().entrySet()) {
+			Integer count = entry.getValue();
+			MutantObject mutant;
+			// check what requirement should be violated
+			if( entry.getKey() instanceof Policy ) {
+				mutant = MutantFactory.createMutantFor((Policy) entry.getKey(), currentProcessModel);
+			} else {
+				mutant = MutantFactory.createMutantFor((UsageControl) entry.getKey(), currentProcessModel);
+			}
+			for (int i = 0; i < count; i++) {
+				mutations.add(mutant);
+			}
+		}
+	}
+	
 	public void reset() throws SimulationExcpetion {
 		// reset net
 		currentProcessModel.getNet().reset();
@@ -199,7 +293,7 @@ public class SimulationEngine extends NarratorObject {
 	
 	private void updateFireableTransitions() throws SimulationExcpetion {
 		HashSet<Transition> fireableTransitions = new HashSet<Transition>();
-		// add every transition that could be fired (ignore safety requirements for now)
+		// add every transition that could be fired
 		for (Transition transition : currentProcessModel.getNet().getTransitions()) {
 			if (transition.isFireable()) {				
 				fireableTransitions.add(transition);
@@ -252,7 +346,8 @@ public class SimulationEngine extends NarratorObject {
 		// check if safetyRquirements should be considered
 		if (configuration.isConsiderSafetyRequirements()) {
 			
-			if( configuration.isActivator(transition) && !transition.isSilent() ) {
+			// execute an authorization mutant?
+			if( isActivator(transition) && !transition.isSilent() ) {
 				subjects = executeAuthorizationMutant(transition, subjects);
 			} else if (currentProcessModel.getSafetyRequirements().hasDelegation(transition)) {
 				// get delegations and add subjects that are authorized through the delegations
@@ -339,8 +434,8 @@ public class SimulationEngine extends NarratorObject {
 		SimulationEvent event = internalEventMap.get(policy.getObjective());
 		
 		// check if we rather should violate the policy than satisfy it
-		if( configuration.isActivator(policy) ) {
-			for (MutantObject mutant : configuration.getActivatorMap().get(policy)) {
+		if( isActivator(policy) ) {
+			for (MutantObject mutant : getActivatorMap().get(policy)) {
 				if( mutant instanceof PolicyMutant ) {
 					executedMutants.put(mutant, policy);
 					subjectSet = ((PolicyMutant) mutant).getMutation(event);
@@ -373,8 +468,8 @@ public class SimulationEngine extends NarratorObject {
 		// get event to check who has executed the task
 		SimulationEvent event = internalEventMap.get(usageControl.getObjective());
 		
-		if( configuration.isActivator(usageControl) ) {
-			for (MutantObject mutant : configuration.getActivatorMap().get(usageControl)) {
+		if( isActivator(usageControl) ) {
+			for (MutantObject mutant : getActivatorMap().get(usageControl)) {
 				if( mutant instanceof UsageControlMutant ) {
 					executedMutants.put(mutant, usageControl);
 					subjectSet = ((UsageControlMutant) mutant).getMutation(event);
@@ -397,7 +492,7 @@ public class SimulationEngine extends NarratorObject {
 	}
 
 	private HashSet<Subject> executeAuthorizationMutant(Transition transition, HashSet<Subject> subjects) {
-		for (MutantObject mutant : configuration.getActivatorMap().get(transition)) {
+		for (MutantObject mutant : getActivatorMap().get(transition)) {
 			if( mutant instanceof AuthorizationMutant ) {
 				executedMutants.put(mutant, transition);
 				return ((AuthorizationMutant) mutant).getMutation();
