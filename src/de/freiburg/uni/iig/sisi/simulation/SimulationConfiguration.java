@@ -20,7 +20,9 @@ public class SimulationConfiguration {
 	private ResourceSelectionMode resourceSelectionMode;
 	private boolean considerSafetyRequirements;
 	
-	private int runsWithoutViolations = 0;
+	private int numberOfIterations = 1;
+	
+	private int runsWithoutViolations = 1;
 	private int runsViolatingAuthorizations = 0;
 	private HashMap<ModelObject, Integer> violationMap = new HashMap<ModelObject, Integer>();
 	
@@ -54,6 +56,14 @@ public class SimulationConfiguration {
 
 	public boolean isConsiderSafetyRequirements() {
 		return considerSafetyRequirements;
+	}
+
+	public int getNumberOfIterations() {
+		return numberOfIterations;
+	}
+
+	public void setNumberOfIterations(int numberOfIterations) {
+		this.numberOfIterations = numberOfIterations;
 	}
 
 	public int getRunsWithoutViolations() {

@@ -40,6 +40,10 @@ public class SiSiViewController {
 		System.out.println(log);		
 	}
 
+	public void updateNumberOfIterations(int value) {
+		simulationConfiguration.setNumberOfIterations(value);
+	}
+	
 	public void updateRunsWihtoutViolations(int value){
 		simulationConfiguration.setRunsWithoutViolations(value);
 	}

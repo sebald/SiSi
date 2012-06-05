@@ -213,6 +213,10 @@ public class SiSiView {
 		lblNumberOfIterations.setText("Number of Iterations");
 		
 		Spinner spinner = new Spinner(grpSimulationConfiguration, SWT.BORDER);
+		spinner.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+			}
+		});
 		spinner.setMaximum(1000);
 		spinner.setMinimum(1);
 		GridData gd_spinner = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -677,6 +681,11 @@ public class SiSiView {
 		gd_spinner.horizontalIndent = 5;
 		spinner.setLayoutData(gd_spinner);
 		spinner.setBounds(0, 0, 47, 22);
+		spinner.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				controller.updateNumberOfIterations(((Spinner) e.getSource()).getSelection());
+			}
+		});
 		
 		Button btnConsiderSafety = new Button(activeComposite, SWT.CHECK);
 		GridData gd_btnConsiderSafety = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
