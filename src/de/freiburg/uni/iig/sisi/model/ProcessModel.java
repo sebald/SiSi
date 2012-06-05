@@ -77,7 +77,7 @@ public class ProcessModel extends ModelObject {
 		return transitions;		
 	}
 	
-	public ArrayList<Transition> getNonSafetryRequirementTransitions() {
+	public ArrayList<Transition> getNonSafetyRequirementTransitions() {
 		ArrayList<Transition> nonEventuallyTransitions = new ArrayList<Transition>(getNonEventuallyTransitions());
 		ArrayList<Transition> nonObjectiveTransitions = new ArrayList<Transition>(getNonObjetiveTransitions());
 		nonEventuallyTransitions.retainAll(nonObjectiveTransitions);

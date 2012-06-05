@@ -110,7 +110,7 @@ public class SimulationEngine extends NarratorObject {
 		// # of runs with a swapping deviation
 		if( configuration.getDeviationMap().containsKey(DeviationType.SWAPPING) ) {
 			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.SWAPPING); i++) {
-				processModels.add(new VariantProcessModel(configuration.getOriginalModel()));
+				processModels.add(new VariantProcessModel(configuration.getOriginalModel(), DeviationType.SWAPPING));
 			}				
 		}
 		// # of runs with a AND2XOR deviation

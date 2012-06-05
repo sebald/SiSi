@@ -60,7 +60,7 @@ public class VariantProcessModel extends ProcessModel {
 
 	private void swapTransitions() {
 		// only swap transitions not involved in safety requirements
-		ArrayList<Transition> transitions = getNonSafetryRequirementTransitions();
+		ArrayList<Transition> transitions = getNonSafetyRequirementTransitions();
 		Random generator = new Random();
 		Object[] values = transitions.toArray();
 		Transition transition1 = ((Transition) values[generator.nextInt(values.length)]);
@@ -83,20 +83,26 @@ public class VariantProcessModel extends ProcessModel {
 		transition1.setName(transition2.getName());
 		HashSet<WorkObject> workObjects2 = getResourceModel().getWorkObjectFor(transition2);
 		getResourceModel().setWorkObjectsFor(transition1, workObjects2);
-		for (WorkObject workObject : workObjects2) {
-			workObject.removeTransition(transition2);
-			workObject.addTransition(transition1);
-		}		
+		if( workObjects2 != null ) {
+			for (WorkObject workObject : workObjects2) {
+				workObject.removeTransition(transition2);
+				workObject.addTransition(transition1);
+			}				
+		}
 		transition2.setId(tmpID);
 		transition2.setName(tmpName);
 		getResourceModel().setWorkObjectsFor(transition2, tmpWorkObjects);
-		for (WorkObject workObject : tmpWorkObjects) {
-			workObject.removeTransition(transition1);
-			workObject.addTransition(transition2);
+		if( tmpWorkObjects != null ) {
+			for (WorkObject workObject : tmpWorkObjects) {
+				workObject.removeTransition(transition1);
+				workObject.addTransition(transition2);
+			}
 		}
 		// new values
 		getDeviation().addNewValue(transition1);
 		getDeviation().addNewValue(transition2);
+		
+		System.out.println(transition1 + "<>" + transition2);
 		
 	}
 
