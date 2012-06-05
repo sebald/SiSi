@@ -58,7 +58,7 @@ public class ProcessModel extends ModelObject {
 	public ProcessModel clone() {
 		PNMLReader reader = new PNMLReader();
 		try {
-			return reader.cloneParameterFromDoc(this, doc);
+			return reader.cloneParametersFromDoc(doc);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 			return null;

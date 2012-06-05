@@ -20,13 +20,17 @@ public class VariantProcessModel extends ProcessModel {
 
 	private NetDeviation deviation;
 	
-	public VariantProcessModel(ProcessModel pm) throws ParserConfigurationException, SAXException, IOException {
+	public VariantProcessModel(ProcessModel pm) {
 		this(pm, DeviationType.SKIPPING);
 	}
 
-	public VariantProcessModel(ProcessModel pm, DeviationType type) throws ParserConfigurationException, SAXException, IOException {
+	public VariantProcessModel(ProcessModel pm, DeviationType type) {
 		PNMLReader reader = new PNMLReader();
-		reader.cloneParameterFromDoc(this, pm.getDoc());
+		try {
+			reader.cloneParametersFromDoc(pm.getDoc());
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			e.printStackTrace();
+		}
 		
 		long unixTime = System.currentTimeMillis() / 1000L;
 		setId("variant#"+unixTime);
