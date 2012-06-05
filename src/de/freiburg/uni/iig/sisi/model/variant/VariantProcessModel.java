@@ -60,16 +60,16 @@ public class VariantProcessModel extends ProcessModel {
 
 	private void swapTransitions() {
 		// only swap transitions not involved in safety requirements
-		ArrayList<Transition> transitions = getNonSafetyRequirementTransitions();
+		ArrayList<Transition> transitions = new ArrayList<Transition>(getNonSafetyRequirementTransitions());
 		Random generator = new Random();
 		Object[] values = transitions.toArray();
 		Transition transition1 = ((Transition) values[generator.nextInt(values.length)]);
 		// find another to swap
 		transitions.remove(transition1);
 		Transition transition2 = null;
-		values = transitions.toArray();		
 		// don't swap if the transitions are part of small concurrency
 		do {
+			values = transitions.toArray();
 			transition2 = ((Transition) values[generator.nextInt(values.length)]);			
 		} while ( getNet().partofSmallConcurrency(transition1, transition2) );
 		// old values

@@ -61,6 +61,12 @@ public class PTNetTest {
 		Transition t2 = (Transition) pm.getNet().getNode("t03");
 		
 		assertEquals("Is part of small concurrency", true, pm.getNet().partofSmallConcurrency(t1, t2));		
+		
+		
+		Transition t3 = (Transition) pm.getNet().getNode("t06");
+		
+		assertEquals("Is part of small concurrency", false, pm.getNet().partofSmallConcurrency(t1, t3));	
+		
 	}
 
 }

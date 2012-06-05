@@ -93,7 +93,7 @@ public class PTNet extends ModelObject {
 			prePreSet1.addAll(node.getPreSet());
 		}
 		ArrayList<Node> prePreSet2 = new ArrayList<Node>();
-		for (Node node : transition1.getPreSet()) {
+		for (Node node : transition2.getPreSet()) {
 			prePreSet2.addAll(node.getPreSet());
 		}
 		// have common prepre transition
@@ -106,7 +106,7 @@ public class PTNet extends ModelObject {
 			postPostSet1.addAll(node.getPreSet());
 		}
 		ArrayList<Node> postPostSet2 = new ArrayList<Node>();
-		for (Node node : transition1.getPreSet()) {
+		for (Node node : transition2.getPreSet()) {
 			postPostSet2.addAll(node.getPreSet());
 		}
 		// have common prepre transition
