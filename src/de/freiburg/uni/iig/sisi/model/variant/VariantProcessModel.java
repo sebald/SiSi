@@ -27,7 +27,7 @@ public class VariantProcessModel extends ProcessModel {
 	public VariantProcessModel(ProcessModel pm, DeviationType type) {
 		PNMLReader reader = new PNMLReader();
 		try {
-			reader.cloneParametersFromDoc(pm.getDoc());
+			reader.cloneParametersFromDocTo(this, pm.getDoc());
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 		}
@@ -36,7 +36,7 @@ public class VariantProcessModel extends ProcessModel {
 		setId("variant#"+unixTime);
 		setName("Variant for "+pm.getName());
 		
-		// after "cloning" everything transform the net
+		// after "cloning" everything, transform the net
 		createDeviation(type);
 	}
 	

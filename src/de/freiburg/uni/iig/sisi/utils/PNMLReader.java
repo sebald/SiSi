@@ -46,6 +46,12 @@ public class PNMLReader {
 		this.pm = new ProcessModel();
 		doc.getDocumentElement().normalize();
 		return createModelFromDoc(doc);
+	}
+	
+	public ProcessModel cloneParametersFromDocTo(ProcessModel pm, Document doc) throws ParserConfigurationException, SAXException, IOException {
+		this.pm = pm;
+		doc.getDocumentElement().normalize();
+		return createModelFromDoc(doc);
 	}	
 	
 	public ProcessModel createModelFromPNML(String path) throws ParserConfigurationException, SAXException, IOException {
