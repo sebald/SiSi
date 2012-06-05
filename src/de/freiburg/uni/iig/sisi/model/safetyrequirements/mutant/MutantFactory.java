@@ -24,7 +24,7 @@ public class MutantFactory {
 	 * @param transition
 	 * @return mutant for {@link Transition}
 	 */
-	public static MutantObject createMutantFrom(Transition transition, ProcessModel processModel) {
+	public static MutantObject createMutantFor(Transition transition, ProcessModel processModel) {
 		return new AuthorizationMutant(createID(), transition, processModel);
 	}
 	
@@ -34,7 +34,7 @@ public class MutantFactory {
 	 * @param processModel
 	 * @return
 	 */
-	public static MutantObject createAuthorizationMutantFrom(ProcessModel processModel) {
+	public static MutantObject createAuthorizationMutantFor(ProcessModel processModel) {
 		HashSet<Transition> transitions = new HashSet<Transition>(processModel.getNet().getTransitions());
 		SafetyRequirements sr = processModel.getSafetyRequirements();
 		for (Transition transition : processModel.getNet().getTransitions()) {
@@ -53,7 +53,7 @@ public class MutantFactory {
 	 * @param policy
 	 * @return mutant for {@link Policy}
 	 */
-	public static MutantObject createMutantFrom(Policy policy, ProcessModel processModel) {
+	public static MutantObject createMutantFor(Policy policy, ProcessModel processModel) {
 		return new PolicyMutant(createID(), policy, processModel);
 	}
 	
@@ -63,7 +63,7 @@ public class MutantFactory {
 	 * @param usageControl
 	 * @return mutant for {@link UsageControl}
 	 */
-	public static MutantObject createMutantFrom(UsageControl usageControl, ProcessModel processModel) {
+	public static MutantObject createMutantFor(UsageControl usageControl, ProcessModel processModel) {
 		return new UsageControlMutant(createID(), usageControl, processModel);
 	}
 	
