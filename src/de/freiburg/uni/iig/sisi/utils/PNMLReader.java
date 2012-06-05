@@ -42,10 +42,10 @@ public class PNMLReader {
 		createModelFromDoc(doc);
 	}
 
-	public void cloneParameterFromDoc(ProcessModel pm, Document doc) throws ParserConfigurationException, SAXException, IOException {
+	public ProcessModel cloneParameterFromDoc(ProcessModel pm, Document doc) throws ParserConfigurationException, SAXException, IOException {
 		this.pm = pm;
 		doc.getDocumentElement().normalize();
-		createModelFromDoc(doc);
+		return createModelFromDoc(doc);
 	}	
 	
 	public ProcessModel createModelFromPNML(String path) throws ParserConfigurationException, SAXException, IOException {
@@ -62,7 +62,7 @@ public class PNMLReader {
 		return createModelFromDoc(doc);
 	}
 	
-	public ProcessModel createModelFromDoc(Document doc) throws IOException {
+	private ProcessModel createModelFromDoc(Document doc) throws IOException {
 		// check for correct type
 		if (!((Element) doc.getElementsByTagName("pnml").item(0)).getAttribute("type").equals("de.freiburg.uni.iig.sisi"))
 			throw new IOException("Can not read. Wrong PNML type. Can only read PNML from type 'de.freiburg.uni.iig.sisi'.");
