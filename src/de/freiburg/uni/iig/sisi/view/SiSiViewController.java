@@ -36,8 +36,8 @@ public class SiSiViewController {
 
 	public void runSimulation() throws SimulationExcpetion, IOException{
 		SimulationEngine se = new SimulationEngine(simulationConfiguration);
-		LogGenerator lg = new LogGenerator(se, FileMode.CSV);
-		se.runFor(1);
+		LogGenerator lg = new LogGenerator(se, simulationConfiguration.getFileMode());
+		se.run();
 		String log = lg.generateLog(false);
 		System.out.println(log);
 	}
