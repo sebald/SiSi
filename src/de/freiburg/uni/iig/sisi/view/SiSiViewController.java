@@ -29,7 +29,7 @@ public class SiSiViewController {
 	public void loadModel(String path) throws ParserConfigurationException, SAXException, IOException{
 		processModel = new ProcessModel(path);
 		simulationConfiguration = new SimulationConfiguration(ResourceSelectionMode.RANDOM, true);
-		simulationConfiguration.addProcessModel(processModel);
+		simulationConfiguration.setOriginalModel(processModel);
 	}
 
 	public void runSimulation() throws SimulationExcpetion, IOException{

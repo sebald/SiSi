@@ -17,6 +17,8 @@ public class SimulationConfiguration {
 	}
 	
 	// configuration parameters
+	private ProcessModel originalModel;
+	
 	private ResourceSelectionMode resourceSelectionMode;
 	private boolean considerSafetyRequirements;
 	
@@ -46,6 +48,14 @@ public class SimulationConfiguration {
 		this.resourceSelectionMode = resourceSelectionMode;
 	}
 	
+	public ProcessModel getOriginalModel() {
+		return originalModel;
+	}
+
+	public void setOriginalModel(ProcessModel originalModel) {
+		this.originalModel = originalModel;
+	}
+
 	public ResourceSelectionMode getResourceSelectionMode() {
 		return resourceSelectionMode;
 	}
