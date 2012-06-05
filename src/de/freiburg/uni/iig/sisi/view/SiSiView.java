@@ -472,12 +472,13 @@ public class SiSiView {
 		lblAttackerSpecification.setLayoutData(gd_lblAttackerSpecification);
 		lblAttackerSpecification.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		lblAttackerSpecification.setText("Attacker Specification");
+
+		// create model configuration
+		createProcessModelConfiguration();		
 		
 		// create violation configuration
 		createViolationConfigurationComposite(controller.getProcessModel().getSafetyRequirements());
 		
-		// create model configuration
-		createProcessModelConfiguration();
 		
 		Label lblLogConfiguration = new Label(activeComposite, SWT.NONE);
 		GridData gd_lblLogConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 1, 1);
@@ -616,7 +617,7 @@ public class SiSiView {
 		grpViolationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		grpViolationConfiguration.setLayout(new GridLayout(2, false));
 		grpViolationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-		grpViolationConfiguration.setText("Violation Configuration");
+		grpViolationConfiguration.setText("Violations for each Process Model");
 
 		Label lblRunsWithoutViolations = new Label(grpViolationConfiguration, SWT.NONE);
 		GridData gd_lblRunsWithoutViolations = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
