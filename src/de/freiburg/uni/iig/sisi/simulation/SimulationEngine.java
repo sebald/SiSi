@@ -212,12 +212,13 @@ public class SimulationEngine extends NarratorObject {
 		// create policy/uc mutants
 		for (Entry<ModelObject, Integer> entry : configuration.getViolationMap().entrySet()) {
 			Integer count = entry.getValue();
+			String id = ((ModelObject) entry.getKey()).getId();
 			MutantObject mutant;
 			// check what requirement should be violated
 			if( entry.getKey() instanceof Policy ) {
-				mutant = MutantFactory.createMutantFor((Policy) entry.getKey(), currentProcessModel);
+				mutant = MutantFactory.createMutantFor(currentProcessModel.getSafetyRequirements().getPolicies().get(id), currentProcessModel);
 			} else {
-				mutant = MutantFactory.createMutantFor((UsageControl) entry.getKey(), currentProcessModel);
+				mutant = MutantFactory.createMutantFor(currentProcessModel.getSafetyRequirements().getUsageControls().get(id), currentProcessModel);
 			}
 			for (int i = 0; i < count; i++) {
 				mutations.add(mutant);
