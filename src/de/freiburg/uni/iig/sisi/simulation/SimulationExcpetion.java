@@ -25,11 +25,11 @@ public class SimulationExcpetion extends Exception {
 	}
 
 	public SimulationExcpetion(Policy policy) {
-		super("After satisfing the policy #" + policy.getId() + "there is now subject left that can execute the task.");
+		super("After satisfing the policy #" + policy.getId() + " there is now subject left that can execute the task.");
 	}
 
 	public SimulationExcpetion(UsageControl usageControl) {
-		super("After satisfing the usage control #" + usageControl.getId() + "there is now subject left that can execute the task.");
+		super("After satisfing the usage control #" + usageControl.getId() + " there is now subject left that can execute the task.");
 	}
 
 	
