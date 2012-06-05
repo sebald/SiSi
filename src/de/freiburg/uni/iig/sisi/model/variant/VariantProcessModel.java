@@ -67,11 +67,11 @@ public class VariantProcessModel extends ProcessModel {
 		// find another to swap
 		transitions.remove(transition1);
 		Transition transition2 = null;
+		values = transitions.toArray();		
 		// don't swap if the transitions are part of small concurrency
 		do {
-			values = transitions.toArray();
 			transition2 = ((Transition) values[generator.nextInt(values.length)]);			
-		} while ( !getNet().partofSmallConcurrency(transition1, transition2) );
+		} while ( getNet().partofSmallConcurrency(transition1, transition2) );
 		// old values
 		getDeviation().addOldValue(transition1);
 		getDeviation().addOldValue(transition2);
