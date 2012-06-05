@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 import de.freiburg.uni.iig.sisi.log.LogGenerator;
 import de.freiburg.uni.iig.sisi.log.LogGenerator.FileMode;
 import de.freiburg.uni.iig.sisi.model.ModelObject;
+import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration;
@@ -67,17 +68,17 @@ public class SiSiViewController {
 	public void updateConfigParameter(Object object, int i) {
 		// ModelObjects => means its an policy/uc
 		if( object instanceof ModelObject )
-			updateViolationParameter((ModelObject) object, i);
+			updateViolationParameter((MutantObject) object, i);
 		if( object instanceof DeviationType )
 			updateDeviationParameter((DeviationType) object, i);
 	}
 	
-	public void updateViolationParameter(ModelObject modelObject, int i) {
+	public void updateViolationParameter(MutantObject mutantObject, int i) {
 		if( i == 0 ) {
-			simulationConfiguration.removeFromViolationMap(modelObject);
+			simulationConfiguration.removeFromViolationMap(mutantObject);
 			return;
 		}
-		simulationConfiguration.updateViolationMap(modelObject, i);		
+		simulationConfiguration.updateViolationMap(mutantObject, i);		
 	}
 	
 	public void updateDeviationParameter(DeviationType type, int i) {
