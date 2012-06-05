@@ -2,17 +2,24 @@ package de.freiburg.uni.iig.sisi.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
+import java.io.IOException;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.junit.Test;
+import org.xml.sax.SAXException;
+
+import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Arc;
 import de.freiburg.uni.iig.sisi.model.net.PTNet;
 import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
+import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class PTNetTest {
 
 	@Test
-	public void testPartOfSmallConcurrency() {
+	public void testPartOfSmallConcurrency() throws ParserConfigurationException, SAXException, IOException {
 		
 		PTNet n = new PTNet();
 		
@@ -46,6 +53,14 @@ public class PTNetTest {
 		n.addArc(arc37);
 		
 		assertEquals("Is part of small concurrency", true, n.partofSmallConcurrency((Transition) n.getNode("5"), (Transition) n.getNode("6")));
+		
+		PNMLReader reader = new PNMLReader();
+		ProcessModel pm = reader.createModelFromPNML("examples/kbv.pnml");
+		
+		Transition t1 = (Transition) pm.getNet().getNode("t02");
+		Transition t2 = (Transition) pm.getNet().getNode("t03");
+		
+		assertEquals("Is part of small concurrency", true, pm.getNet().partofSmallConcurrency(t1, t2));		
 	}
 
 }
