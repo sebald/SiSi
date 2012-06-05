@@ -649,11 +649,11 @@ public class SiSiView {
 			}
 		});
 		
-		for (Policy policy : controller.getProcessModel().getSafetyRequirements().getPolicies()) {
+		for (Policy policy : controller.getProcessModel().getSafetyRequirements().getPolicies().values()) {
 			String text = "Runs violating #"+policy.getId();
 			createCheckBoxSpinnerCombo(policy, text, grpViolationConfiguration);
 		}
-		for (UsageControl uc : controller.getProcessModel().getSafetyRequirements().getUsageControls()) {
+		for (UsageControl uc : controller.getProcessModel().getSafetyRequirements().getUsageControls().values()) {
 			String text = "Runs violating #"+uc.getId();
 			createCheckBoxSpinnerCombo(uc, text, grpViolationConfiguration);
 		}

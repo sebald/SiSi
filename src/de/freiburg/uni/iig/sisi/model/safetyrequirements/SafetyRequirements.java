@@ -2,7 +2,6 @@ package de.freiburg.uni.iig.sisi.model.safetyrequirements;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.Role;
@@ -13,8 +12,8 @@ public class SafetyRequirements {
 	
 	// one transition can has one or more roles for delegation
 	private HashMap<Transition, HashSet<Role>> delegations = new HashMap<Transition, HashSet<Role>>();
-	private LinkedList<Policy> policies = new LinkedList<Policy>();
-	private LinkedList<UsageControl> usageControls = new LinkedList<UsageControl>();
+	private HashMap<String, Policy> policies = new HashMap<String, Policy>();
+	private HashMap<String, UsageControl> usageControls = new HashMap<String, UsageControl>();
 	
 	// maps for quick reference
 	private HashMap<Transition, HashSet<Policy>> policyMap = new HashMap<Transition, HashSet<Policy>>();
@@ -36,12 +35,12 @@ public class SafetyRequirements {
 		}
 	}
 	
-	public LinkedList<Policy> getPolicies() {
+	public HashMap<String, Policy> getPolicies() {
 		return policies;
 	}
 	
 	public void addPolicy(Policy policy) {
-		this.policies.add(policy);
+		this.policies.put(policy.getId(), policy);
 		if ( this.policyMap.containsKey(policy.getObjective()) ){
 			this.policyMap.get(policy.getObjective()).add(policy);
 		} else {
@@ -67,12 +66,12 @@ public class SafetyRequirements {
 		return policyMap;
 	}
 
-	public LinkedList<UsageControl> getUsageControls() {
+	public HashMap<String, UsageControl> getUsageControls() {
 		return usageControls;
 	}	
 	
 	public void addUsageControl(UsageControl usageControl) {
-		this.usageControls.add(usageControl);
+		this.usageControls.put(usageControl.getId(), usageControl);
 		if ( this.usageControlMap.containsKey(usageControl.getObjective()) ){
 			this.usageControlMap.get(usageControl.getObjective()).add(usageControl);
 		} else {
@@ -102,7 +101,7 @@ public class SafetyRequirements {
 	}
 	
 	public boolean isPartOf(Transition transition, PolicyType type) {
-		for (Policy policy : policies) {
+		for (Policy policy : policies.values()) {
 			if( policy.getType() == type ) {
 				if( policy.getObjective() ==  transition) return true;
 				if( policy.getEventually() == transition ) return true;		
@@ -112,7 +111,7 @@ public class SafetyRequirements {
 	}
 	
 	public boolean isPartOf(Transition transition, UsageControlType type) {
-		for (UsageControl uc : usageControls) {
+		for (UsageControl uc : usageControls.values()) {
 			if( uc.getType() == type ) {
 				if( uc.getObjective() ==  transition) return true;
 				if( uc.getEventually() == transition ) return true;		
