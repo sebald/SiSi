@@ -169,6 +169,7 @@ public class SimulationEngine extends NarratorObject {
 				
 				// simulate model with mutation
 				simulateCurrentModel();
+				activatorMap.clear();
 			}
 			
 		}
@@ -182,16 +183,12 @@ public class SimulationEngine extends NarratorObject {
 	 */
 	private ModelState simulateCurrentModel() throws SimulationExcpetion{
 		notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
-		
 		reset();
-		
 		while (!fireableTransitions.isEmpty()) {
 			Transition transition = getRandomFireableTransition();
 			fire(transition);
 		}
 		notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
-		
-		System.out.println(evaluateModel());
 		
 		return evaluateModel();
 	}
@@ -289,7 +286,7 @@ public class SimulationEngine extends NarratorObject {
 		for (Role role : currentProcessModel.getResourceModel().getDomainFor(transition)) {
 			subjects.addAll(role.getMembers());
 		}
-		
+				
 		// check if safetyRquirements should be considered
 		if (configuration.isConsiderSafetyRequirements()) {
 			
@@ -363,6 +360,9 @@ public class SimulationEngine extends NarratorObject {
 
 		}
 
+		if( subjects.isEmpty() )
+			System.out.println("ups");
+		
 		// resource selection
 		if (configuration.getResourceSelectionMode() == ResourceSelectionMode.LIST) {
 			// first
