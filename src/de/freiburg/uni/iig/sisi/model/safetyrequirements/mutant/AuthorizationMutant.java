@@ -25,9 +25,6 @@ public class AuthorizationMutant extends MutantObject {
 			authorizedSubjects.addAll(role.getMembers());
 		}
 		HashSet<Role> roleSet = getProcessModel().getSafetyRequirements().getDelegations().get(modelObject);
-		HashSet<Role> delegationSet = getProcessModel().getSafetyRequirements().getDelegations().get(modelObject);
-		if( delegationSet != null )
-			roleSet.addAll(delegationSet);
 		if( roleSet != null ) {
 			for (Role role : roleSet) {
 				authorizedSubjects.addAll(role.getMembers());
@@ -37,11 +34,7 @@ public class AuthorizationMutant extends MutantObject {
 		ArrayList<Subject> allSubjects = new ArrayList<Subject>(getProcessModel().getResourceModel().getSubjects());
 		allSubjects.removeAll(authorizedSubjects);
 		// create an HashSet to return
-		HashSet<Subject> returnSet = new HashSet<Subject>();
-		for (Subject subject : allSubjects) {
-			returnSet.add(subject);
-		}
-		
+		HashSet<Subject> returnSet = new HashSet<Subject>(allSubjects);		
 		return returnSet;
 	}
 	

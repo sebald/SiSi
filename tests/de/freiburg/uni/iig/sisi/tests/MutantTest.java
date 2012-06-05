@@ -36,6 +36,15 @@ public class MutantTest {
 		}
 		intersection.retainAll(mutant.getMutation());
 		assertEquals("Is mutant", true, intersection.isEmpty());
+		
+		Transition t1 = (Transition) pm.getNet().getNode("t07");
+		mutant = (AuthorizationMutant) MutantFactory.createMutantFor(t1, pm);
+		intersection = new HashSet<Subject>();
+		for (Role role : pm.getResourceModel().getDomainFor(t1)) {
+			intersection.addAll(role.getMembers());
+		}
+		intersection.retainAll(mutant.getMutation());
+		assertEquals("Is mutant", true, intersection.isEmpty());		
 	}
 
 	@Test
