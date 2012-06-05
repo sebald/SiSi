@@ -29,7 +29,7 @@ public class MutantTest {
 		PNMLReader reader = new PNMLReader();
 		ProcessModel pm = reader.createModelFromPNML("examples/kbv.pnml");
 		Transition t = pm.getNet().getTransitions().get(0);
-		AuthorizationMutant mutant = (AuthorizationMutant) MutantFactory.createMutantFrom(t, pm);
+		AuthorizationMutant mutant = (AuthorizationMutant) MutantFactory.createMutantFor(t, pm);
 		HashSet<Subject> intersection = new HashSet<Subject>();
 		for (Role role : pm.getResourceModel().getDomainFor(t)) {
 			intersection.addAll(role.getMembers());
@@ -46,14 +46,14 @@ public class MutantTest {
 		
 		// SoD
 		Policy policySoD = new Policy("p01", "", PolicyType.SEPERATION_OF_DUTY, (Transition) pm.getNet().getNode("t04"), (Transition) pm.getNet().getNode("t05"));
-		PolicyMutant mSoD = (PolicyMutant) MutantFactory.createMutantFrom(policySoD, pm);
+		PolicyMutant mSoD = (PolicyMutant) MutantFactory.createMutantFor(policySoD, pm);
 		HashSet<Subject> badSubjects = mSoD.getMutation(event);
 		badSubjects.remove(pm.getResourceModel().getSubject("s01"));
 		assertEquals("Is mutant", true, badSubjects.isEmpty());
 		
 		//BoD
 		Policy policyBoD = new Policy("p01", "", PolicyType.BINDING_OF_DUTY, (Transition) pm.getNet().getNode("t04"), (Transition) pm.getNet().getNode("t05"));
-		PolicyMutant mBoD = (PolicyMutant) MutantFactory.createMutantFrom(policyBoD, pm);
+		PolicyMutant mBoD = (PolicyMutant) MutantFactory.createMutantFor(policyBoD, pm);
 		badSubjects = mBoD.getMutation(event);
 		
 		badSubjects.add(pm.getResourceModel().getSubject("s01"));
@@ -67,7 +67,7 @@ public class MutantTest {
 		
 		//CoI	
 		Policy policyCoI = new Policy("p01", "", PolicyType.CONFLICT_OF_INTEREST, (Transition) pm.getNet().getNode("t04"), (Transition) pm.getNet().getNode("t05"));
-		PolicyMutant mCoI = (PolicyMutant) MutantFactory.createMutantFrom(policyCoI, pm);
+		PolicyMutant mCoI = (PolicyMutant) MutantFactory.createMutantFor(policyCoI, pm);
 		badSubjects = mCoI.getMutation(event);
 		
 		assertEquals("Is mutant", true, badSubjects.isEmpty());
