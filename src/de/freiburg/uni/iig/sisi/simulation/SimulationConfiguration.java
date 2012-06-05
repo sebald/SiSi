@@ -26,7 +26,7 @@ public class SimulationConfiguration {
 	
 	private int runsWithoutViolations = 1;
 	private int runsViolatingAuthorizations = 0;
-	private HashMap<MutantObject, Integer> violationMap = new HashMap<MutantObject, Integer>();
+	private HashMap<ModelObject, Integer> violationMap = new HashMap<ModelObject, Integer>();
 	
 	private HashMap<DeviationType, Integer> deviationMap = new HashMap<DeviationType, Integer>();
 	
@@ -92,16 +92,16 @@ public class SimulationConfiguration {
 		this.runsViolatingAuthorizations = runsViolatingAuthorizations;
 	}
 
-	public HashMap<MutantObject, Integer> getViolationMap() {
+	public HashMap<ModelObject, Integer> getViolationMap() {
 		return violationMap;
 	}
 
-	public void removeFromViolationMap(MutantObject mutantObject) {
-		this.violationMap.remove(mutantObject);
+	public void removeFromViolationMap(ModelObject modelObject) {
+		this.violationMap.remove(modelObject);
 	}
 	
-	public void updateViolationMap(MutantObject mutantObject, int i) {
-		this.violationMap.put(mutantObject, i);
+	public void updateViolationMap(ModelObject modelObject, int i) {
+		this.violationMap.put(modelObject, i);
 	}
 	
 	public HashMap<DeviationType, Integer> getDeviationMap() {
