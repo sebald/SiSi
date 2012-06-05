@@ -1,4 +1,4 @@
-package sisi;
+package de.freiburg.uni.iig.sisi;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

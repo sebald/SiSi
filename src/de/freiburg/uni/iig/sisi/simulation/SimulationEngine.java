@@ -126,12 +126,6 @@ public class SimulationEngine extends NarratorObject {
 			}				
 		}		
 	}
-		
-	public void runFor(int numerOfRuns) throws SimulationExcpetion {
-		for (int i = 0; i < numerOfRuns; i++) {
-			run2(i);
-		}
-	}	
 	
 	/**
 	 * Run the Simulation with the {@link SimulationConfiguration} given when the {@link SimulationEngine} was
@@ -201,53 +195,6 @@ public class SimulationEngine extends NarratorObject {
 		
 		return evaluateModel();
 	}
-	
-	/**
-	 * Run the simulation once. Each {@link ProcessModel} will be simulated {@code n}-times, where {@code n} is the number of
-	 * {@link MutantObject}s in the {@link SimulationConfiguration}.
-	 * 
-	 * @throws SimulationExcpetion
-	 */
-	public void run2(int singleRunID) throws SimulationExcpetion {
-		
-		// for every process model
-		for (int i = 0; i < configuration.getProcessModels().size(); i++) {
-			setCurrentProcessModel(configuration.getProcessModels().get(i));
-			updateFireableTransitions();
-			
-			// run once if no mutation is there
-			if ( configuration.getMutants().isEmpty() ) {
-				DecimalFormat df = new DecimalFormat("#000");
-				simulationRunID = df.format(singleRunID)+"-"+df.format(i)+"-"+df.format(0);
-				
-				notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
-				while (!fireableTransitions.isEmpty()) {
-					Transition transition = getRandomFireableTransition();
-					fire(transition);
-				}
-				notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
-				reset();
-			}
-			
-			// for every mutation
-			for (int j = 0; j < configuration.getMutants().size(); j++) {
-				setMutantToExecute(configuration.getMutants().get(j));
-
-				DecimalFormat df = new DecimalFormat("#00");
-				simulationRunID = df.format(singleRunID)+"-"+df.format(i)+"-"+df.format(j);
-				
-				notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
-				while (!fireableTransitions.isEmpty()) {
-					Transition transition = getRandomFireableTransition();
-					fire(transition);
-				}
-				notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
-				reset();
-			}
-		}
-		
-		evaluateModel();
-	}	
 	
 	/**
 	 * Create {@link MutantObject}s for the current {@link ProcessModel}. Which {@link MutantObject} are created
