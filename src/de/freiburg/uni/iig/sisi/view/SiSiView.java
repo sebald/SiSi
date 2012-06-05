@@ -602,6 +602,8 @@ public class SiSiView {
 				controller.updateDeviationParameter(DeviationType.NONE, ((Spinner) e.getSource()).getSelection());
 			}
 		});
+		// set initial
+		controller.updateDeviationParameter(DeviationType.NONE, spinnerRunsWithOriginalModel.getSelection());
 		
 		createCheckBoxSpinnerCombo(DeviationType.SKIPPING, "Create Skipping Deviations", grpDeviationConfiguration);
 		createCheckBoxSpinnerCombo(DeviationType.SWAPPING, "Create Swapping Deviations", grpDeviationConfiguration);
