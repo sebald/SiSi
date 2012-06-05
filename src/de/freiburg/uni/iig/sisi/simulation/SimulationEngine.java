@@ -52,7 +52,6 @@ public class SimulationEngine extends NarratorObject {
 	
 	// vars for multiple runs
 	private ProcessModel currentProcessModel;
-	private MutantObject mutantToExecute;
 	private String simulationRunID;
 	
 	/**
@@ -69,10 +68,6 @@ public class SimulationEngine extends NarratorObject {
 		this.currentProcessModel = currentProcessModel;
 	}
 
-	protected MutantObject getMutantToExecute() {
-		return mutantToExecute;
-	}
-
 	/**
 	 * Add an mutant to the mutant(s) that should be executed while simulation the current {@link ProcessModel}.
 	 * The mutant will also be added to the {@code activatorMap}. This map is used to activate mutants when the corresponding action,
@@ -81,7 +76,6 @@ public class SimulationEngine extends NarratorObject {
 	 * @param mutant 
 	 */
 	protected void setMutantToExecute(MutantObject mutant) {
-		this.mutantToExecute = mutant;
 		if ( activatorMap.containsKey(mutant.getActivator()) ){
 			activatorMap.get(mutant.getActivator()).add(mutant);
 		} else {
@@ -161,6 +155,16 @@ public class SimulationEngine extends NarratorObject {
 			// create mutations for this process model
 			createMutationsForCurrentModel();
 			
+			// run without violations
+			for (int j = 0; j < configuration.getRunsWithoutViolations(); j++) {
+				// create run id
+				DecimalFormat df = new DecimalFormat("#000");
+				simulationRunID = df.format(iterationNumber)+"-"+df.format(i)+"-"+df.format(j);
+				
+				// simulate model with mutation
+				simulateCurrentModel();				
+			}
+			
 			// run the process model for every mutation created
 			for (int j = 0; j < mutations.size(); j++) {
 				setMutantToExecute(mutations.get(j));
@@ -173,15 +177,6 @@ public class SimulationEngine extends NarratorObject {
 				simulateCurrentModel();
 			}
 			
-			// if there are no mutations just run once
-			if( mutations.isEmpty() ) {
-				// create run id
-				DecimalFormat df = new DecimalFormat("#000");
-				simulationRunID = df.format(iterationNumber)+"-"+df.format(i);
-				
-				// simulate model with mutation
-				simulateCurrentModel();				
-			}
 		}
 	}
 	
@@ -258,7 +253,10 @@ public class SimulationEngine extends NarratorObject {
 	 * depends on the {@link SimulationConfiguration}.
 	 */
 	private void createMutationsForCurrentModel(){
+		// clear last settigns
 		mutations.clear();
+		activatorMap.clear();
+		
 		// create authorization violations
 		for (int i = 0; i < configuration.getRunsViolatingAuthorizations(); i++) {
 			mutations.add(MutantFactory.createAuthorizationMutantFor(currentProcessModel));
