@@ -67,7 +67,6 @@ public class SiSiViewController {
 	}
 	
 	public void updateViolationParameter(ModelObject modelObject, int i) {
-		System.out.println(modelObject.getId() + " " + i);
 		if( i == 0 ) {
 			simulationConfiguration.removeFromViolationMap(modelObject);
 			return;
@@ -76,7 +75,6 @@ public class SiSiViewController {
 	}
 	
 	public void updateDeviationParameter(DeviationType type, int i) {
-		System.out.println(type + " " + i);
 		if( i == 0 ) {
 			simulationConfiguration.removeFromDeviationMap(type);
 			return;
