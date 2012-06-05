@@ -188,13 +188,14 @@ public class SimulationEngine extends NarratorObject {
 	 */
 	private ModelState simulateCurrentModel() throws SimulationExcpetion{
 		notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
-		updateFireableTransitions();
+		
+		reset();
+		
 		while (!fireableTransitions.isEmpty()) {
 			Transition transition = getRandomFireableTransition();
 			fire(transition);
 		}
 		notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
-		reset();
 		
 		System.out.println(evaluateModel());
 		
