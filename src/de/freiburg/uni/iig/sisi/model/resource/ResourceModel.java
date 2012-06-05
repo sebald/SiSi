@@ -2,6 +2,7 @@ package de.freiburg.uni.iig.sisi.model.resource;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +19,8 @@ public class ResourceModel implements PropertyChangeListener {
 	public HashMap<Transition, HashSet<Role>> domainMap = new HashMap<Transition, HashSet<Role>>();
 	public HashMap<Transition, HashSet<WorkObject>> workObjectsMap = new HashMap<Transition, HashSet<WorkObject>>();
 	
-	public Collection<Subject> getSubjects() {
-		return this.subjects.values();
+	public ArrayList<Subject> getSubjects() {
+		return new ArrayList<Subject>(this.subjects.values());
 	}
 	
 	public void addSubject(Subject subject) {

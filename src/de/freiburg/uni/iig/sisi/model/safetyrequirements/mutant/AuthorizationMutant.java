@@ -1,6 +1,6 @@
 package de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
@@ -34,7 +34,7 @@ public class AuthorizationMutant extends MutantObject {
 			}
 		}
 		// remove authorized subjects from the new list of subjects that can execute the transition
-		Collection<Subject> allSubjects = getProcessModel().getResourceModel().getSubjects();
+		ArrayList<Subject> allSubjects = new ArrayList<Subject>(getProcessModel().getResourceModel().getSubjects());
 		allSubjects.removeAll(authorizedSubjects);
 		// create an HashSet to return
 		HashSet<Subject> returnSet = new HashSet<Subject>();
