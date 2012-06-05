@@ -1,13 +1,18 @@
 package de.freiburg.uni.iig.sisi.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.model.net.PTNet;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.ResourceModel;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
+import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class ProcessModel extends ModelObject {
 	
@@ -48,6 +53,16 @@ public class ProcessModel extends ModelObject {
 	
 	public void setDoc(Document doc) {
 		this.doc = doc;
+	}
+	
+	public ProcessModel clone() {
+		PNMLReader reader = new PNMLReader();
+		try {
+			return reader.cloneParameterFromDoc(this, doc);
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public ArrayList<Transition> getNonEventuallyTransitions() {
