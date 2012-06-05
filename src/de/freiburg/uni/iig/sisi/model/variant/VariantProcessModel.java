@@ -14,22 +14,23 @@ import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.net.Transition.TransitionType;
 import de.freiburg.uni.iig.sisi.model.resource.WorkObject;
 import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
+import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class VariantProcessModel extends ProcessModel {
 
 	private NetDeviation deviation;
 	
-	public VariantProcessModel(String uri) throws ParserConfigurationException, SAXException, IOException {
-		super(uri);
-		createDeviation(DeviationType.SKIPPING);
+	public VariantProcessModel(ProcessModel pm) throws ParserConfigurationException, SAXException, IOException {
+		this(pm, DeviationType.SKIPPING);
 	}
 
-	public VariantProcessModel(String uri, DeviationType type) throws ParserConfigurationException, SAXException, IOException {
-		super(uri);
+	public VariantProcessModel(ProcessModel pm, DeviationType type) throws ParserConfigurationException, SAXException, IOException {
+		PNMLReader reader = new PNMLReader();
+		reader.cloneParameterFromDoc(this, pm.getDoc());
 		
 		long unixTime = System.currentTimeMillis() / 1000L;
 		setId("variant#"+unixTime);
-		setName("Variant for "+getName());
+		setName("Variant for "+pm.getName());
 		
 		// after "cloning" everything transform the net
 		createDeviation(type);

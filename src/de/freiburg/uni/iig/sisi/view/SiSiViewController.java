@@ -15,6 +15,7 @@ import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelectionMode;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
 import de.freiburg.uni.iig.sisi.simulation.SimulationExcpetion;
+import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class SiSiViewController {
 	
@@ -27,7 +28,8 @@ public class SiSiViewController {
 	}
 
 	public void loadModel(String path) throws ParserConfigurationException, SAXException, IOException{
-		processModel = new ProcessModel(path);
+		PNMLReader reader = new PNMLReader();
+		processModel = reader.createModelFromPNML(path);
 		simulationConfiguration = new SimulationConfiguration(ResourceSelectionMode.RANDOM, true);
 		simulationConfiguration.setOriginalModel(processModel);
 	}
@@ -37,7 +39,7 @@ public class SiSiViewController {
 		LogGenerator lg = new LogGenerator(se, FileMode.CSV);
 		se.runFor(1);
 		String log = lg.generateLog(false);
-		System.out.println(log);		
+		System.out.println(log);
 	}
 
 	public void updateNumberOfIterations(int value) {

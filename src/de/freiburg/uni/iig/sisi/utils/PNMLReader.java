@@ -27,24 +27,48 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 
 public class PNMLReader {
 
-	ProcessModel sm;
+	ProcessModel pm;
 
-	public ProcessModel createModelFromPNML(ProcessModel sm, String uri) throws ParserConfigurationException, SAXException,
-			IOException {
-		this.sm = sm;
-
-		File fXmlFile = new File(uri);
+	public void setParameterFromPNML(ProcessModel pm, String path) throws ParserConfigurationException, SAXException, IOException {
+		this.pm = pm;
+		
+		File fXmlFile = new File(path);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(fXmlFile);
 		doc.getDocumentElement().normalize();
+		
+		pm.setDoc(doc);
+		createModelFromDoc(doc);
+	}
 
+	public void cloneParameterFromDoc(ProcessModel pm, Document doc) throws ParserConfigurationException, SAXException, IOException {
+		this.pm = pm;
+		doc.getDocumentElement().normalize();
+		createModelFromDoc(doc);
+	}	
+	
+	public ProcessModel createModelFromPNML(String path) throws ParserConfigurationException, SAXException, IOException {
+		pm = new ProcessModel();
+		
+		File fXmlFile = new File(path);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(fXmlFile);
+		doc.getDocumentElement().normalize();
+		
+		pm.setDoc(doc);
+			
+		return createModelFromDoc(doc);
+	}
+	
+	public ProcessModel createModelFromDoc(Document doc) throws IOException {
 		// check for correct type
 		if (!((Element) doc.getElementsByTagName("pnml").item(0)).getAttribute("type").equals("de.freiburg.uni.iig.sisi"))
 			throw new IOException("Can not read. Wrong PNML type. Can only read PNML from type 'de.freiburg.uni.iig.sisi'.");
-
+		
 		setPMAttributes((Element) doc.getElementsByTagName("net").item(0));
-
+		
 		// set up control flow
 		setPlaces(doc.getElementsByTagName("place"));
 		setTransitions(doc.getElementsByTagName("transition"));
@@ -58,34 +82,34 @@ public class PNMLReader {
 		// set up safety requirements
 		setDelegations(doc.getElementsByTagName("delegation"));
 		setPolicies(doc.getElementsByTagName("policy"));
-		setUsageControl(doc.getElementsByTagName("usageControl"));
-
-		return sm;
+		setUsageControl(doc.getElementsByTagName("usageControl"));		
+		
+		return pm;
 	}
-
+	
 	private void setUsageControl(NodeList nodeList) {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element e = (Element) nodeList.item(i);
-			UsageControl usageControl = new UsageControl(e.getAttribute("id"), "", e.getAttribute("type"), (Transition) sm.getNet().getNode(
-					e.getAttribute("objective")), (Transition) sm.getNet().getNode(e.getAttribute("eventually")));
-			sm.getSafetyRequirements().addUsageControl(usageControl);
+			UsageControl usageControl = new UsageControl(e.getAttribute("id"), "", e.getAttribute("type"), (Transition) pm.getNet().getNode(
+					e.getAttribute("objective")), (Transition) pm.getNet().getNode(e.getAttribute("eventually")));
+			pm.getSafetyRequirements().addUsageControl(usageControl);
 		}
 	}
 
 	private void setPolicies(NodeList nodeList) {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element e = (Element) nodeList.item(i);
-			Policy policy = new Policy(e.getAttribute("id"), "", e.getAttribute("type"), (Transition) sm.getNet().getNode(
-					e.getAttribute("objective")), (Transition) sm.getNet().getNode(e.getAttribute("eventually")));
-			sm.getSafetyRequirements().addPolicy(policy);
+			Policy policy = new Policy(e.getAttribute("id"), "", e.getAttribute("type"), (Transition) pm.getNet().getNode(
+					e.getAttribute("objective")), (Transition) pm.getNet().getNode(e.getAttribute("eventually")));
+			pm.getSafetyRequirements().addPolicy(policy);
 		}
 	}
 
 	private void setDelegations(NodeList nodeList) {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element e = (Element) nodeList.item(i);
-			sm.getSafetyRequirements().addDelegation((Transition) sm.getNet().getNode(e.getAttribute("transRef")),
-					sm.getResourceModel().getRole(e.getAttribute("roleRef")));
+			pm.getSafetyRequirements().addDelegation((Transition) pm.getNet().getNode(e.getAttribute("transRef")),
+					pm.getResourceModel().getRole(e.getAttribute("roleRef")));
 		}
 	}
 
@@ -96,11 +120,11 @@ public class PNMLReader {
 			HashSet<Transition> usedBySet = new HashSet<Transition>();
 			for (int j = 0; j < usedByList.getLength(); j++) {
 				Element usedBy = (Element) usedByList.item(j);
-				usedBySet.add((Transition) sm.getNet().getNode(usedBy.getAttribute("transRef")));
+				usedBySet.add((Transition) pm.getNet().getNode(usedBy.getAttribute("transRef")));
 			}
 			WorkObject workObject = new WorkObject(e.getAttribute("id"), e.getElementsByTagName("name").item(0).getTextContent().trim(),
 					usedBySet);
-			sm.getResourceModel().addWorkObject(workObject);
+			pm.getResourceModel().addWorkObject(workObject);
 		}
 	}
 
@@ -111,10 +135,10 @@ public class PNMLReader {
 			NodeList assignments = e.getElementsByTagName("assigned");
 			for (int j = 0; j < assignments.getLength(); j++) {
 				Element role = (Element) assignments.item(j);
-				subject.addRole(sm.getResourceModel().getRole(role.getAttribute("roleRef")));
-				sm.getResourceModel().getRole(role.getAttribute("roleRef")).addMember(subject);
+				subject.addRole(pm.getResourceModel().getRole(role.getAttribute("roleRef")));
+				pm.getResourceModel().getRole(role.getAttribute("roleRef")).addMember(subject);
 			}
-			sm.getResourceModel().addSubject(subject);
+			pm.getResourceModel().addSubject(subject);
 		}
 	}
 
@@ -122,23 +146,23 @@ public class PNMLReader {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element e = (Element) nodeList.item(i);
 			Role role = new Role(e.getAttribute("id"), e.getElementsByTagName("name").item(0).getTextContent().trim());
-			sm.getResourceModel().addRole(role);
+			pm.getResourceModel().addRole(role);
 			NodeList domains = e.getElementsByTagName("domain");
 			for (int j = 0; j < domains.getLength(); j++) {
 				Element domain = (Element) domains.item(j);
-				sm.getResourceModel().getRole(e.getAttribute("id"))
-						.addDomain((Transition) sm.getNet().getNode(domain.getAttribute("transRef")));
+				pm.getResourceModel().getRole(e.getAttribute("id"))
+						.addDomain((Transition) pm.getNet().getNode(domain.getAttribute("transRef")));
 			}
 		}
 	}
 
 	private void setPMAttributes(Element e) {
-		sm.setId(e.getAttribute("id"));
+		pm.setId(e.getAttribute("id"));
 		NodeList nodeList = e.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node childNode = nodeList.item(i);
 			if ((childNode.getNodeType() == 1) && (childNode.getNodeName().equals("name"))) {
-				sm.setName(childNode.getTextContent().trim());
+				pm.setName(childNode.getTextContent().trim());
 				break;
 			}
 		}
@@ -153,9 +177,9 @@ public class PNMLReader {
 				marking = Integer.valueOf(node.getElementsByTagName("initialMarking").item(0).getTextContent().trim());
 			Place place = new Place(node.getAttribute("id"), node.getElementsByTagName("name").item(0).getTextContent().trim(), marking);
 			initialMarking.put(place, marking);
-			sm.getNet().addPlace(place);
+			pm.getNet().addPlace(place);
 		}
-		sm.getNet().setInitialMarking(initialMarking);
+		pm.getNet().setInitialMarking(initialMarking);
 	}
 
 	private void setTransitions(NodeList nodeList) {
@@ -163,16 +187,16 @@ public class PNMLReader {
 			Element node = (Element) nodeList.item(i);
 			Transition transition = new Transition(node.getAttribute("id"), node.getElementsByTagName("name").item(0).getTextContent()
 					.trim());
-			sm.getNet().addTransition(transition);
+			pm.getNet().addTransition(transition);
 		}
 	}
 
 	private void setArcs(NodeList nodeList) {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element node = (Element) nodeList.item(i);
-			Arc arc = new Arc(node.getAttribute("id"), sm.getNet().getNode(node.getAttribute("source")), sm.getNet().getNode(
+			Arc arc = new Arc(node.getAttribute("id"), pm.getNet().getNode(node.getAttribute("source")), pm.getNet().getNode(
 					node.getAttribute("target")));
-			sm.getNet().addArc(arc);
+			pm.getNet().addArc(arc);
 		}
 	}
 

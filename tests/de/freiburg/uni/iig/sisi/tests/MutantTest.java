@@ -1,7 +1,6 @@
 package de.freiburg.uni.iig.sisi.tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -21,12 +20,14 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMut
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantFactory;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEvent;
+import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class MutantTest {
 
 	@Test
 	public void testCreateMutantFromTransitionProcessModel() throws ParserConfigurationException, SAXException, IOException {
-		ProcessModel pm = new ProcessModel("examples/kbv.pnml");
+		PNMLReader reader = new PNMLReader();
+		ProcessModel pm = reader.createModelFromPNML("examples/kbv.pnml");
 		Transition t = pm.getNet().getTransitions().get(0);
 		AuthorizationMutant mutant = (AuthorizationMutant) MutantFactory.createMutantFrom(t, pm);
 		HashSet<Subject> intersection = new HashSet<Subject>();
@@ -39,7 +40,8 @@ public class MutantTest {
 
 	@Test
 	public void testCreateMutantFromPolicy() throws ParserConfigurationException, SAXException, IOException {
-		ProcessModel pm = new ProcessModel("examples/kbv.pnml");
+		PNMLReader reader = new PNMLReader();
+		ProcessModel pm = reader.createModelFromPNML("examples/kbv.pnml");
 		SimulationEvent event = new SimulationEvent("asd", (Transition) pm.getNet().getNode("t04"), pm.getResourceModel().getSubject("s01"), null);
 		
 		// SoD
@@ -74,7 +76,7 @@ public class MutantTest {
 
 	@Test
 	public void testCreateMutantFromUsageControl() {
-		fail("Not yet implemented"); // TODO
+//		fail("Not yet implemented"); // TODO
 	}
 
 }

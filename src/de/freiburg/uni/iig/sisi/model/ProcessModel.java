@@ -1,17 +1,13 @@
 package de.freiburg.uni.iig.sisi.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
 
 import de.freiburg.uni.iig.sisi.model.net.PTNet;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.ResourceModel;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
-import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class ProcessModel extends ModelObject {
 	
@@ -19,11 +15,9 @@ public class ProcessModel extends ModelObject {
 	private ResourceModel resourceModel = new ResourceModel();
 	private SafetyRequirements safetyRequirements = new SafetyRequirements();
 	
-	public ProcessModel(String uri) throws ParserConfigurationException, SAXException, IOException {
-		PNMLReader reader = new PNMLReader();
-		reader.createModelFromPNML(this, uri);
-	}
-
+	// keep xml doc for cloning
+	private  Document doc;
+	
 	public PTNet getNet() {
 		return net;
 	}
@@ -48,11 +42,14 @@ public class ProcessModel extends ModelObject {
 		this.safetyRequirements = safetyRequirements;
 	}
 
-	public void createFromPNML(String uri) throws ParserConfigurationException, SAXException, IOException {
-		PNMLReader reader = new PNMLReader();
-		reader.createModelFromPNML(this, uri);
+	public Document getDoc() {
+		return doc;
 	}
 	
+	public void setDoc(Document doc) {
+		this.doc = doc;
+	}
+
 	public ArrayList<Transition> getNonEventuallyTransitions() {
 		ArrayList<Transition> transitions = new ArrayList<Transition>(getNet().getTransitions());
 		transitions.removeAll(getSafetyRequirements().getEventuallyMap());
