@@ -198,7 +198,6 @@ public class LogView extends Shell {
 	private void createTableItems(EventLog log){
 		for (SimulationEvent e : log.getEvents()) {
 			TableItem tableItem = new TableItem(eventsTable, SWT.NONE);
-			System.out.println(e);
 			tableItem.setText(new String[] {e.getSimulationID(), e.getTransition().getId(), e.getTransition().getName(), e.getSubject().getName(), e.getUsedObjects().toString()});
 		}
 	}
@@ -210,6 +209,8 @@ public class LogView extends Shell {
 	    	colSize += column.getWidth();
 	    }
 	    int scrollBarWidth = 21;
+	    if( table.getItemCount() < 33 )
+	    	scrollBarWidth = 0;
 	    int spaceLeft = table.getSize().x - colSize - scrollBarWidth;
 	    if( spaceLeft > 0 ) {
 	    	int additionalSpace = spaceLeft/table.getColumnCount();
