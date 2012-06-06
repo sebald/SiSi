@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.TreeMap;
 
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutationEvent;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEvent;
 
@@ -20,6 +21,7 @@ public class LogGenerator implements PropertyChangeListener {
 	
 	private final FileMode fileMode;
 	private TreeMap<String, EventLog> eventLogs = new TreeMap<String, EventLog>();
+	private TreeMap<String, MutationEvent> mutationLog = new TreeMap<String, MutationEvent>();
 
 	private String currentSimulation = null;
 
@@ -37,6 +39,14 @@ public class LogGenerator implements PropertyChangeListener {
 		return eventLogs;
 	}	
 	
+	public TreeMap<String, MutationEvent> getMutationLog() {
+		return mutationLog;
+	}
+
+	public void addMutationEvent(MutationEvent mutationEvent) {
+		this.mutationLog.put(mutationEvent.getSimulationID(), mutationEvent);
+	}
+
 	protected String getCurrentSimulation() {
 		return currentSimulation;
 	}
@@ -56,7 +66,12 @@ public class LogGenerator implements PropertyChangeListener {
 		}
 		if (evt.getPropertyName() == SimulationEngine.PORPERTY_SIMULATION_COMPLETE) {
 			//nothing yet
-		}		
+		}
+		if ( evt.getPropertyName() == SimulationEngine.PROPERTY_MUTATION_EXECUTED ) {
+			MutationEvent mutationEvent = ((MutationEvent) evt.getNewValue());
+			mutationLog.put(mutationEvent.getSimulationID(), mutationEvent);
+			System.out.println(mutationEvent.getSimulationID() + ": " + mutationEvent.getObjectViolated());
+		}
 	}
 
 	public String generateLog(String path, boolean createFile) throws IOException {

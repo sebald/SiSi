@@ -6,7 +6,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -223,9 +225,16 @@ public class LogView extends Shell {
 	}
 	
 	private void createTableItems(EventLog log, Table table){
+		// is there some violation?
+		String mutatedTask = "";
+		if( controller.getLogGenerator().getMutationLog().containsKey(log.getEvents().getFirst().getSimulationID()) ) {
+			mutatedTask = controller.getLogGenerator().getMutationLog().get(log.getEvents().getFirst().getSimulationID()).getObjectViolated().getId();
+		}		
 		for (SimulationEvent e : log.getEvents()) {
 			TableItem tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setText(new String[] {e.getSimulationID(), e.getTransition().getId(), e.getTransition().getName(), e.getSubject().getName(), e.getUsedObjects().toString()});
+			if( mutatedTask.equals(e.getTransition().getId()) )
+				tableItem.setBackground(new Color(getDisplay(), new RGB(255, 229, 229) ));
 		}
 	}
 	
