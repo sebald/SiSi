@@ -60,6 +60,8 @@ public class SiSiView {
 	private ScrolledComposite mainComposite;
 	private Composite activeComposite;
 
+	private Button btnSaveLogsAutomatically;
+
 	/**
 	 * Launch the application.
 	 * @param args
@@ -114,7 +116,7 @@ public class SiSiView {
 	 */
 	protected void createContents(Display display) {
 		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
-		shell.setSize(513, 571);
+		shell.setSize(513, 612);
 		shell.setText("SiSi - Security-aware Event Log Generator");
 		shell.setImage(new Image(shell.getDisplay(), "imgs/shell.png"));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -197,7 +199,7 @@ public class SiSiView {
 		loadingInfoComposite.setLayout(new GridLayout(2, false));
 		
 		Label imgLoadingInformation = new Label(loadingInfoComposite, SWT.NONE);
-		imgLoadingInformation.setImage(SWTResourceManager.getImage("D:\\Eclipse Workspaces\\MasterThesis\\SiSi\\imgs\\info.png"));
+		imgLoadingInformation.setImage(new Image(shell.getDisplay(), "imgs/info.png"));
 		
 		Label lblLoadingInformation = new Label(loadingInfoComposite, SWT.CENTER);
 		lblLoadingInformation.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
@@ -360,12 +362,26 @@ public class SiSiView {
 		spinner_6.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
 		Label lblLogConfiguration = new Label(activeComposite, SWT.NONE);
-		GridData gd_lblLogConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 1, 1);
+		GridData gd_lblLogConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 2, 1);
 		gd_lblLogConfiguration.verticalIndent = 20;
 		lblLogConfiguration.setLayoutData(gd_lblLogConfiguration);
 		lblLogConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		lblLogConfiguration.setText("Log Configuration");
-		new Label(activeComposite, SWT.NONE);
+		
+		Button btnShowLogsAfter = new Button(activeComposite, SWT.CHECK);
+		GridData gd_btnShowLogsAfter = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnShowLogsAfter.horizontalIndent = 10;
+		btnShowLogsAfter.setLayoutData(gd_btnShowLogsAfter);
+		btnShowLogsAfter.setSelection(true);
+		btnShowLogsAfter.setToolTipText("Show Event Logs after the Simulation has finished");
+		btnShowLogsAfter.setText("Show Logs afterwards");
+		
+		Button btnSaveLogsAutomatically = new Button(activeComposite, SWT.CHECK);
+		GridData gd_btnSaveLogsAutomatically = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnSaveLogsAutomatically.horizontalIndent = 10;
+		btnSaveLogsAutomatically.setLayoutData(gd_btnSaveLogsAutomatically);
+		btnSaveLogsAutomatically.setToolTipText("Save Logs automatically after Simulation has finished");
+		btnSaveLogsAutomatically.setText("Save Logs automatically");
 		
 		Composite selectLogModeComposite = new Composite(activeComposite, SWT.NONE);
 		selectLogModeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
@@ -416,6 +432,8 @@ public class SiSiView {
 
 		Button btnSelectLogSaveDir = new Button(saveLogComposite, SWT.CENTER);
 		GridData gd_btnSelectLogSaveDir = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_btnSelectLogSaveDir.minimumHeight = 30;
+		gd_btnSelectLogSaveDir.heightHint = 30;
 		gd_btnSelectLogSaveDir.minimumWidth = 70;
 		gd_btnSelectLogSaveDir.widthHint = 70;
 		btnSelectLogSaveDir.setLayoutData(gd_btnSelectLogSaveDir);
@@ -434,14 +452,19 @@ public class SiSiView {
 			}
 		});		
 		
+		Label seperator = new Label(activeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData gd_seperator = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		gd_seperator.verticalIndent = 20;
+		seperator.setLayoutData(gd_seperator);
+		
 		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
 		btnRunSimulation.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
-		GridData gd_btnRunSimulation = new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 2);
+		GridData gd_btnRunSimulation = new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 1);
+		gd_btnRunSimulation.verticalIndent = 10;
 		gd_btnRunSimulation.minimumWidth = 180;
 		gd_btnRunSimulation.heightHint = 50;
 		gd_btnRunSimulation.widthHint = 180;
 		gd_btnRunSimulation.minimumHeight = 50;
-		gd_btnRunSimulation.verticalIndent = 20;
 		btnRunSimulation.setLayoutData(gd_btnRunSimulation);
 		btnRunSimulation.setText("Run Simulation");
 		btnRunSimulation.addSelectionListener(new SelectionAdapter() {
@@ -495,16 +518,49 @@ public class SiSiView {
 		// create violation configuration
 		createViolationConfigurationComposite(controller.getProcessModel().getSafetyRequirements());
 		
-		
+		// log configuration
 		Label lblLogConfiguration = new Label(activeComposite, SWT.NONE);
-		GridData gd_lblLogConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 1, 1);
+		GridData gd_lblLogConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 2, 1);
 		gd_lblLogConfiguration.verticalIndent = 20;
 		lblLogConfiguration.setLayoutData(gd_lblLogConfiguration);
 		lblLogConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		lblLogConfiguration.setText("Log Configuration");
-		new Label(activeComposite, SWT.NONE);
 		
-		// log configuration
+		Button btnShowLogsAfter = new Button(activeComposite, SWT.CHECK);
+		GridData gd_btnShowLogsAfter = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnShowLogsAfter.horizontalIndent = 10;
+		btnShowLogsAfter.setLayoutData(gd_btnShowLogsAfter);
+		btnShowLogsAfter.setSelection(true);
+		btnShowLogsAfter.setToolTipText("Show Event Logs after the Simulation has finished");
+		btnShowLogsAfter.setText("Show Logs afterwards");
+		// save show log view and endable/disable autosave
+		btnShowLogsAfter.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean value = ((Button) e.getSource()).getSelection();
+				controller.setShowLogView(value);
+				
+				btnSaveLogsAutomatically.setEnabled(value);
+				if( !value ) {
+					btnSaveLogsAutomatically.setSelection(true);
+					controller.setAutoSaveLogs(true);
+				}
+			}
+		});
+		
+		btnSaveLogsAutomatically = new Button(activeComposite, SWT.CHECK);
+		GridData gd_btnSaveLogsAutomatically = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnSaveLogsAutomatically.horizontalIndent = 10;
+		btnSaveLogsAutomatically.setLayoutData(gd_btnSaveLogsAutomatically);
+		btnSaveLogsAutomatically.setToolTipText("Save Logs automatically after Simulation has finished");
+		btnSaveLogsAutomatically.setText("Save Logs automatically");
+		btnSaveLogsAutomatically.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				controller.setAutoSaveLogs(((Button) e.getSource()).getSelection());
+			}
+		});		
+		
 		Composite selectLogModeComposite = new Composite(activeComposite, SWT.NONE);
 		selectLogModeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		selectLogModeComposite.setLayout(new GridLayout(2, false));
@@ -530,7 +586,7 @@ public class SiSiView {
 		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_btnSeperateLogFile.horizontalIndent = 10;
 		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
-		btnSeperateLogFile.setText("Seperate Log Files");
+		btnSeperateLogFile.setText("Save Log in seperate Files");
 		btnSeperateLogFile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -555,10 +611,12 @@ public class SiSiView {
 
 		Button btnSelectLogSaveDir = new Button(saveLogComposite, SWT.CENTER);
 		GridData gd_btnSelectLogSaveDir = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_btnSelectLogSaveDir.minimumHeight = 30;
+		gd_btnSelectLogSaveDir.heightHint = 30;
 		gd_btnSelectLogSaveDir.minimumWidth = 70;
 		gd_btnSelectLogSaveDir.widthHint = 70;
 		btnSelectLogSaveDir.setLayoutData(gd_btnSelectLogSaveDir);
-		btnSelectLogSaveDir.setText("Select...");
+		btnSelectLogSaveDir.setText("Save into...");
 		btnSelectLogSaveDir.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -572,15 +630,20 @@ public class SiSiView {
 		        }
 			}
 		});		
+
+		Label seperator = new Label(activeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData gd_seperator = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		gd_seperator.verticalIndent = 20;
+		seperator.setLayoutData(gd_seperator);		
 		
 		Button btnRunSimulation = new Button(activeComposite, SWT.CENTER);
 		btnRunSimulation.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
 		GridData gd_btnRunSimulation = new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 2);
+		gd_btnRunSimulation.verticalIndent = 10;
 		gd_btnRunSimulation.minimumWidth = 180;
 		gd_btnRunSimulation.heightHint = 50;
 		gd_btnRunSimulation.widthHint = 180;
 		gd_btnRunSimulation.minimumHeight = 50;
-		gd_btnRunSimulation.verticalIndent = 20;
 		btnRunSimulation.setLayoutData(gd_btnRunSimulation);
 		btnRunSimulation.setText("Run Simulation");
 		btnRunSimulation.addSelectionListener(new SelectionAdapter() {
@@ -622,10 +685,10 @@ public class SiSiView {
 		// set initial
 		controller.updateDeviationParameter(DeviationType.NONE, spinnerRunsWithOriginalModel.getSelection());
 		
-		createCheckBoxSpinnerCombo(DeviationType.SKIPPING, "Create Skipping Deviations", grpDeviationConfiguration);
-		createCheckBoxSpinnerCombo(DeviationType.SWAPPING, "Create Swapping Deviations", grpDeviationConfiguration);
-		createCheckBoxSpinnerCombo(DeviationType.AND2XOR, "Create AND2XOR Deviations", grpDeviationConfiguration);
-		createCheckBoxSpinnerCombo(DeviationType.XOR2AND, "Create XOR2AND Deviations", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.SKIPPING, "Run Skipping Deviations", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.SWAPPING, "Run Swapping Deviations", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.AND2XOR, "Run AND2XOR Deviations", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.XOR2AND, "Run XOR2AND Deviations", grpDeviationConfiguration);
 	}
 
 	protected void createViolationConfigurationComposite(SafetyRequirements safetyRequirements) {

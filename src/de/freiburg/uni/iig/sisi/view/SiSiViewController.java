@@ -25,6 +25,9 @@ public class SiSiViewController {
 	private SimulationConfiguration simulationConfiguration = null;
 	private LogGenerator logGenerator = null;
 	
+	private boolean showLogView = true;
+	private boolean autoSaveLogs = false;
+	
 	public ProcessModel getProcessModel() {
 		return processModel;
 	}
@@ -49,6 +52,22 @@ public class SiSiViewController {
 
 	public LogGenerator getLogGenerator() {
 		return logGenerator;
+	}
+
+	public boolean isShowLogView() {
+		return showLogView;
+	}
+
+	public void setShowLogView(boolean showLogView) {
+		this.showLogView = showLogView;
+	}
+
+	public boolean isAutoSaveLogs() {
+		return autoSaveLogs;
+	}
+
+	public void setAutoSaveLogs(boolean autoSaveLogs) {
+		this.autoSaveLogs = autoSaveLogs;
 	}
 
 	public void updateNumberOfIterations(int value) {
