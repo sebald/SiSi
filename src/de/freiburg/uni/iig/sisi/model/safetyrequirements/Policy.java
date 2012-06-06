@@ -6,10 +6,21 @@ import de.freiburg.uni.iig.sisi.model.net.Transition;
 public class Policy extends ModelObject {
 	
 	public enum PolicyType {
-		SEPERATION_OF_DUTY, 
-		BINDING_OF_DUTY, 
-		CONFLICT_OF_INTEREST,
-		UNKNOWN
+		SEPERATION_OF_DUTY("SoD"), 
+		BINDING_OF_DUTY("BoD"), 
+		CONFLICT_OF_INTEREST("CoI"),
+		UNKNOWN("unknown");
+		
+		private String abbreviation;
+		
+		private PolicyType(String s) {
+			abbreviation = s;
+		}
+		
+		@Override
+		public String toString() {
+		   return abbreviation;
+		}
 	}
 	private final PolicyType type;
 	

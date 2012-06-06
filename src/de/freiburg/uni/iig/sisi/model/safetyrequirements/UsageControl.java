@@ -6,9 +6,20 @@ import de.freiburg.uni.iig.sisi.model.net.Transition;
 public class UsageControl extends ModelObject {
 
 	public enum UsageControlType {
-		USAGE_RESTRICTION, 
-		ACTION_REQUIREMENT,
-		UNKNOWN
+		USAGE_RESTRICTION("UR"), 
+		ACTION_REQUIREMENT("AR"),
+		UNKNOWN("unkown");
+		
+		private String abbreviation;
+		
+		private UsageControlType(String s) {
+			abbreviation = s;
+		}
+		
+		@Override
+		public String toString() {
+		   return abbreviation;
+		}		
 	}
 	private final UsageControlType type;
 	
