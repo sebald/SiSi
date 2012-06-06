@@ -39,8 +39,8 @@ public abstract class ModelObject {
 
 	@Override
 	public String toString() {
-		if (name != null) return name;
-		if (id != null) return id;
+		if (name != "") return name;
+		if (id != "") return id;
 		return super.toString();
 	}
 
