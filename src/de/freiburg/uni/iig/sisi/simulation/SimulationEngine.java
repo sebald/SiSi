@@ -152,7 +152,8 @@ public class SimulationEngine extends NarratorObject {
 			createMutationsForCurrentModel();
 			
 			// run without violations
-			for (int j = 0; j < configuration.getRunsWithoutViolations(); j++) {
+			int j;
+			for (j = 0; j < configuration.getRunsWithoutViolations(); j++) {
 				// create run id
 				DecimalFormat df = new DecimalFormat("#000");
 				simulationRunID = df.format(iterationNumber)+"-"+df.format(i)+"-"+df.format(j);
@@ -162,12 +163,12 @@ public class SimulationEngine extends NarratorObject {
 			}
 			
 			// run the process model for every mutation created
-			for (int j = 0; j < mutations.size(); j++) {
-				setMutantToExecute(mutations.get(j));
+			for (int k = 0; k < mutations.size(); k++) {
+				setMutantToExecute(mutations.get(k));
 				
 				// create run id
 				DecimalFormat df = new DecimalFormat("#000");
-				simulationRunID = df.format(iterationNumber)+"-"+df.format(i)+"-"+df.format(j);
+				simulationRunID = df.format(iterationNumber)+"-"+df.format(i)+"-"+df.format(j+k);
 				
 				// simulate model with mutation
 				simulateCurrentModel();
