@@ -66,6 +66,7 @@ public class LogView extends Shell {
 	private Text rawDataText;
 	private Table eventsTable;
 	private Tree tree;
+	private Text violationDataText;
 
 	/**
 	 * Create the shell.
@@ -133,12 +134,18 @@ public class LogView extends Shell {
 		
 		// tab violations
 		TabItem tbtmViolations = new TabItem(tabFolder, SWT.NONE);
-		tbtmViolations.setText("Violations");
+		tbtmViolations.setText("Violations Data");
+		
+		violationDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.V_SCROLL);
+		violationDataText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		violationDataText.setFont(SWTResourceManager.getFont("Courier New", 11, SWT.NORMAL));
+		tbtmViolations.setControl(violationDataText);
 		
 		// tab raw data
 		TabItem tbtmRawData = new TabItem(tabFolder, SWT.NONE);
 		tbtmRawData.setText("Raw Data");
-		rawDataText = new Text(tabFolder, SWT.V_SCROLL);
+		rawDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.V_SCROLL);
+		rawDataText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		tbtmRawData.setControl(rawDataText);
 		scrolledFolderComposite.setContent(tabFolder);
 		scrolledFolderComposite.setMinSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -209,7 +216,7 @@ public class LogView extends Shell {
 	}
 	
 	protected void writeLogToTabs(String id) {
-		// clear + reset tables
+		// clear + reset table
 		eventsTable.clearAll();
 		eventsTable.setItemCount(0);
 		
@@ -217,20 +224,28 @@ public class LogView extends Shell {
 		if(id.equals("all")) {
 			// event table
 			for (EventLog log : controller.getLogGenerator().getEventLogs().values()) {
-				createTableItems(log, eventsTable);
+				createEventTableItems(log, eventsTable);
 			}
-			
+			// violation data
+			String violationData = "";
+			for (MutationEvent mutationEvent : controller.getLogGenerator().getMutationLog().values() ) {
+				violationData += mutationEvent.toString() + System.lineSeparator() + System.lineSeparator();
+			}
+			violationDataText.setText(violationData);
 			// raw data
 			rawDataText.setText(controller.getLogGenerator().logsToCSV());
 		} else {
 			// event table
-			createTableItems(controller.getLogGenerator().getEventLogs().get(id), eventsTable);	
+			createEventTableItems(controller.getLogGenerator().getEventLogs().get(id), eventsTable);
+			// vriolation data
+			if( controller.getLogGenerator().getMutationLog().containsKey(id) )
+				violationDataText.setText(controller.getLogGenerator().getMutationLog().get(id).toString());
 			// raw data
 			rawDataText.setText(controller.getLogGenerator().logToCSV(id));
 		}
 	}
 	
-	private void createTableItems(EventLog log, Table table){
+	private void createEventTableItems(EventLog log, Table table){
 		// is there some violation?
 		String mutatedTask1 = "";
 		String mutatedTask2 = ""; // for policy/uc violations
