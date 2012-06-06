@@ -319,7 +319,7 @@ public class SiSiView {
 		GridData gd_btnCreateSkippingDeviation = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_btnCreateSkippingDeviation.horizontalIndent = 3;
 		btnCreateSkippingDeviation.setLayoutData(gd_btnCreateSkippingDeviation);
-		btnCreateSkippingDeviation.setText("Create Skipping Deviations");
+		btnCreateSkippingDeviation.setText("Run Skipping Deviations");
 		
 		Spinner spinnerSkippingDeviation = new Spinner(grpDeviationConfiguration, SWT.BORDER);
 		spinnerSkippingDeviation.setMinimum(1);
@@ -330,7 +330,7 @@ public class SiSiView {
 		GridData gd_btnCreateSwappingDeviation = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_btnCreateSwappingDeviation.horizontalIndent = 3;
 		btnCreateSwappingDeviation.setLayoutData(gd_btnCreateSwappingDeviation);
-		btnCreateSwappingDeviation.setText("Create Swapping Deviations");
+		btnCreateSwappingDeviation.setText("Run Swapping Deviations");
 		
 		Spinner spinner_4 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
 		spinner_4.setMinimum(1);
@@ -341,7 +341,7 @@ public class SiSiView {
 		GridData gd_btnCreateAndxorDeviations = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_btnCreateAndxorDeviations.horizontalIndent = 3;
 		btnCreateAndxorDeviations.setLayoutData(gd_btnCreateAndxorDeviations);
-		btnCreateAndxorDeviations.setText("Create AND2XOR Deviations");
+		btnCreateAndxorDeviations.setText("Run AND2XOR Deviations");
 		
 		Spinner spinner_5 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
 		spinner_5.setMinimum(1);
@@ -352,7 +352,7 @@ public class SiSiView {
 		GridData gd_btnCreateXorandDeviations = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_btnCreateXorandDeviations.horizontalIndent = 3;
 		btnCreateXorandDeviations.setLayoutData(gd_btnCreateXorandDeviations);
-		btnCreateXorandDeviations.setText("Create XOR2AND Deviations");
+		btnCreateXorandDeviations.setText("Run XOR2AND Deviations");
 		
 		Spinner spinner_6 = new Spinner(grpDeviationConfiguration, SWT.BORDER);
 		spinner_6.setMinimum(1);

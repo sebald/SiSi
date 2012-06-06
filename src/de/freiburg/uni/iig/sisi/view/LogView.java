@@ -91,10 +91,10 @@ public class LogView extends Shell {
 		eventsTable.setLinesVisible(true);
 		tbtmEvents.setControl(eventsTable);
 		eventsTable.setHeaderVisible(true);
+		
 		TableColumn tblclmnCaseId = new TableColumn(eventsTable, SWT.NONE);
 		tblclmnCaseId.setWidth(100);
 		tblclmnCaseId.setText("Case ID");
-		
 		TableColumn tblclmnTaskId = new TableColumn(eventsTable, SWT.NONE);
 		tblclmnTaskId.setWidth(100);
 		tblclmnTaskId.setText("Task ID");
@@ -182,22 +182,32 @@ public class LogView extends Shell {
 	}
 	
 	protected void writeLogToTabs(String id) {
+		// clear tables
+		eventsTable.clearAll();
+		eventsTable.setItemCount(0);
+		
 		// print full log?
 		if(id.equals("all")) {
 			// event table
 			for (EventLog log : controller.getLogGenerator().getEventLogs().values()) {
-				createTableItems(log);
+				createTableItems(log, eventsTable);
 			}
 			resizeTable(eventsTable);
 			
 			// raw data
 			rawDataText.setText(controller.getLogGenerator().getFullLog());
+		} else {
+			// event table
+			createTableItems(controller.getLogGenerator().getEventLogs().get(id), eventsTable);	
+			resizeTable(eventsTable);
+			// raw data
+			rawDataText.setText(controller.getLogGenerator().logToCSV(id));
 		}
 	}
 	
-	private void createTableItems(EventLog log){
+	private void createTableItems(EventLog log, Table table){
 		for (SimulationEvent e : log.getEvents()) {
-			TableItem tableItem = new TableItem(eventsTable, SWT.NONE);
+			TableItem tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setText(new String[] {e.getSimulationID(), e.getTransition().getId(), e.getTransition().getName(), e.getSubject().getName(), e.getUsedObjects().toString()});
 		}
 	}

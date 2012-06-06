@@ -111,7 +111,7 @@ public class LogGenerator implements PropertyChangeListener {
 		return log;
 	}
 
-	private String logToCSV(String id) {
+	public String logToCSV(String id) {
 		String log = "";
 		for (SimulationEvent event : eventLogs.get(id).getEvents()) {
 			log += event.toCSV() + System.getProperty("line.separator");
