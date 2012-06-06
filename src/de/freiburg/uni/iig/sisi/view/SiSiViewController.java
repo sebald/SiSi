@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.swt.widgets.Display;
 import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.log.LogGenerator;
@@ -22,6 +23,7 @@ public class SiSiViewController {
 	// model
 	private ProcessModel processModel = null;
 	private SimulationConfiguration simulationConfiguration = null;
+	private LogGenerator logGenerator = null;
 	
 	public ProcessModel getProcessModel() {
 		return processModel;
@@ -36,10 +38,17 @@ public class SiSiViewController {
 
 	public void runSimulation() throws SimulationExcpetion, IOException{
 		SimulationEngine se = new SimulationEngine(simulationConfiguration);
-		LogGenerator lg = new LogGenerator(se, simulationConfiguration.getFileMode());
+		logGenerator = new LogGenerator(se, simulationConfiguration.getFileMode());
 		se.run();
-		String log = lg.generateLog(false);
+		
+		openLogView();
+		
+		String log = logGenerator.generateLog(false);
 		System.out.println(log);
+	}
+
+	public LogGenerator getLogGenerator() {
+		return logGenerator;
 	}
 
 	public void updateNumberOfIterations(int value) {
@@ -103,4 +112,19 @@ public class SiSiViewController {
 		simulationConfiguration.setSeperateLogs(seperate);
 	}
 	
+	protected void openLogView() {
+		try {
+			Display display = Display.getDefault();
+			LogView shell = new LogView(this);
+			shell.open();
+			shell.layout();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
 }

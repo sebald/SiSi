@@ -127,6 +127,16 @@ public class LogGenerator implements PropertyChangeListener {
 			}
 		}
 		return log;
-	}	
+	}
+	
+	public String getFullLog(){
+		String log = "";
+		for (EventLog eventLog : eventLogs.values()) {
+			for (SimulationEvent event : eventLog.getEvents()) {
+				log += event.toCSV() + System.getProperty("line.separator");
+			}
+		}		
+		return log;
+	}
 
 }
