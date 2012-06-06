@@ -7,9 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.TreeMap;
 
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
@@ -19,10 +16,6 @@ public class LogGenerator implements PropertyChangeListener {
 
 	public enum FileMode {
 		CSV, MXML
-	}
-
-	public enum LogMode {
-		LIST, COMPOSITE
 	}
 	
 	private final FileMode fileMode;
@@ -66,27 +59,7 @@ public class LogGenerator implements PropertyChangeListener {
 		}		
 	}
 
-	public String generateLog() throws IOException {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH-mm-ss");
-		Date date = new Date();
-		return generateLog("logs/SiSiLog_"+ dateFormat.format(date)  + ".log");
-	}
-
-	public String generateLog(String uri) throws IOException {
-		return generateLog(uri, LogMode.LIST, true);
-	}
-	
-	public String generateLog(boolean createFile) throws IOException {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH-mm-ss");
-		Date date = new Date();
-		return generateLog("logs/SiSiLog_"+ dateFormat.format(date)  + ".log", LogMode.LIST, createFile);
-	}
-	
-	public String geStringLog(String uri, LogMode logMode) throws IOException {
-		return generateLog(uri, logMode, true);
-	}
-	
-	public String generateLog(String uri, LogMode logMode, boolean createFile) throws IOException {
+	public String generateLog(String path, boolean createFile) throws IOException {
 		// parse log
 		String log = "";
 		if ( fileMode == FileMode.MXML ) {
@@ -95,11 +68,10 @@ public class LogGenerator implements PropertyChangeListener {
 			log = logsToCSV();
 		}
 		
-		
 		// create file
 		if ( createFile ) {
 			Writer output = null;
-			File file = new File(uri);
+			File file = new File(path);
 			if ( !file.exists() )
 				file.createNewFile();
 			output = new BufferedWriter(new FileWriter(file));
@@ -107,10 +79,32 @@ public class LogGenerator implements PropertyChangeListener {
 			output.close();			
 		}
 
-
 		return log;
 	}
+	
+	public String generateLogFromID(String id, String path, boolean createFile) throws IOException {
+		// parse log
+		String log = "";
+		if ( fileMode == FileMode.MXML ) {
+			log = logToCSV(id);
+		} else {
+			log = logToCSV(id);
+		}
+		
+		// create file
+		if ( createFile ) {
+			Writer output = null;
+			File file = new File(path);
+			if ( !file.exists() )
+				file.createNewFile();
+			output = new BufferedWriter(new FileWriter(file));
+			output.write(log);
+			output.close();			
+		}
 
+		return log;		
+	}
+	
 	public String logToCSV(String id) {
 		String log = "";
 		for (SimulationEvent event : eventLogs.get(id).getEvents()) {
@@ -119,17 +113,7 @@ public class LogGenerator implements PropertyChangeListener {
 		return log;
 	}
 	
-	private String logsToCSV() {
-		String log = "";
-		for (EventLog eventLog : eventLogs.values()) {
-			for (SimulationEvent event : eventLog.getEvents()) {
-				log += event.toCSV() + System.getProperty("line.separator");
-			}
-		}
-		return log;
-	}
-	
-	public String getFullLog(){
+	public String logsToCSV(){
 		String log = "";
 		for (EventLog eventLog : eventLogs.values()) {
 			for (SimulationEvent event : eventLog.getEvents()) {

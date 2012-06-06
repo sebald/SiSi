@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
@@ -53,9 +54,10 @@ public class LogView extends Shell {
 	}
 
 
-	private SiSiViewController controller;
+	private final SiSiViewController controller;
 	private Text rawDataText;
 	private Table eventsTable;
+	private Tree tree;
 
 	/**
 	 * Create the shell.
@@ -74,6 +76,19 @@ public class LogView extends Shell {
 		
 		ToolItem tltmSave = new ToolItem(toolBar, SWT.NONE);
 		tltmSave.setImage(new Image(this.getDisplay(), "imgs/save.png"));
+		tltmSave.setData(this.controller.getSaveToPath());
+		tltmSave.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+		        FileDialog fd = new FileDialog(getShell(), SWT.SAVE);
+		        fd.setText("Save Log to...");
+		        fd.setFilterPath((String) ((ToolItem) e.getSource()).getData());
+		        String[] filterExt = { "*.log", "*.*" };
+		        fd.setFilterExtensions(filterExt);
+		        String selected = fd.open();
+		        saveFileTo(selected);				
+			}
+		});
 		
 		ScrolledComposite scrolledFolderComposite = new ScrolledComposite(mainComposite, SWT.H_SCROLL | SWT.V_SCROLL);
 		scrolledFolderComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2));
@@ -129,7 +144,7 @@ public class LogView extends Shell {
 		scrolledTreeComposite.setExpandVertical(true);
 		
 		// create tree
-		Tree tree = new Tree(scrolledTreeComposite, SWT.NONE);
+		tree = new Tree(scrolledTreeComposite, SWT.NONE);
 		tree.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -186,7 +201,7 @@ public class LogView extends Shell {
 	}
 	
 	protected void writeLogToTabs(String id) {
-		// clear tables
+		// clear + reset tables
 		eventsTable.clearAll();
 		eventsTable.setItemCount(0);
 		
@@ -198,7 +213,7 @@ public class LogView extends Shell {
 			}
 			
 			// raw data
-			rawDataText.setText(controller.getLogGenerator().getFullLog());
+			rawDataText.setText(controller.getLogGenerator().logsToCSV());
 		} else {
 			// event table
 			createTableItems(controller.getLogGenerator().getEventLogs().get(id), eventsTable);	
@@ -232,6 +247,9 @@ public class LogView extends Shell {
 	    }
 	}
 
+	protected void saveFileTo(String path) {
+		controller.saveLog((String) tree.getSelection()[0].getData(), path);
+	}
 	
 	@Override
 	protected void checkSubclass() {

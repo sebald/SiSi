@@ -138,7 +138,7 @@ public class SiSiView {
 
 				String[] filterNames = new String[] { "PNML", "All Files (*)" };
 				String[] filterExtensions = new String[] { "*.pnml", "*" };
-				dialog.setFilterPath("C:/");
+				dialog.setFilterPath(System.getProperty("user.dir"));
 
 				dialog.setFilterNames(filterNames);
 				dialog.setFilterExtensions(filterExtensions);
@@ -601,7 +601,7 @@ public class SiSiView {
 		saveLogComposite.setLayout(gl_saveLogComposite);		
 		
 		saveLogPathText = new Text(saveLogComposite, SWT.BORDER);
-		saveLogPathText.setText("logs/");
+		saveLogPathText.setText(System.getProperty("user.dir") + System.getProperty("file.separator"));
 		saveLogPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		saveLogPathText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -626,7 +626,7 @@ public class SiSiView {
 		        
 		        String dir = directoryDialog.open();
 		        if(dir != null) {
-		        	saveLogPathText.setText(dir);
+		        	saveLogPathText.setText(dir + System.getProperty("file.separator"));
 		        }
 			}
 		});		

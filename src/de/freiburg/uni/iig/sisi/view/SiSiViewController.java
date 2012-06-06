@@ -1,6 +1,9 @@
 package de.freiburg.uni.iig.sisi.view;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -44,10 +47,17 @@ public class SiSiViewController {
 		logGenerator = new LogGenerator(se, simulationConfiguration.getFileMode());
 		se.run();
 		
-		openLogView();
+		if( autoSaveLogs ) {
+			// generate file name
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH-mm-ss");
+			Date date = new Date();
+			String fileName = "SiSiLog_"+ dateFormat.format(date)  + ".log";
+			String path = simulationConfiguration.getSaveLogPath() + fileName;
+			logGenerator.generateLog(path, true);
+		}
 		
-		String log = logGenerator.generateLog(false);
-		System.out.println(log);
+		if( showLogView )
+			openLogView();
 	}
 
 	public LogGenerator getLogGenerator() {
@@ -131,6 +141,10 @@ public class SiSiViewController {
 		simulationConfiguration.setSeperateLogs(seperate);
 	}
 	
+	public String getSaveToPath(){
+		return simulationConfiguration.getSaveLogPath();
+	}
+	
 	protected void openLogView() {
 		try {
 			Display display = Display.getDefault();
@@ -145,5 +159,21 @@ public class SiSiViewController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
+	}
+	
+	public void saveLog(String id, String path) {
+		if( id.equals("all") ) {
+			try {
+				logGenerator.generateLog(path, true);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				logGenerator.generateLogFromID(id, path, true);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
