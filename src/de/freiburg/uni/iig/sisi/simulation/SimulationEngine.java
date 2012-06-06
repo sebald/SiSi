@@ -22,6 +22,7 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantFactory;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutationEvent;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
 import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
@@ -33,6 +34,7 @@ public class SimulationEngine extends NarratorObject {
 	public static String PROPERTY_TRANSITION_FIRED = "Transition fired";
 	public static String PORPERTY_SIMULATION_COMPLETE = "Simulation complete";
 	public static String PORPERTY_SIMULATION_START = "Simulation start";
+	public static String PROPERTY_MUTATION_EXECUTED = "Mutation executed";
 	
 	public enum ModelState {
 		VIOLATED, TEMPORALY_VIOLATED, SATISFIED
@@ -359,9 +361,6 @@ public class SimulationEngine extends NarratorObject {
 			}		
 
 		}
-
-		if( subjects.isEmpty() )
-			System.out.println("ups");
 		
 		// resource selection
 		if (configuration.getResourceSelectionMode() == ResourceSelectionMode.LIST) {
@@ -385,6 +384,8 @@ public class SimulationEngine extends NarratorObject {
 			for (MutantObject mutant : getActivatorMap().get(policy)) {
 				if( mutant instanceof PolicyMutant ) {
 					executedMutants.put(mutant, policy);
+					MutationEvent mutationEvent = new MutationEvent(simulationRunID, mutant, policy, policy.getEventually());
+					notifyListeners(this, PROPERTY_MUTATION_EXECUTED, mutationEvent);
 					subjectSet = ((PolicyMutant) mutant).getMutation(event);
 				}
 			}
@@ -419,6 +420,8 @@ public class SimulationEngine extends NarratorObject {
 			for (MutantObject mutant : getActivatorMap().get(usageControl)) {
 				if( mutant instanceof UsageControlMutant ) {
 					executedMutants.put(mutant, usageControl);
+					MutationEvent mutationEvent = new MutationEvent(simulationRunID, mutant, usageControl, usageControl.getEventually());
+					notifyListeners(this, PROPERTY_MUTATION_EXECUTED, mutationEvent);					
 					subjectSet = ((UsageControlMutant) mutant).getMutation(event);
 				}
 			}			
@@ -442,6 +445,8 @@ public class SimulationEngine extends NarratorObject {
 		for (MutantObject mutant : getActivatorMap().get(transition)) {
 			if( mutant instanceof AuthorizationMutant ) {
 				executedMutants.put(mutant, transition);
+				MutationEvent mutationEvent = new MutationEvent(simulationRunID, mutant, transition, transition);
+				notifyListeners(this, PROPERTY_MUTATION_EXECUTED, mutationEvent);					
 				return ((AuthorizationMutant) mutant).getMutation();
 			}
 		}
