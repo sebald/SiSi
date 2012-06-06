@@ -69,4 +69,24 @@ public class PTNetTest {
 		
 	}
 
+	@Test
+	public void testGetSourcePlace() throws ParserConfigurationException, SAXException, IOException {
+		PNMLReader reader = new PNMLReader();
+		ProcessModel pm = reader.createModelFromPNML("examples/kbv.pnml");
+		Place p = pm.getNet().getSourcePlace();
+		
+		assertEquals("Is sink", true, p.getId().equals("p01"));
+		assertEquals("Is sink", false, p.getId().equals("p09"));
+	}	
+	
+	@Test
+	public void testGetSinkPlace() throws ParserConfigurationException, SAXException, IOException {
+		PNMLReader reader = new PNMLReader();
+		ProcessModel pm = reader.createModelFromPNML("examples/kbv.pnml");
+		Place p = pm.getNet().getSinkPlace();
+		
+		assertEquals("Is sink", true, p.getId().equals("p09"));
+		assertEquals("Is sink", false, p.getId().equals("p01"));
+	}
+	
 }

@@ -114,6 +114,34 @@ public class PTNet extends ModelObject {
 		if ( postPostSet1.isEmpty() ) return false;
 		
 		return true;
+	}
+	
+	public Place getSourcePlace(){
+		for (Place p : places) {
+			if( p.getIncomingArcs().size() == 0 )
+				return p;
+		}
+		return null;
+	}
+	
+	public Place getSinkPlace(){
+		for (Place p : places) {
+			if( p.getOutgoingArcs().size() == 0 )
+				return p;
+		}
+		return null;
 	}	
+	
+	/**
+	 * Search for scopes. E.g. fragments of the {@link PTNet} that starts with a split and end with an join (AND or XOR).
+	 * This function is needed to transform the {@link PTNet} and create AND2XOR or XOR2AND deviations.
+	 */
+	public HashMap<Transition, Transition> findScopes() {
+		
+		
+		
+		
+		return null;
+	}
 	
 }
