@@ -31,6 +31,12 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import de.freiburg.uni.iig.sisi.log.EventLog;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutationEvent;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEvent;
 
 public class LogView extends Shell {
@@ -226,14 +232,24 @@ public class LogView extends Shell {
 	
 	private void createTableItems(EventLog log, Table table){
 		// is there some violation?
-		String mutatedTask = "";
+		String mutatedTask1 = "";
+		String mutatedTask2 = ""; // for policy/uc violations
 		if( controller.getLogGenerator().getMutationLog().containsKey(log.getEvents().getFirst().getSimulationID()) ) {
-			mutatedTask = controller.getLogGenerator().getMutationLog().get(log.getEvents().getFirst().getSimulationID()).getObjectViolated().getId();
+			MutationEvent mutationEvent = controller.getLogGenerator().getMutationLog().get(log.getEvents().getFirst().getSimulationID());
+			if( mutationEvent.getMutant() instanceof AuthorizationMutant ) {
+				mutatedTask1 = mutationEvent.getObjectViolated().getId();
+			} else if( mutationEvent.getMutant() instanceof PolicyMutant ) {
+				mutatedTask1 = ((Policy) mutationEvent.getMutant().getActivator()).getObjective().getId();
+				mutatedTask2 = ((Policy) mutationEvent.getMutant().getActivator()).getEventually().getId();
+			} else if ( mutationEvent.getMutant() instanceof UsageControlMutant ) {
+				mutatedTask1 = ((UsageControl) mutationEvent.getMutant().getActivator()).getObjective().getId();
+				mutatedTask2 = ((UsageControl) mutationEvent.getMutant().getActivator()).getEventually().getId();
+			}
 		}		
 		for (SimulationEvent e : log.getEvents()) {
 			TableItem tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setText(new String[] {e.getSimulationID(), e.getTransition().getId(), e.getTransition().getName(), e.getSubject().getName(), e.getUsedObjects().toString()});
-			if( mutatedTask.equals(e.getTransition().getId()) )
+			if( mutatedTask1.equals(e.getTransition().getId()) || mutatedTask2.equals(e.getTransition().getId()) )
 				tableItem.setBackground(new Color(getDisplay(), new RGB(255, 229, 229) ));
 		}
 	}
