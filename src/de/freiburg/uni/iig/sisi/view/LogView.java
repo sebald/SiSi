@@ -17,15 +17,18 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import de.freiburg.uni.iig.sisi.log.EventLog;
+import de.freiburg.uni.iig.sisi.simulation.SimulationEvent;
 
 public class LogView extends Shell {
 
@@ -52,6 +55,7 @@ public class LogView extends Shell {
 
 	private SiSiViewController controller;
 	private Text rawDataText;
+	private Table eventsTable;
 
 	/**
 	 * Create the shell.
@@ -79,12 +83,36 @@ public class LogView extends Shell {
 		TabFolder tabFolder = new TabFolder(scrolledFolderComposite, SWT.NONE);
 		tabFolder.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.NORMAL));
 		
+		// tab events (table)
 		TabItem tbtmEvents = new TabItem(tabFolder, SWT.NONE);
 		tbtmEvents.setText("Events");
 		
+		eventsTable = new Table(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
+		eventsTable.setLinesVisible(true);
+		tbtmEvents.setControl(eventsTable);
+		eventsTable.setHeaderVisible(true);
+		TableColumn tblclmnCaseId = new TableColumn(eventsTable, SWT.NONE);
+		tblclmnCaseId.setWidth(100);
+		tblclmnCaseId.setText("Case ID");
+		
+		TableColumn tblclmnTaskId = new TableColumn(eventsTable, SWT.NONE);
+		tblclmnTaskId.setWidth(100);
+		tblclmnTaskId.setText("Task ID");
+		TableColumn tblclmnTask = new TableColumn(eventsTable, SWT.NONE);
+		tblclmnTask.setWidth(100);
+		tblclmnTask.setText("Task");
+		TableColumn tblclmnSubject = new TableColumn(eventsTable, SWT.NONE);
+		tblclmnSubject.setWidth(100);
+		tblclmnSubject.setText("Subject");
+		TableColumn tblclmnObjectsUsed = new TableColumn(eventsTable, SWT.NONE);
+		tblclmnObjectsUsed.setWidth(100);
+		tblclmnObjectsUsed.setText("Object(s) used");
+		
+		// tab violations
 		TabItem tbtmViolations = new TabItem(tabFolder, SWT.NONE);
 		tbtmViolations.setText("Violations");
 		
+		// tab raw data
 		TabItem tbtmRawData = new TabItem(tabFolder, SWT.NONE);
 		tbtmRawData.setText("Raw Data");
 		rawDataText = new Text(tabFolder, SWT.V_SCROLL);
@@ -100,6 +128,7 @@ public class LogView extends Shell {
 		scrolledTreeComposite.setExpandHorizontal(true);
 		scrolledTreeComposite.setExpandVertical(true);
 		
+		// create tree
 		Tree tree = new Tree(scrolledTreeComposite, SWT.NONE);
 		tree.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -114,16 +143,13 @@ public class LogView extends Shell {
 		trtmFullEventLog.setText("Event Log");
 		trtmFullEventLog.setData("all");
 		
+		// add single runs to tree 
 		if( this.controller.getLogGenerator() != null ) {
 			for (Entry<String, EventLog> logEntry : this.controller.getLogGenerator().getEventLogs().entrySet()) {
 				createTreeEntry(logEntry, trtmFullEventLog);
 			}
 		}
-		
-		TreeItem trtmChild = new TreeItem(trtmFullEventLog, SWT.NONE);
-		trtmChild.setImage(ResourceManager.getPluginImage("org.eclipse.debug.ui", "/icons/full/obj16/file_obj.gif"));
-		trtmChild.setText("999-999-999");
-		
+			
 		trtmFullEventLog.setExpanded(true);
 		scrolledTreeComposite.setContent(tree);
 		scrolledTreeComposite.setMinSize(tree.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -158,9 +184,41 @@ public class LogView extends Shell {
 	protected void writeLogToTabs(String id) {
 		// print full log?
 		if(id.equals("all")) {
+			// event table
+			for (EventLog log : controller.getLogGenerator().getEventLogs().values()) {
+				createTableItems(log);
+			}
+			resizeTable(eventsTable);
+			
+			// raw data
 			rawDataText.setText(controller.getLogGenerator().getFullLog());
 		}
 	}
+	
+	private void createTableItems(EventLog log){
+		for (SimulationEvent e : log.getEvents()) {
+			TableItem tableItem = new TableItem(eventsTable, SWT.NONE);
+			System.out.println(e);
+			tableItem.setText(new String[] {e.getSimulationID(), e.getTransition().getId(), e.getTransition().getName(), e.getSubject().getName(), e.getUsedObjects().toString()});
+		}
+	}
+	
+	private static void resizeTable(Table table) {
+		int colSize = 0;
+	    for (TableColumn column : table.getColumns()) {
+	    	column.pack();
+	    	colSize += column.getWidth();
+	    }
+	    int scrollBarWidth = 21;
+	    int spaceLeft = table.getSize().x - colSize - scrollBarWidth;
+	    if( spaceLeft > 0 ) {
+	    	int additionalSpace = spaceLeft/table.getColumnCount();
+	    	for (TableColumn column : table.getColumns()) {
+				column.setWidth(column.getWidth()+additionalSpace);
+			}
+	    }
+	}
+
 	
 	@Override
 	protected void checkSubclass() {
