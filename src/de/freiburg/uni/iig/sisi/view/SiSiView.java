@@ -179,6 +179,7 @@ public class SiSiView {
 				System.exit(0);
 			}
 		});
+		mntmExit.setImage(new Image(shell.getDisplay(), "imgs/exit.png"));
 		mntmExit.setText("Exit");
 		
 		mainComposite = new ScrolledComposite(shell, SWT.H_SCROLL | SWT.V_SCROLL);
