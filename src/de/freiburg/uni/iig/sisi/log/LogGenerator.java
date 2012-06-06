@@ -70,7 +70,6 @@ public class LogGenerator implements PropertyChangeListener {
 		if ( evt.getPropertyName() == SimulationEngine.PROPERTY_MUTATION_EXECUTED ) {
 			MutationEvent mutationEvent = ((MutationEvent) evt.getNewValue());
 			mutationLog.put(mutationEvent.getSimulationID(), mutationEvent);
-			System.out.println(mutationEvent.getSimulationID() + ": " + mutationEvent.getObjectViolated());
 		}
 	}
 

@@ -204,7 +204,7 @@ public class SiSiView {
 		Label lblLoadingInformation = new Label(loadingInfoComposite, SWT.CENTER);
 		lblLoadingInformation.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		lblLoadingInformation.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.ITALIC));
-		lblLoadingInformation.setText("Loading Information");
+		lblLoadingInformation.setText("Load a File or an Example to get started!");
 		
 		Label lblSimulationConfiguration = new Label(activeComposite, SWT.NONE);
 		GridData gd_lblSimulationConfiguration = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 2, 1);
