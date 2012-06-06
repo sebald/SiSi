@@ -7,7 +7,10 @@ import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.log.LogGenerator;
@@ -56,8 +59,11 @@ public class SiSiViewController {
 			logGenerator.generateLog(path, true);
 		}
 		
-		if( showLogView )
+		if( showLogView ) {
 			openLogView();
+		} else {
+			popUpMessageBox();
+		}
 	}
 
 	public LogGenerator getLogGenerator() {
@@ -176,4 +182,15 @@ public class SiSiViewController {
 			}
 		}
 	}
+	
+
+	private void popUpMessageBox() {
+		Display display = Display.getDefault();
+	    Shell shell = new Shell(display);
+		MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_WORKING);
+        mb.setText("SiSi - Info");
+        mb.setMessage("Simulation successfully finished!");
+        mb.open();
+		
+	}	
 }
