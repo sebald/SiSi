@@ -154,6 +154,10 @@ public class LogView extends Shell {
 		scrolledTreeComposite.setContent(tree);
 		scrolledTreeComposite.setMinSize(tree.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		createContents();
+		
+		// select "all"
+		tree.setSelection(trtmFullEventLog);
+		writeLogToTabs("all");
 	}
 	
 	/**
@@ -170,8 +174,7 @@ public class LogView extends Shell {
 	    Rectangle rect = getBounds();
 	    int x = bounds.x + (bounds.width - rect.width) / 2;
 	    int y = bounds.y + (bounds.height - rect.height) / 2;
-	    setLocation(x, y);
-
+	    setLocation(x, y);	    
 	}
 
 	protected void createTreeEntry(Entry<String, EventLog> logEntry, TreeItem parent) {
