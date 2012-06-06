@@ -158,6 +158,7 @@ public class LogView extends Shell {
 		// select "all"
 		tree.setSelection(trtmFullEventLog);
 		writeLogToTabs("all");
+		resizeTable(eventsTable);
 	}
 	
 	/**
@@ -195,14 +196,12 @@ public class LogView extends Shell {
 			for (EventLog log : controller.getLogGenerator().getEventLogs().values()) {
 				createTableItems(log, eventsTable);
 			}
-			resizeTable(eventsTable);
 			
 			// raw data
 			rawDataText.setText(controller.getLogGenerator().getFullLog());
 		} else {
 			// event table
 			createTableItems(controller.getLogGenerator().getEventLogs().get(id), eventsTable);	
-			resizeTable(eventsTable);
 			// raw data
 			rawDataText.setText(controller.getLogGenerator().logToCSV(id));
 		}
