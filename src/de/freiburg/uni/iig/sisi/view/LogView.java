@@ -84,6 +84,8 @@ public class LogView extends Shell {
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		
 		ToolItem tltmSave = new ToolItem(toolBar, SWT.NONE);
+		tltmSave.setToolTipText("Save currently selected Log");
+		tltmSave.setText("Save");
 		tltmSave.setImage(new Image(this.getDisplay(), "imgs/save.png"));
 		tltmSave.setData(this.controller.getSaveToPath());
 		tltmSave.addSelectionListener(new SelectionAdapter() {
@@ -136,7 +138,7 @@ public class LogView extends Shell {
 		TabItem tbtmViolations = new TabItem(tabFolder, SWT.NONE);
 		tbtmViolations.setText("Violations Data");
 		
-		violationDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.V_SCROLL);
+		violationDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL);
 		violationDataText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		violationDataText.setFont(SWTResourceManager.getFont("Courier New", 11, SWT.NORMAL));
 		tbtmViolations.setControl(violationDataText);

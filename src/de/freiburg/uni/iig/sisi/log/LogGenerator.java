@@ -93,7 +93,7 @@ public class LogGenerator implements PropertyChangeListener {
 			output.write(log);
 			output.close();			
 		}
-
+		generateViolationLog(path, true);
 		return log;
 	}
 	
@@ -117,8 +117,68 @@ public class LogGenerator implements PropertyChangeListener {
 			output.close();			
 		}
 
+		if ( !mutationLog.isEmpty() ) {
+			String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
+			violationPath += "_violationData" + new String(path.substring(path.lastIndexOf('.')));
+			generateLogFromID(id, violationPath, true);
+		}		
+		generateViolationLogFromID(id, path, true);
 		return log;		
 	}
+	
+	private String generateViolationLog(String path, boolean createFile) throws IOException {
+		if ( mutationLog.isEmpty() )
+			return null;
+		
+		String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
+		violationPath += "_violationData" + new String(path.substring(path.lastIndexOf('.')));
+		
+		String log = "";
+		if ( fileMode == FileMode.MXML ) {
+			log = logsToCSV();
+		} else {
+			log = logsToCSV();
+		}
+		
+		// create file
+		if ( createFile ) {
+			Writer output = null;
+			File file = new File(violationPath);
+			if ( !file.exists() )
+				file.createNewFile();
+			output = new BufferedWriter(new FileWriter(file));
+			output.write(log);
+			output.close();			
+		}	
+		return log;
+	}
+	
+	private String generateViolationLogFromID(String id, String path, boolean createFile) throws IOException {
+		if ( !mutationLog.containsKey(id) )
+			return null;
+		
+		String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
+		violationPath += "_violationData" + new String(path.substring(path.lastIndexOf('.')));		
+		// parse log
+		String log = "";
+		if ( fileMode == FileMode.MXML ) {
+			log = logToCSV(id);
+		} else {
+			log = logToCSV(id);
+		}
+		
+		// create file
+		if ( createFile ) {
+			Writer output = null;
+			File file = new File(violationPath);
+			if ( !file.exists() )
+				file.createNewFile();
+			output = new BufferedWriter(new FileWriter(file));
+			output.write(log);
+			output.close();			
+		}
+		return null;
+	}	
 	
 	public String logToCSV(String id) {
 		String log = "";

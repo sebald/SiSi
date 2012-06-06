@@ -30,7 +30,7 @@ public class SimulationConfiguration {
 	private HashMap<DeviationType, Integer> deviationMap = new HashMap<DeviationType, Integer>();
 	
 	private FileMode fileMode = FileMode.CSV;
-	private String saveLogPath = "";
+	private String saveLogPath = System.getProperty("user.dir") + System.getProperty("file.separator");
 	private boolean seperateLogs = false;
 
 	private LinkedList<ProcessModel> processModels = new LinkedList<ProcessModel>();
