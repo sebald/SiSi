@@ -11,7 +11,7 @@ public class SimulationEvent {
 	private final String simulationID;
 	private final Transition transition;
 	private final Subject subject;
-	private final HashSet<WorkObject> usedObjects;
+	private HashSet<WorkObject> usedObjects = new HashSet<WorkObject>();
 	
 	public SimulationEvent(String simulationID, Transition transition, Subject subject, HashSet<WorkObject> usedObjects) {
 		super();
@@ -19,7 +19,8 @@ public class SimulationEvent {
 		this.simulationID = simulationID;
 		this.transition = transition;
 		this.subject = subject;
-		this.usedObjects = usedObjects;
+		if( usedObjects != null )
+			this.usedObjects.addAll(usedObjects);
 	}
 
 	public String getSimulationID() {
