@@ -132,11 +132,22 @@ public class PTNet extends ModelObject {
 		return null;
 	}	
 	
+	public boolean isSplit(Node node) {
+		if( node.getOutgoingArcs().size() > 1 ) return true;
+		return false;
+	}
+	
+	public boolean isJoin(Node node) {
+		if( node.getIncomingArcs().size() > 1 ) return true;
+		return false;		
+	}
+	
 	/**
 	 * Search for scopes. E.g. fragments of the {@link PTNet} that starts with a split and end with an join (AND or XOR).
 	 * This function is needed to transform the {@link PTNet} and create AND2XOR or XOR2AND deviations.
 	 */
-	public HashMap<Transition, Transition> findScopes() {
+	public HashMap<Node, Node> findScopes() {
+		ArrayList<Node> splits = new ArrayList<Node>();
 		
 		
 		
