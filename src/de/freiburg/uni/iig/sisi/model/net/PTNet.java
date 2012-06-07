@@ -150,7 +150,7 @@ public class PTNet extends ModelObject {
 	}
 	
 	/**
-	 * Searches for scopes that begin and end with transitions.
+	 * Searches for scopes that begin and end with transitions. => AND
 	 * 
 	 * @return
 	 */
@@ -164,7 +164,7 @@ public class PTNet extends ModelObject {
 	}
 
 	/**
-	 * Searches for scopes that begin and end with transitions.
+	 * Searches for scopes that begin and end with places. => XOR
 	 * 
 	 * @return
 	 */
