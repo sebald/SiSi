@@ -7,7 +7,7 @@ import de.freiburg.uni.iig.sisi.log.LogGenerator.FileMode;
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
-import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
+import de.freiburg.uni.iig.sisi.model.net.variant.NetDeviation.DeviationType;
 
 public class SimulationConfiguration {
 

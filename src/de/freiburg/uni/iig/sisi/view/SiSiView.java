@@ -41,10 +41,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.xml.sax.SAXException;
 
+import de.freiburg.uni.iig.sisi.model.net.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
-import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.simulation.SimulationExcpetion;
 
 @SuppressWarnings("restriction")

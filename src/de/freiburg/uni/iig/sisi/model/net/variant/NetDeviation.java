@@ -1,4 +1,4 @@
-package de.freiburg.uni.iig.sisi.model.variant;
+package de.freiburg.uni.iig.sisi.model.net.variant;
 
 import java.util.ArrayList;
 

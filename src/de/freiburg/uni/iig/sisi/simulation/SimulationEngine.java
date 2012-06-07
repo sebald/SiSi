@@ -14,6 +14,8 @@ import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Arc;
 import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
+import de.freiburg.uni.iig.sisi.model.net.variant.VariantProcessModel;
+import de.freiburg.uni.iig.sisi.model.net.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.model.resource.Role;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
@@ -25,8 +27,6 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantFactory;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutationEvent;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
-import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
-import de.freiburg.uni.iig.sisi.model.variant.VariantProcessModel;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelectionMode;
 
 public class SimulationEngine extends NarratorObject {

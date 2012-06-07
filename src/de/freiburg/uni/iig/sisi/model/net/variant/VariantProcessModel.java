@@ -1,4 +1,4 @@
-package de.freiburg.uni.iig.sisi.model.variant;
+package de.freiburg.uni.iig.sisi.model.net.variant;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,8 +12,8 @@ import org.xml.sax.SAXException;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.net.Transition.TransitionType;
+import de.freiburg.uni.iig.sisi.model.net.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.model.resource.WorkObject;
-import de.freiburg.uni.iig.sisi.model.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class VariantProcessModel extends ProcessModel {
