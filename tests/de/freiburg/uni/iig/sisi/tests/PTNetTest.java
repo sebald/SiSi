@@ -3,6 +3,7 @@ package de.freiburg.uni.iig.sisi.tests;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -11,6 +12,7 @@ import org.xml.sax.SAXException;
 
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Arc;
+import de.freiburg.uni.iig.sisi.model.net.Node;
 import de.freiburg.uni.iig.sisi.model.net.PTNet;
 import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
@@ -87,6 +89,19 @@ public class PTNetTest {
 		
 		assertEquals("Is sink", true, p.getId().equals("p09"));
 		assertEquals("Is sink", false, p.getId().equals("p01"));
+	}
+	
+	@Test
+	public void testFindScopes() throws ParserConfigurationException, SAXException, IOException {
+		PNMLReader reader = new PNMLReader();
+		PTNet net = reader.createModelFromPNML("examples/kbv.pnml").getNet();
+		HashMap<Node, Node> scopes = net.findScopes();
+		
+		assertEquals("Has two scopes.", 2, scopes.size());
+		
+		assertEquals("Concurrency t1 -> t4", net.getNode("t04"), scopes.get(net.getNode("t01")));
+		
+		assertEquals("Decision p7 -> p8", net.getNode("p08"), scopes.get(net.getNode("p07")));
 	}
 	
 }

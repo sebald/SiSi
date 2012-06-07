@@ -1,8 +1,11 @@
 package de.freiburg.uni.iig.sisi.model.net;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 
@@ -49,6 +52,10 @@ public class PTNet extends ModelObject {
 	
 	public Node getNode(String id){
 		return this.nodeMap.get(id);
+	}
+	
+	public Collection<Node> getNodes(){
+		return this.nodeMap.values();
 	}
 	
 	public HashMap<Place, Integer> getInitialMarking() {
@@ -147,12 +154,91 @@ public class PTNet extends ModelObject {
 	 * This function is needed to transform the {@link PTNet} and create AND2XOR or XOR2AND deviations.
 	 */
 	public HashMap<Node, Node> findScopes() {
+		HashMap<Node, Node> scopes = new HashMap<Node, Node>();
 		ArrayList<Node> splits = new ArrayList<Node>();
+		for (Node node : getNodes()) {
+			if( isSplit(node) )
+				splits.add(node);
+		}
+		// for every split node find the join
+		for (Node splitNode : splits) {
+			Node joinNode = findFirstCommonNode(getFollowingNodes(splitNode));
+			if( joinNode != null )
+				scopes.put(splitNode, joinNode);
+		}
+		return scopes;
+	}
+	
+	/**
+	 * Walk ignores node types and firing (e.g. transition/place). Just walks over all possible
+	 * paths and stores the {@link Node}s in visited order. <b>Warning:</b> This is a recursive
+	 * method, so be sure that the net you are walking has a sink place!
+	 * 
+	 * @param node
+	 * @param visitedNodes
+	 * @return list of visited nodes
+	 */
+	public LinkedList<Node> walk(Node node, LinkedList<Node> visitedNodes) {
+		visitedNodes.add(node);
+		ArrayList<Node> postSet = node.getPostSet();
+		if( postSet.size() == 0 )
+			return visitedNodes;
+		// depth first walk
+		for (Node postNode : postSet) {
+			walk(postNode, visitedNodes);
+		}
+		return visitedNodes;
+	}
+	
+	/**
+	 * Find all {@link Node}s that can be visited from the input {@code node}'s post set.
+	 * 
+	 * @param node
+	 * @return paths starting from the post set of {@code node}. The key of the returned map is
+	 * the starting node of the path
+	 */
+	public HashMap<Node, LinkedList<Node>> getFollowingNodes(Node node) {
+		ArrayList<Node> postSet = node.getPostSet();
+		HashMap<Node, LinkedList<Node>> visitedtNodes = new HashMap<Node, LinkedList<Node>>();
+		for (Node postNode : postSet) {
+			LinkedList<Node> pathNodes = new LinkedList<Node>();
+			walk(postNode, pathNodes);
+			visitedtNodes.put(postNode, pathNodes);
+		}
+		return visitedtNodes;
+	}
+	
+	/**
+	 * Find the first common not of some paths.
+	 * 
+	 * @param pathMap
+	 * @return the first common node.
+	 */
+	public Node findFirstCommonNode(HashMap<Node, LinkedList<Node>> pathMap) {
+		Node commonNode = null;
 		
+		// take a path and remove if from the map
+		Entry<Node, LinkedList<Node>> entry = pathMap.entrySet().iterator().next();
+		LinkedList<Node> referencePath = entry.getValue();
+		pathMap.remove(entry.getKey());
 		
-		
-		
-		return null;
+		//iterate the path
+		for (Node node : referencePath) {
+			boolean common = false;
+			// check if every other path also conains the node
+			for (LinkedList<Node> path : pathMap.values()) {
+				if( path.contains(node) ) {
+					common = true;
+				} else {
+					common = false;
+				}	
+			}
+			if( common ) {
+				commonNode = node;
+				break;
+			}
+		}
+		return commonNode;
 	}
 	
 }
