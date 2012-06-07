@@ -17,6 +17,12 @@ public class Arc extends ModelObject {
 		return source;
 	}
 
+	/**
+	 * Set source {@link Node} for {@link Arc} and add {@link Arc} to the list
+	 * of outgoing {@link Arc}s for the {@link Node}.
+	 * 
+	 * @param source
+	 */
 	public void setSource(Node source) {
 		this.source = source;
 		source.addOutgoingArc(this);
@@ -25,7 +31,13 @@ public class Arc extends ModelObject {
 	public Node getTarget() {
 		return target;
 	}
-
+	
+	/**
+	 * Set source {@link Node} for {@link Arc} and add {@link Arc} to the list
+	 * of incomming {@link Arc}s for the {@link Node}.
+	 * 
+	 * @param target
+	 */
 	public void setTarget(Node target) {
 		this.target = target;
 		target.addIncomingArc(this);

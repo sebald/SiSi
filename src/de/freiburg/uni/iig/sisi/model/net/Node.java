@@ -14,6 +14,14 @@ public class Node extends ModelObject {
 	private LinkedList<Arc> incomingArcs = new LinkedList<Arc>();
 	private LinkedList<Arc>	outgoingArcs = new LinkedList<Arc>();
 	
+	public void setIncomingArcs(LinkedList<Arc> incomingArcs) {
+		this.incomingArcs = incomingArcs;
+	}
+
+	public void setOutgoingArcs(LinkedList<Arc> outgoingArcs) {
+		this.outgoingArcs = outgoingArcs;
+	}
+	
 	public LinkedList<Arc> getIncomingArcs() {
 		return incomingArcs;
 	}
