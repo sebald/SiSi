@@ -36,6 +36,10 @@ public class NetDeviation {
 		this.oldValues.add(new Node(oldValue.getId(), oldValue.getName()));
 	}
 
+	public void addOldValues(ArrayList<Node> oldValues) {
+		this.oldValues.addAll(new ArrayList<Node>(oldValues));
+	}
+	
 	protected ArrayList<Node> getNewValues() {
 		return newValues;
 	}
@@ -49,6 +53,8 @@ public class NetDeviation {
 		this.newValues.add(new Node(newValue.getId(), newValue.getName()));
 	}
 
-	
+	public void addNewValues(ArrayList<Node> newValues) {
+		this.newValues.addAll(new ArrayList<Node>(newValues));
+	}	
 	
 }

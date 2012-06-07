@@ -63,15 +63,86 @@ public class VariantProcessModel extends ProcessModel {
 			swapTransitions();
 		} else if ( type == DeviationType.AND2XOR ) {
 			transformAnd2Xor();
+		} else if ( type == DeviationType.XOR2AND ) {
+			transformXor2And();
 		}
+	}
+
+	private void transformXor2And() {
+		// get random decision
+		HashMap<Place, Place> decisions = getNet().findDecisions();
+		List<Place> keys = new ArrayList<Place>(decisions.keySet());
+		Place xorSplit = keys.get( new Random().nextInt(keys.size()) );
+		Place xorJoin = decisions.get(xorSplit);
+
+		// old values
+		getDeviation().addOldValue(xorSplit);
+		getDeviation().addOldValue(xorJoin);			
+		
+		// split xorSplit
+		String xorSplitID = xorSplit.getId();
+		int i = 0;
+		for (Arc arc : xorSplit.getOutgoingArcs()) {
+			// new place
+			Place p = new Place(xorSplitID+"_"+i, "", 0);
+			getNet().addPlace(p);
+			getNet().addInitialMarking(p);			
+			i++;
+			// (re)set outgoing arcs
+			arc.setSource(p);
+			//copy incoming arcs for every new place
+			for (Arc incArc : xorSplit.getIncomingArcs()) {
+				Arc newIncArc = new Arc("a_"+incArc.getSource()+p.getId(), incArc.getSource(), p);
+				getNet().addArc(newIncArc);
+			}
+			getDeviation().addNewValue(p);
+		}
+		//remove the incoming arcs from the xorSplit
+		for (Arc incArc : xorSplit.getIncomingArcs()) {
+			incArc.getSource().removeOutgoingArc(incArc);
+			getNet().removeArc(incArc);
+		}
+		getNet().removePlace(xorSplit);
+		
+		// split xorJoin
+		String xorJoinID = xorJoin.getId();
+		int j = 0;
+		for (Arc arc : xorJoin.getIncomingArcs()) {
+			// new place
+			Place p = new Place(xorJoinID+"_"+j, "", 0);
+			getNet().addPlace(p);
+			getNet().addInitialMarking(p);			
+			j++;
+			// (re)set outgoing arcs
+			arc.setTarget(p);
+			//copy incoming arcs for every new place
+			for (Arc outArc : xorJoin.getOutgoingArcs()) {
+				Arc newOutArc = new Arc("a_"+p.getId()+outArc.getTarget(), p, outArc.getTarget());
+				getNet().addArc(newOutArc);
+			}
+			getDeviation().addNewValue(p);
+		}
+		//remove the incoming arcs from the xorSplit
+		for (Arc outArc : xorJoin.getOutgoingArcs()) {
+			outArc.getTarget().removeIncomingArc(outArc);
+			getNet().removeArc(outArc);
+		}
+		getNet().removePlace(xorJoin);
+		
+		// update markings
+		getNet().reset();
 	}
 
 	private void transformAnd2Xor() {
 		// get random concurrency
-		HashMap<Transition, Transition> andSplits = getNet().findConcurrency();
-		List<Transition> keys = new ArrayList<Transition>(andSplits.keySet());
+		HashMap<Transition, Transition> concurrencies = getNet().findConcurrencies();
+		List<Transition> keys = new ArrayList<Transition>(concurrencies.keySet());
 		Transition andSplit = keys.get( new Random().nextInt(keys.size()) );
-		Transition andJoin = andSplits.get(andSplit);
+		Transition andJoin = concurrencies.get(andSplit);
+
+		// old values
+		getDeviation().addOldValues(andSplit.getPostSet());
+		getDeviation().addOldValues(andJoin.getPreSet());		
 		
 		//merge postSet to one place
 		ArrayList<Node> postSet = andSplit.getPostSet();
@@ -131,6 +202,10 @@ public class VariantProcessModel extends ProcessModel {
 		
 		// update markings
 		getNet().reset();
+		
+		// new values
+		getDeviation().addNewValues(andSplit.getPostSet());
+		getDeviation().addNewValues(andJoin.getPreSet());		
 	}
 
 	private void swapTransitions() {

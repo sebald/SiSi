@@ -22,8 +22,11 @@ public class VariationTest {
 		ProcessModel pm = reader.createModelFromPNML("examples/kbv.pnml");		
 		VariantProcessModel v = new VariantProcessModel(pm, DeviationType.AND2XOR);
 
-		assertEquals("Is mutant", true, pm.getNet().getPlaces().size() == (v.getNet().getPlaces().size()+2) );
+		assertEquals("Is variant", true, pm.getNet().getPlaces().size() == (v.getNet().getPlaces().size()+2) );
 		
+		VariantProcessModel v1 = new VariantProcessModel(pm, DeviationType.XOR2AND);
+		
+		assertEquals("Is variant", true, pm.getNet().getPlaces().size() == (v1.getNet().getPlaces().size()-2) );
 	}
 
 }

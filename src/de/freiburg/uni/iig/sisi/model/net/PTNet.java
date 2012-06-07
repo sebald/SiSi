@@ -52,6 +52,10 @@ public class PTNet extends ModelObject {
 		this.arcs.add(arc);
 	}
 	
+	public void removeArc(Arc arc) {
+		this.arcs.remove(arc);
+	}
+	
 	protected void addNode(Node node) {
 		this.nodeMap.put(node.getId(), node);
 	}
@@ -164,7 +168,7 @@ public class PTNet extends ModelObject {
 	 * 
 	 * @return
 	 */
-	public HashMap<Transition, Transition> findConcurrency(){
+	public HashMap<Transition, Transition> findConcurrencies(){
 		HashMap<Transition, Transition> concurrencies = new HashMap<Transition, Transition>();
 		for (Entry<Node, Node> entry : findScopes().entrySet()) {
 			if( (entry.getKey() instanceof Transition) && (entry.getValue() instanceof Transition) )

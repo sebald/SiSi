@@ -123,8 +123,8 @@ public class SimulationEngine extends NarratorObject {
 		}		
 		// # of runs with a XOR2AND deviation
 		if( configuration.getDeviationMap().containsKey(DeviationType.XOR2AND) ) {
-			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.SWAPPING); i++) {
-				processModels.add(new VariantProcessModel(configuration.getOriginalModel()));
+			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.XOR2AND); i++) {
+				processModels.add(new VariantProcessModel(configuration.getOriginalModel(), DeviationType.XOR2AND));
 			}				
 		}		
 	}
