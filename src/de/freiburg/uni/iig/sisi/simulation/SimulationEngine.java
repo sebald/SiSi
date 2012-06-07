@@ -14,8 +14,8 @@ import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Arc;
 import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
-import de.freiburg.uni.iig.sisi.model.net.variant.VariantProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.variant.NetDeviation.DeviationType;
+import de.freiburg.uni.iig.sisi.model.net.variant.VariantProcessModel;
 import de.freiburg.uni.iig.sisi.model.resource.Role;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
@@ -117,8 +117,8 @@ public class SimulationEngine extends NarratorObject {
 		}
 		// # of runs with a AND2XOR deviation
 		if( configuration.getDeviationMap().containsKey(DeviationType.AND2XOR) ) {
-			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.SWAPPING); i++) {
-				processModels.add(new VariantProcessModel(configuration.getOriginalModel()));
+			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.AND2XOR); i++) {
+				processModels.add(new VariantProcessModel(configuration.getOriginalModel(), DeviationType.AND2XOR));
 			}				
 		}		
 		// # of runs with a XOR2AND deviation

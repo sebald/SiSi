@@ -29,6 +29,12 @@ public class PTNet extends ModelObject {
 		this.nodeMap.put(place.getId(), place);
 	}
 	
+	public void removePlace(Place place) {
+		this.places.remove(place);
+		this.nodeMap.remove(place.getId());
+		this.initialMarking.remove(place);
+	}
+	
 	public ArrayList<Transition> getTransitions() {
 		return transitions;
 	}
@@ -64,6 +70,10 @@ public class PTNet extends ModelObject {
 
 	public void setInitialMarking(HashMap<Place, Integer> initialMarking) {
 		this.initialMarking = initialMarking;
+	}
+	
+	public void addInitialMarking(Place place) {
+		this.initialMarking.put(place, place.getMarking());
 	}
 	
 	public HashMap<Transition, HashSet<String>> getWorkObjectsMap() {
