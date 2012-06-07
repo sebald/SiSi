@@ -150,6 +150,34 @@ public class PTNet extends ModelObject {
 	}
 	
 	/**
+	 * Searches for scopes that begin and end with transitions.
+	 * 
+	 * @return
+	 */
+	public HashMap<Transition, Transition> findConcurrency(){
+		HashMap<Transition, Transition> concurrencies = new HashMap<Transition, Transition>();
+		for (Entry<Node, Node> entry : findScopes().entrySet()) {
+			if( (entry.getKey() instanceof Transition) && (entry.getValue() instanceof Transition) )
+				concurrencies.put((Transition) entry.getKey(), (Transition) entry.getValue());
+		}
+		return concurrencies;
+	}
+
+	/**
+	 * Searches for scopes that begin and end with transitions.
+	 * 
+	 * @return
+	 */
+	public HashMap<Place, Place> findDecisions(){
+		HashMap<Place, Place> decisions = new HashMap<Place, Place>();
+		for (Entry<Node, Node> entry : findScopes().entrySet()) {
+			if( (entry.getKey() instanceof Place) && (entry.getValue() instanceof Place) )
+				decisions.put((Place) entry.getKey(), (Place) entry.getValue());
+		}
+		return decisions;
+	}	
+	
+	/**
 	 * Search for scopes. E.g. fragments of the {@link PTNet} that starts with a split and end with an join (AND or XOR).
 	 * This function is needed to transform the {@link PTNet} and create AND2XOR or XOR2AND deviations.
 	 */
