@@ -1,6 +1,7 @@
 package de.freiburg.uni.iig.sisi.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,6 +21,47 @@ import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class PTNetTest {
 
+	@Test
+	public void testRun() {
+		PTNet n = new PTNet();
+		Place p1 = new Place("0", "", 1);
+		Place p2 = new Place("1", "", 0);
+		n.addPlace(p1);
+		n.addInitialMarking(p1);
+		n.addPlace(p2);
+		n.addInitialMarking(p2);
+		n.addTransition(new Transition("2", ""));
+		Arc arc1 = new Arc("02", n.getNode("0"), n.getNode("2"));
+		Arc arc2 = new Arc("21", n.getNode("2"), n.getNode("1"));
+		n.addArc(arc1);
+		n.addArc(arc2);
+		
+		n.reset();
+		
+		assertNull("Run finished", n.run());
+	}
+	
+	@Test
+	public void testFire() {
+		PTNet n = new PTNet();
+		Place p1 = new Place("0", "", 1);
+		Place p2 = new Place("1", "", 0);
+		n.addPlace(p1);
+		n.addInitialMarking(p1);
+		n.addPlace(p2);
+		n.addInitialMarking(p2);
+		n.addTransition(new Transition("2", ""));
+		Arc arc1 = new Arc("02", n.getNode("0"), n.getNode("2"));
+		Arc arc2 = new Arc("21", n.getNode("2"), n.getNode("1"));
+		n.addArc(arc1);
+		n.addArc(arc2);
+		
+		n.reset();
+		n.fire();
+		
+		assertNull("Firing finished", n.fire());
+	}	
+	
 	@Test
 	public void testPartOfSmallConcurrency() throws ParserConfigurationException, SAXException, IOException {
 		

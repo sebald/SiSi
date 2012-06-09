@@ -97,6 +97,7 @@ public class PTNet extends ModelObject {
 	}
 	
 	public Transition fire(){
+		if( fireableTransitions.isEmpty() ) return null;
 		return fire(getRandomFireableTransition());
 	}
 	
@@ -146,6 +147,12 @@ public class PTNet extends ModelObject {
 			place.setMarking(initialMarking.get(place));
 		}
 		updateFireableTransitions();
+	}
+	
+	public LinkedList<Transition> run(){
+		LinkedList<Transition> firedTransitions = new LinkedList<Transition>();
+		while (firedTransitions.add(fire()));
+		return firedTransitions;
 	}
 	
 	/**

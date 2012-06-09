@@ -234,7 +234,14 @@ public class SimulationEngine extends NarratorObject {
 		internalEventMap.clear();
 	}
 
+	/**
+	 * This method will fire the {@code currentProcessModel} once, so that after each firing
+	 * additional informations can be logged. E.g. who fired the transition.
+	 * 
+	 * @throws SimulationExcpetion
+	 */
 	private void fire() throws SimulationExcpetion {
+		// step-wise firing
 		Transition transition = currentProcessModel.getNet().fire();
 		Subject subject = firedby(transition);
 		// generate event
