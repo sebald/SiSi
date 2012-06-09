@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 
@@ -19,6 +20,7 @@ public class PTNet extends ModelObject {
 	private HashMap<String, Node> nodeMap = new HashMap<String, Node>();
 	private HashMap<Place, Integer> initialMarking = new HashMap<Place, Integer>();
 	private HashMap<Transition, HashSet<String>> workObjectsMap = new HashMap<Transition, HashSet<String>>();
+	private HashSet<Transition> fireableTransitions = new HashSet<Transition>();
 
 	public ArrayList<Place> getPlaces() {
 		return places;
@@ -94,10 +96,56 @@ public class PTNet extends ModelObject {
 		}
 	}
 	
+	public Transition fire(){
+		return fire(getRandomFireableTransition());
+	}
+	
+	public Transition fire(Transition transition) {
+		// remove tokens form pre set
+		for (Arc arc : transition.getIncomingArcs()) {
+			Place p = ((Place) arc.getSource());
+			p.setMarking(p.getMarking() - 1);
+		}
+		// add tokens to post set
+		for (Arc arc : transition.getOutgoingArcs()) {
+			Place p = ((Place) arc.getTarget());
+			p.setMarking(p.getMarking() + 1);
+		}
+		// check what is now fireable
+		updateFireableTransitions();
+		return transition;
+	}
+
+	private Transition getRandomFireableTransition() {
+		Random generator = new Random();
+		Object[] values = getFireableTransitions().toArray();
+		return (Transition) values[generator.nextInt(values.length)];
+	}	
+	
+	public HashSet<Transition> getFireableTransitions() {
+		return fireableTransitions;
+	}
+
+	protected void setFireableTransitions(HashSet<Transition> fireableTransitions) {
+		this.fireableTransitions = fireableTransitions;
+	}
+
+	public void updateFireableTransitions() {
+		HashSet<Transition> fireableTransitions = new HashSet<Transition>();
+		// add every transition that could be fired
+		for (Transition transition : getTransitions()) {
+			if (transition.isFireable()) {				
+				fireableTransitions.add(transition);
+			}
+		}		
+		this.setFireableTransitions(fireableTransitions);
+	}	
+	
 	public void reset(){
 		for (Place place : places) {
 			place.setMarking(initialMarking.get(place));
 		}
+		updateFireableTransitions();
 	}
 	
 	/**

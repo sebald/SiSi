@@ -11,8 +11,6 @@ import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.NarratorObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
-import de.freiburg.uni.iig.sisi.model.net.Arc;
-import de.freiburg.uni.iig.sisi.model.net.Place;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.net.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.model.net.variant.VariantProcessModel;
@@ -43,7 +41,7 @@ public class SimulationEngine extends NarratorObject {
 	private final SimulationConfiguration configuration;
 
 	// important vars while simulation
-	private HashSet<Transition> fireableTransitions = new HashSet<Transition>();
+//	private HashSet<Transition> fireableTransitions = new HashSet<Transition>();
 	private HashMap<Transition, HashSet<Policy>> policiesToSatisfy = new HashMap<Transition, HashSet<Policy>>();
 	private HashMap<Transition, HashSet<UsageControl>> usageControlsToSatisfy = new HashMap<Transition, HashSet<UsageControl>>();
 	private HashMap<MutantObject, ModelObject> executedMutants = new HashMap<MutantObject, ModelObject>();
@@ -187,9 +185,8 @@ public class SimulationEngine extends NarratorObject {
 	private ModelState simulateCurrentModel() throws SimulationExcpetion{
 		notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
 		reset();
-		while (!fireableTransitions.isEmpty()) {
-			Transition transition = getRandomFireableTransition();
-			fire(transition);
+		while (!currentProcessModel.getNet().getFireableTransitions().isEmpty()) {
+			fire();
 		}
 		notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
 		
@@ -229,7 +226,6 @@ public class SimulationEngine extends NarratorObject {
 	public void reset() throws SimulationExcpetion {
 		// reset net
 		currentProcessModel.getNet().reset();
-		updateFireableTransitions();
 		
 		// clear internal vars
 		policiesToSatisfy.clear();
@@ -237,38 +233,9 @@ public class SimulationEngine extends NarratorObject {
 		executedMutants.clear();
 		internalEventMap.clear();
 	}
-	
-	private void updateFireableTransitions() throws SimulationExcpetion {
-		HashSet<Transition> fireableTransitions = new HashSet<Transition>();
-		// add every transition that could be fired
-		for (Transition transition : currentProcessModel.getNet().getTransitions()) {
-			if (transition.isFireable()) {				
-				fireableTransitions.add(transition);
-			}
-		}		
-		this.fireableTransitions = fireableTransitions;
-	}
 
-	private Transition getRandomFireableTransition() {
-		Random generator = new Random();
-		Object[] values = fireableTransitions.toArray();
-		return (Transition) values[generator.nextInt(values.length)];
-	}
-
-	private void fire(Transition transition) throws SimulationExcpetion {
-		// we fire it, we remove it
-		fireableTransitions.remove(transition.getId());
-		// remove tokens form pre set
-		for (Arc arc : transition.getIncomingArcs()) {
-			Place p = ((Place) arc.getSource());
-			p.setMarking(p.getMarking() - 1);
-		}
-		// add tokens to post set
-		for (Arc arc : transition.getOutgoingArcs()) {
-			Place p = ((Place) arc.getTarget());
-			p.setMarking(p.getMarking() + 1);
-		}
-		
+	private void fire() throws SimulationExcpetion {
+		Transition transition = currentProcessModel.getNet().fire();
 		Subject subject = firedby(transition);
 		// generate event
 		SimulationEvent event = new SimulationEvent(simulationRunID, transition, subject, currentProcessModel.getResourceModel().getWorkObjectFor(transition));
@@ -276,9 +243,6 @@ public class SimulationEngine extends NarratorObject {
 		// the event is observable, if the transition has a label (no silent transition)
 		if ( !transition.isSilent() )
 			notifyListeners(this, PROPERTY_TRANSITION_FIRED, event);		
-		
-		// check what is now fireable
-		updateFireableTransitions();
 	}
 
 	private Subject firedby(Transition transition) throws SimulationExcpetion {
