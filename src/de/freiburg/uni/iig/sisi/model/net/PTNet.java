@@ -359,7 +359,8 @@ public class PTNet extends ModelObject {
 	}
 	
 	/**
-	 * Used by {@code generateReachabilitySet} to create the reachability set.
+	 * Used by {@code generateReachabilitySet} to create the reachability set. Traverses (depth first) through the net and fires every possible
+	 * marking.
 	 * 
 	 * @param transition
 	 * @param marking
