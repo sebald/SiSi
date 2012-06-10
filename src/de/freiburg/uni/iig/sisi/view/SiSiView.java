@@ -424,7 +424,8 @@ public class SiSiView {
 		lblRunsWithoutViolations.setText("Runs without Violations");
 		
 		Spinner spinnerRunsWithoutViolations = new Spinner(grpViolationConfiguration, SWT.BORDER);
-		spinnerRunsWithoutViolations.setMinimum(1);
+		spinnerRunsWithoutViolations.setMinimum(0);
+		spinnerRunsWithoutViolations.setSelection(1);
 		spinnerRunsWithoutViolations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		spinnerRunsWithoutViolations.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
