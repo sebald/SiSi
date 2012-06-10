@@ -354,6 +354,7 @@ public class PTNet extends ModelObject {
 		reachabilitySet = new HashMap<Transition, HashSet<Transition>>();
 		for (Transition transition : transitions) {
 			reachabilitySet.put(transition, new HashSet<Transition>());
+			reachabilitySet.get(transition).add(transition);
 		}
 		traverse(null, getCurrentMarking(), new HashSet<Transition>());
 	}

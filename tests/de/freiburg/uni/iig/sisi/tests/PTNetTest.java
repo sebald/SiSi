@@ -143,8 +143,8 @@ public class PTNetTest {
 		
 		pm.getNet().generateReachabilitySet();
 		
-		assertEquals("Size of reachability set.", 7, pm.getNet().getReachableTransitionsFor((Transition) pm.getNet().getNode("t01")).size());
-		assertEquals("Size of reachability set.", 0, pm.getNet().getReachableTransitionsFor((Transition) pm.getNet().getNode("t08")).size());
+		assertEquals("Size of reachability set.", 8, pm.getNet().getReachableTransitionsFor((Transition) pm.getNet().getNode("t01")).size());
+		assertEquals("Size of reachability set.", 1, pm.getNet().getReachableTransitionsFor((Transition) pm.getNet().getNode("t08")).size());
 	}
 	
 }
