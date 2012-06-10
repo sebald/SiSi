@@ -277,7 +277,8 @@ public class SimulationEngine extends NarratorObject {
 	}
 
 	private Transition getFireableTransition() {
-		HashSet<Transition> fireableTransitions = new HashSet<Transition>(currentProcessModel.getNet().getFireableTransitions());
+		HashSet<Transition> fireableTransitions = currentProcessModel.getNet().getFireableTransitions();
+		HashSet<Transition> allowedTransitions = new HashSet<Transition>(currentProcessModel.getNet().getFireableTransitions());
 		// remove transitions that can not lead to the current violation to execute
 		for (Transition transition : fireableTransitions) {
 			for (ModelObject activator : getActivatorMap().keySet()) {
@@ -288,12 +289,12 @@ public class SimulationEngine extends NarratorObject {
 						continue;
 					// when the transition is fired the mutation can not be executed (because we can not reach the activator anymore)
 					if( !currentProcessModel.getNet().isReachableFrom(transition, (Transition) activator) )
-						fireableTransitions.remove(transition);
+						allowedTransitions.remove(transition);
 				}
 			}
 		}
 		Random generator = new Random();
-		Object[] values = fireableTransitions.toArray();
+		Object[] values = allowedTransitions.toArray();
 		return (Transition) values[generator.nextInt(values.length)];
 	}
 
