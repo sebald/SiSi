@@ -16,6 +16,9 @@ public class PTNet extends ModelObject {
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	
+	// reachability set
+	private HashMap<Transition, HashSet<Transition>> reachabilitySet = null;
+	
 	// maps for quick reference
 	private HashMap<String, Node> nodeMap = new HashMap<String, Node>();
 	private HashMap<Place, Integer> initialMarking = new HashMap<Place, Integer>();
@@ -151,7 +154,9 @@ public class PTNet extends ModelObject {
 	
 	public LinkedList<Transition> run(){
 		LinkedList<Transition> firedTransitions = new LinkedList<Transition>();
-		while (firedTransitions.add(fire()));
+		while (!fireableTransitions.isEmpty()) {
+			firedTransitions.add(fire());
+		}
 		return firedTransitions;
 	}
 	
@@ -336,6 +341,82 @@ public class PTNet extends ModelObject {
 			}
 		}
 		return commonNode;
+	}
+	
+	/**
+	 * Generates and sets the reachability set for every {@link Transition}. E.g. fills the class variable
+	 * {@code reachabilitySet} with the mapping which {@link Transition} can be reached/fired later from the key
+	 * {@link Transition}.
+	 * 
+	 */
+	public void generateReachabilitySet(){
+		// string is the "id", e.g. list of markings
+		reachabilitySet = new HashMap<Transition, HashSet<Transition>>();
+		for (Transition transition : transitions) {
+			reachabilitySet.put(transition, new HashSet<Transition>());
+		}
+		traverse(null, getCurrentMarking(), new HashSet<Transition>());
+	}
+	
+	/**
+	 * Used by {@code generateReachabilitySet} to create the reachability set.
+	 * 
+	 * @param transition
+	 * @param marking
+	 * @param firedTransitions
+	 */
+	private void traverse(Transition transition, HashMap<Place, Integer> marking, HashSet<Transition> firedTransitions) {
+		setMarking(marking);
+		if( transition != null ) {
+			fire(transition);
+			// add the fired transition to the set of reachable transition for already fired transitions for this traversal
+			for (Transition earlierFiredTransition : firedTransitions) {
+				reachabilitySet.get(earlierFiredTransition).add(transition);
+			}
+			firedTransitions.add(transition);
+		}
+		if( getFireableTransitions().isEmpty() )
+			return;
+		HashMap<Place, Integer> currentMarking = getCurrentMarking();
+		for (Transition fireableTransition : getFireableTransitions()) {
+			traverse(fireableTransition, currentMarking, new HashSet<Transition>(firedTransitions));
+		}
+		
+	}
+	
+	public void setMarking(HashMap<Place, Integer> marking) {
+		for (Place place : marking.keySet()) {
+			place.setMarking(marking.get(place));
+		}
+		updateFireableTransitions();
+	}
+	
+	public HashMap<Place, Integer> getCurrentMarking(){
+		HashMap<Place, Integer> marking = new HashMap<Place, Integer>();
+		for (Place place : places) {
+			marking.put(place, place.getMarking());
+		}
+		return marking;
+	}
+
+	public HashMap<Transition, HashSet<Transition>> getReachabilitySet() {
+		return reachabilitySet;
+	}
+	
+	public HashSet<Transition> getReachableTransitionsFor(Transition transition) {
+		return reachabilitySet.get(transition);
+	}
+	
+	/**
+	 * Checks if a {@link Transition} is reachable from another {@link Transition.}
+	 * 
+	 * @param fromTransition		starting point for the check
+	 * @param reachableTransition	{@link Transition} you want to reach
+	 * @return true if {@code reachableTransition} is reachable from {@code fromTransition}, false otherweise
+	 */
+	public boolean isReachableFrom(Transition fromTransition, Transition reachableTransition) {
+		if( reachabilitySet.get(fromTransition).contains(reachableTransition) ) return true;
+		return false;
 	}
 	
 }

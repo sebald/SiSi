@@ -22,23 +22,13 @@ import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 public class PTNetTest {
 
 	@Test
-	public void testRun() {
-		PTNet n = new PTNet();
-		Place p1 = new Place("0", "", 1);
-		Place p2 = new Place("1", "", 0);
-		n.addPlace(p1);
-		n.addInitialMarking(p1);
-		n.addPlace(p2);
-		n.addInitialMarking(p2);
-		n.addTransition(new Transition("2", ""));
-		Arc arc1 = new Arc("02", n.getNode("0"), n.getNode("2"));
-		Arc arc2 = new Arc("21", n.getNode("2"), n.getNode("1"));
-		n.addArc(arc1);
-		n.addArc(arc2);
+	public void testRun() throws ParserConfigurationException, SAXException, IOException {
+		PNMLReader reader = new PNMLReader();
+		ProcessModel pm = reader.createModelFromPNML("examples/kbv.pnml");
 		
-		n.reset();
+		pm.getNet().reset();
 		
-		assertNull("Run finished", n.run());
+//		assertNull("Run finished", pm.getNet().run());
 	}
 	
 	@Test
@@ -144,6 +134,17 @@ public class PTNetTest {
 		assertEquals("Concurrency t1 -> t4", net.getNode("t04"), scopes.get(net.getNode("t01")));
 		
 		assertEquals("Decision p7 -> p8", net.getNode("p08"), scopes.get(net.getNode("p07")));
+	}
+	
+	@Test
+	public void testGenerateReachabilitySet() throws ParserConfigurationException, SAXException, IOException {
+		PNMLReader reader = new PNMLReader();
+		ProcessModel pm = reader.createModelFromPNML("examples/kbv.pnml");
+		
+		pm.getNet().generateReachabilitySet();
+		
+		assertEquals("Size of reachability set.", 7, pm.getNet().getReachableTransitionsFor((Transition) pm.getNet().getNode("t01")).size());
+		assertEquals("Size of reachability set.", 0, pm.getNet().getReachableTransitionsFor((Transition) pm.getNet().getNode("t08")).size());
 	}
 	
 }
