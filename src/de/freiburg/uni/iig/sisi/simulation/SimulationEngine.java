@@ -278,7 +278,7 @@ public class SimulationEngine extends NarratorObject {
 	private void fire() throws SimulationExcpetion {
 		Transition transition;
 		// step-wise firing
-		if( configuration.isForceViolations() &&  !getActivatorMap().isEmpty() ) {
+		if( configuration.isForceViolations() &&  !getActivatorMap().isEmpty() && configuration.isConsiderSafetyRequirements() ) {
 			transition = getAllowedFireableTransition();
 			currentProcessModel.getNet().fire(transition);
 		} else {
