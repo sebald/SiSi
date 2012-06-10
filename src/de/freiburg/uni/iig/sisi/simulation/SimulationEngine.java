@@ -50,6 +50,8 @@ public class SimulationEngine extends NarratorObject {
 	ArrayList<ProcessModel> processModels = new ArrayList<ProcessModel>();
 	ArrayList<MutantObject> mutations = new ArrayList<MutantObject>();
 	
+	private ArrayList<Transition> executedTransitions = new ArrayList<Transition>();
+	
 	// vars for multiple runs
 	private ProcessModel currentProcessModel;
 	private String simulationRunID;
@@ -94,6 +96,14 @@ public class SimulationEngine extends NarratorObject {
 	}
 		
 	
+	public ArrayList<Transition> getExecutedTransitions() {
+		return executedTransitions;
+	}
+
+	public void addExecutedTransition(Transition executedTransition) {
+		this.executedTransitions.add(executedTransition);
+	}
+
 	protected void initProcessModells() {
 		// # of runs with original model
 		if( configuration.getDeviationMap().containsKey(DeviationType.NONE) ) {
@@ -183,6 +193,10 @@ public class SimulationEngine extends NarratorObject {
 	 * @throws SimulationExcpetion
 	 */
 	private ModelState simulateCurrentModel() throws SimulationExcpetion{
+		// force violation? yes => create reachability set, if not present.
+		if( configuration.isForceViolations()  &&  currentProcessModel.getNet().getReachabilitySet() == null)
+			currentProcessModel.getNet().generateReachabilitySet();
+		
 		notifyListeners(this, PORPERTY_SIMULATION_START, simulationRunID);
 		reset();
 		while (!currentProcessModel.getNet().getFireableTransitions().isEmpty()) {
@@ -232,6 +246,7 @@ public class SimulationEngine extends NarratorObject {
 		usageControlsToSatisfy.clear();
 		executedMutants.clear();
 		internalEventMap.clear();
+		executedTransitions.clear();
 	}
 
 	/**
@@ -241,8 +256,17 @@ public class SimulationEngine extends NarratorObject {
 	 * @throws SimulationExcpetion
 	 */
 	private void fire() throws SimulationExcpetion {
+		Transition transition;
 		// step-wise firing
-		Transition transition = currentProcessModel.getNet().fire();
+		if( configuration.isForceViolations() &&  !getActivatorMap().isEmpty() ) {
+			transition = getFireableTransition();
+			currentProcessModel.getNet().fire(transition);
+		} else {
+			transition = currentProcessModel.getNet().fire();
+		}
+		System.out.println(transition);
+		addExecutedTransition(transition);
+		
 		Subject subject = firedby(transition);
 		// generate event
 		SimulationEvent event = new SimulationEvent(simulationRunID, transition, subject, currentProcessModel.getResourceModel().getWorkObjectFor(transition));
@@ -250,6 +274,27 @@ public class SimulationEngine extends NarratorObject {
 		// the event is observable, if the transition has a label (no silent transition)
 		if ( !transition.isSilent() )
 			notifyListeners(this, PROPERTY_TRANSITION_FIRED, event);		
+	}
+
+	private Transition getFireableTransition() {
+		HashSet<Transition> fireableTransitions = new HashSet<Transition>(currentProcessModel.getNet().getFireableTransitions());
+		// remove transitions that can not lead to the current violation to execute
+		for (Transition transition : fireableTransitions) {
+			for (ModelObject activator : getActivatorMap().keySet()) {
+				// authorization violations reachable
+				if ( activator instanceof Transition ) {
+					// already executed don't bother
+					if( getExecutedTransitions().contains((Transition) activator) )
+						continue;
+					// when the transition is fired the mutation can not be executed (because we can not reach the activator anymore)
+					if( !currentProcessModel.getNet().isReachableFrom(transition, (Transition) activator) )
+						fireableTransitions.remove(transition);
+				}
+			}
+		}
+		Random generator = new Random();
+		Object[] values = fireableTransitions.toArray();
+		return (Transition) values[generator.nextInt(values.length)];
 	}
 
 	private Subject firedby(Transition transition) throws SimulationExcpetion {
