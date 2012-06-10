@@ -19,14 +19,14 @@ public class SimulationConfiguration {
 	private ProcessModel originalModel;
 	
 	private ResourceSelectionMode resourceSelectionMode;
-	private boolean considerSafetyRequirements;
+	private boolean considerSafetyRequirements = true;
+	private boolean forceViolations = true;
 	
 	private int numberOfIterations = 1;
 	
 	private int runsWithoutViolations = 1;
 	private int runsViolatingAuthorizations = 0;
 	private HashMap<ModelObject, Integer> violationMap = new HashMap<ModelObject, Integer>();
-	
 	private HashMap<DeviationType, Integer> deviationMap = new HashMap<DeviationType, Integer>();
 	
 	private FileMode fileMode = FileMode.CSV;
@@ -45,6 +45,14 @@ public class SimulationConfiguration {
 		this.resourceSelectionMode = resourceSelectionMode;
 	}
 	
+	public boolean isForceViolations() {
+		return forceViolations;
+	}
+
+	public void setForceViolations(boolean forceViolations) {
+		this.forceViolations = forceViolations;
+	}
+
 	public ProcessModel getOriginalModel() {
 		return originalModel;
 	}
