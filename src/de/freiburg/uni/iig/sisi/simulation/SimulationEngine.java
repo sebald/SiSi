@@ -50,6 +50,8 @@ public class SimulationEngine extends NarratorObject {
 	ArrayList<ProcessModel> processModels = new ArrayList<ProcessModel>();
 	ArrayList<MutantObject> mutations = new ArrayList<MutantObject>();
 	
+	// stores transitions that have to be executed (causes are policies/uc for example)
+	private ArrayList<Transition> forceExecution = new ArrayList<Transition>();
 	private ArrayList<Transition> executedTransitions = new ArrayList<Transition>();
 	
 	// vars for multiple runs
@@ -74,6 +76,7 @@ public class SimulationEngine extends NarratorObject {
 	 * Add an mutant to the mutant(s) that should be executed while simulation the current {@link ProcessModel}.
 	 * The mutant will also be added to the {@code activatorMap}. This map is used to activate mutants when the corresponding action,
 	 * e.g. the action that should be violated, occurs.
+	 * An action can be an execution of a {@link Transition}, {@link Policy} or {@link UsageControl}.
 	 * 
 	 * @param mutant 
 	 */
@@ -96,6 +99,14 @@ public class SimulationEngine extends NarratorObject {
 	}
 		
 	
+	public ArrayList<Transition> getForceExecution() {
+		return forceExecution;
+	}
+
+	public void addForceExecution(Transition transition) {
+		this.forceExecution.add(transition);
+	}
+
 	public ArrayList<Transition> getExecutedTransitions() {
 		return executedTransitions;
 	}
@@ -174,6 +185,14 @@ public class SimulationEngine extends NarratorObject {
 			for (int k = 0; k < mutations.size(); k++) {
 				setMutantToExecute(mutations.get(k));
 				
+				// to really execute the mutant, add the objective to the transitions that have to be executed
+				if( configuration.isForceViolations() ) {
+					if( mutations.get(k) instanceof PolicyMutant  )
+						addForceExecution(((Policy) ((PolicyMutant) mutations.get(k)).getActivator()).getObjective());
+					if( mutations.get(k) instanceof UsageControlMutant  )
+						addForceExecution(((UsageControl) ((UsageControlMutant) mutations.get(k)).getActivator()).getObjective());					
+				}
+				
 				// create run id
 				DecimalFormat df = new DecimalFormat("#000");
 				simulationRunID = df.format(iterationNumber)+"-"+df.format(i)+"-"+df.format(j+k);
@@ -247,6 +266,7 @@ public class SimulationEngine extends NarratorObject {
 		executedMutants.clear();
 		internalEventMap.clear();
 		executedTransitions.clear();
+		forceExecution.clear();
 	}
 
 	/**
@@ -259,12 +279,11 @@ public class SimulationEngine extends NarratorObject {
 		Transition transition;
 		// step-wise firing
 		if( configuration.isForceViolations() &&  !getActivatorMap().isEmpty() ) {
-			transition = getFireableTransition();
+			transition = getAllowedFireableTransition();
 			currentProcessModel.getNet().fire(transition);
 		} else {
 			transition = currentProcessModel.getNet().fire();
 		}
-		System.out.println(transition);
 		addExecutedTransition(transition);
 		
 		Subject subject = firedby(transition);
@@ -276,10 +295,24 @@ public class SimulationEngine extends NarratorObject {
 			notifyListeners(this, PROPERTY_TRANSITION_FIRED, event);		
 	}
 
-	private Transition getFireableTransition() {
+	private Transition getAllowedFireableTransition() {
 		HashSet<Transition> fireableTransitions = currentProcessModel.getNet().getFireableTransitions();
-		HashSet<Transition> allowedTransitions = new HashSet<Transition>(currentProcessModel.getNet().getFireableTransitions());
+		HashSet<Transition> allowedTransitions = new HashSet<Transition>(currentProcessModel.getNet().getFireableTransitions());		
 		// remove transitions that can not lead to the current violation to execute
+		
+		// check the objectives of safety requirements to check what has to be executed to activate them
+		for (Transition transition : fireableTransitions) {
+			for (Transition forcedTransition : getForceExecution()) {
+				if( getExecutedTransitions().contains(forcedTransition) )
+					continue;
+				if( !currentProcessModel.getNet().isReachableFrom(transition, forcedTransition) ) {
+					allowedTransitions.remove(transition);
+					break;
+				}
+			}
+		}
+		
+		// check the activators what has to be executed
 		for (Transition transition : fireableTransitions) {
 			for (ModelObject activator : getActivatorMap().keySet()) {
 				// authorization violations reachable
@@ -290,6 +323,18 @@ public class SimulationEngine extends NarratorObject {
 					// when the transition is fired the mutation can not be executed (because we can not reach the activator anymore)
 					if( !currentProcessModel.getNet().isReachableFrom(transition, (Transition) activator) )
 						allowedTransitions.remove(transition);
+				// policy violations reachable => eventually part has to be reachable
+				} else if ( activator instanceof Policy ) {
+					if( getExecutedTransitions().contains(((Policy) activator).getEventually()) )
+						continue;
+					if( !currentProcessModel.getNet().isReachableFrom(transition, (Transition) ((Policy) activator).getEventually()) )
+						allowedTransitions.remove(transition);					
+				// uc violations reachable => eventually part has to be reachable
+				} else if ( activator instanceof UsageControl ) {
+					if( getExecutedTransitions().contains(((UsageControl) activator).getEventually()) )
+						continue;
+					if( !currentProcessModel.getNet().isReachableFrom(transition, (Transition) ((UsageControl) activator).getEventually()) )
+						allowedTransitions.remove(transition);					
 				}
 			}
 		}
