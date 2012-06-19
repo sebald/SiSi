@@ -20,7 +20,7 @@ public class SimulationConfiguration {
 	
 	private ResourceSelectionMode resourceSelectionMode;
 	private boolean considerSafetyRequirements = true;
-	private boolean forceViolations = true;
+	private boolean forceViolations = false;
 	
 	private int numberOfIterations = 1;
 	

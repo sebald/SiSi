@@ -101,7 +101,7 @@ public class SiSiView {
 	 */
 	protected void createContents(Display display) {
 		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
-		shell.setSize(513, 612);
+		shell.setSize(513, 648);
 		shell.setText("SiSi - Security-aware Event Log Generator");
 		shell.setImage(new Image(shell.getDisplay(), "imgs/shell.png"));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -230,7 +230,7 @@ public class SiSiView {
 		lblAttackerSpecification.setLayoutData(gd_lblAttackerSpecification);
 		lblAttackerSpecification.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		lblAttackerSpecification.setText("Attacker Specification");
-
+		
 		// create model configuration
 		createProcessModelConfiguration();		
 		
@@ -460,7 +460,7 @@ public class SiSiView {
 
 	protected void createSimulationConfigraiotnComposite() {
 		Composite grpSimulationConfiguration = new Composite(activeComposite, SWT.NONE);
-		grpSimulationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		grpSimulationConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		grpSimulationConfiguration.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		GridLayout gl_grpSimulationConfiguration = new GridLayout(2, false);
 		gl_grpSimulationConfiguration.marginHeight = 0;
@@ -468,7 +468,7 @@ public class SiSiView {
 		grpSimulationConfiguration.setLayout(gl_grpSimulationConfiguration);
 		
 		Label lblNumberOfIterations = new Label(grpSimulationConfiguration, SWT.NONE);
-		lblNumberOfIterations.setToolTipText("Number of Run with the Attacker Specification below");
+		lblNumberOfIterations.setToolTipText("Number of Iterations with the Attacker Specification below");
 		GridData gd_lblNumberOfIterations = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_lblNumberOfIterations.horizontalIndent = 10;
 		gd_lblNumberOfIterations.minimumWidth = 85;
@@ -491,6 +491,8 @@ public class SiSiView {
 		
 		Button btnConsiderSafety = new Button(activeComposite, SWT.CHECK);
 		GridData gd_btnConsiderSafety = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnConsiderSafety.heightHint = 25;
+		gd_btnConsiderSafety.minimumHeight = 25;		
 		gd_btnConsiderSafety.horizontalIndent = 10;
 		btnConsiderSafety.setLayoutData(gd_btnConsiderSafety);
 		btnConsiderSafety.setText("Ignore Safety Requirements");
@@ -499,7 +501,22 @@ public class SiSiView {
 			public void widgetSelected(SelectionEvent e) {
 					controller.updateConsiderSafetyRequirements(!((Button) e.getSource()).getSelection());
 			}
-		});		
+		});
+		
+		Button btnForceViolations = new Button(activeComposite, SWT.CHECK);
+		btnForceViolations.setToolTipText("WARNING: Enabling this option can greatly increase simulation time!");
+		GridData gd_btnForceViolations = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnForceViolations.minimumHeight = 25;
+		gd_btnForceViolations.heightHint = 25;
+		gd_btnForceViolations.horizontalIndent = 10;
+		btnForceViolations.setLayoutData(gd_btnForceViolations);
+		btnForceViolations.setText("Force Violations in Runs");
+		btnForceViolations.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+					controller.updateForeceViolationConfiguration(((Button) e.getSource()).getSelection());
+			}
+		});
 	}
 
 	protected void createLoadinInformationComposite(String modelName) {

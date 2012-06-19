@@ -151,6 +151,10 @@ public class SiSiViewController {
 		return simulationConfiguration.getSaveLogPath();
 	}
 	
+	public void updateForeceViolationConfiguration(boolean b) {
+		simulationConfiguration.setForceViolations(b);
+	}
+	
 	protected void openLogView() {
 		try {
 			Display display = Display.getDefault();
