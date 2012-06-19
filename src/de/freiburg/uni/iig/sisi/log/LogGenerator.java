@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.TreeMap;
 
-import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutationEvent;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
-import de.freiburg.uni.iig.sisi.simulation.SimulationEvent;
 
 public class LogGenerator implements PropertyChangeListener {
 
@@ -22,8 +20,9 @@ public class LogGenerator implements PropertyChangeListener {
 	private final FileMode fileMode;
 	private TreeMap<String, EventLog> eventLogs = new TreeMap<String, EventLog>();
 	private TreeMap<String, MutationEvent> mutationLog = new TreeMap<String, MutationEvent>();
+	private TreeMap<String, ProcessInstanceInformation> modelMap = new TreeMap<String, ProcessInstanceInformation>();
 
-	private String currentSimulation = null;
+	private String currentSimulationID = null;
 
 	public LogGenerator(SimulationEngine se) {
 		se.addChangeListener(this);
@@ -47,25 +46,29 @@ public class LogGenerator implements PropertyChangeListener {
 		this.mutationLog.put(mutationEvent.getSimulationID(), mutationEvent);
 	}
 
-	protected String getCurrentSimulation() {
-		return currentSimulation;
+	public TreeMap<String, ProcessInstanceInformation> getModelMap() {
+		return modelMap;
 	}
 
-	protected void setCurrentSimulation(String currentSimulation) {
-		this.currentSimulation = currentSimulation;
+	protected String getCurrentSimulationID() {
+		return currentSimulationID;
+	}
+
+	protected void setCurrentSimulationID(String currentSimulation) {
+		this.currentSimulationID = currentSimulation;
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName() == SimulationEngine.PORPERTY_SIMULATION_START) {
-			setCurrentSimulation((String) evt.getNewValue());
-			eventLogs.put(getCurrentSimulation(), new EventLog());
+			setCurrentSimulationID((String) evt.getNewValue());
+			eventLogs.put(getCurrentSimulationID(), new EventLog());
 		}
 		if (evt.getPropertyName() == SimulationEngine.PROPERTY_TRANSITION_FIRED) {
-			eventLogs.get(getCurrentSimulation()).addEvent((SimulationEvent) evt.getNewValue());
+			eventLogs.get(getCurrentSimulationID()).addEvent((SimulationEvent) evt.getNewValue());
 		}
 		if (evt.getPropertyName() == SimulationEngine.PORPERTY_SIMULATION_COMPLETE) {
-			//nothing yet
+			modelMap.put(getCurrentSimulationID(), (ProcessInstanceInformation) evt.getNewValue());
 		}
 		if ( evt.getPropertyName() == SimulationEngine.PROPERTY_MUTATION_EXECUTED ) {
 			MutationEvent mutationEvent = ((MutationEvent) evt.getNewValue());

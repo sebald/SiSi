@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import de.freiburg.uni.iig.sisi.log.MutationEvent;
+import de.freiburg.uni.iig.sisi.log.ProcessInstanceInformation;
+import de.freiburg.uni.iig.sisi.log.SimulationEvent;
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.NarratorObject;
@@ -22,7 +25,6 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantFactory;
-import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutationEvent;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelectionMode;
@@ -221,7 +223,11 @@ public class SimulationEngine extends NarratorObject {
 		while (!currentProcessModel.getNet().getFireableTransitions().isEmpty()) {
 			fire();
 		}
-		notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, simulationRunID);
+		
+		ProcessInstanceInformation processInstanceInformation = new ProcessInstanceInformation(simulationRunID, currentProcessModel.getName());
+		if( currentProcessModel instanceof VariantProcessModel )
+			processInstanceInformation.setDeviation(((VariantProcessModel) currentProcessModel).getDeviation());
+		notifyListeners(this, PORPERTY_SIMULATION_COMPLETE, processInstanceInformation);
 		
 		return evaluateModel();
 	}

@@ -23,7 +23,7 @@ public class NetDeviation {
 		return type;
 	}
 
-	protected ArrayList<Node> getOldValues() {
+	public ArrayList<Node> getOldValues() {
 		return oldValues;
 	}
 
@@ -40,7 +40,7 @@ public class NetDeviation {
 		this.oldValues.addAll(new ArrayList<Node>(oldValues));
 	}
 	
-	protected ArrayList<Node> getNewValues() {
+	public ArrayList<Node> getNewValues() {
 		return newValues;
 	}
 

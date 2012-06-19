@@ -31,13 +31,14 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import de.freiburg.uni.iig.sisi.log.EventLog;
+import de.freiburg.uni.iig.sisi.log.MutationEvent;
+import de.freiburg.uni.iig.sisi.log.ProcessInstanceInformation;
+import de.freiburg.uni.iig.sisi.log.SimulationEvent;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
-import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutationEvent;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
-import de.freiburg.uni.iig.sisi.simulation.SimulationEvent;
 
 public class LogView extends Shell {
 
@@ -67,6 +68,7 @@ public class LogView extends Shell {
 	private Table eventsTable;
 	private Tree tree;
 	private Text violationDataText;
+	private Text deviationDataText;
 
 	/**
 	 * Create the shell.
@@ -142,6 +144,15 @@ public class LogView extends Shell {
 		violationDataText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		violationDataText.setFont(SWTResourceManager.getFont("Courier New", 11, SWT.NORMAL));
 		tbtmViolations.setControl(violationDataText);
+		
+		// tab deviations
+		TabItem tbtmDeviationData = new TabItem(tabFolder, SWT.NONE);
+		tbtmDeviationData.setText("Deviation Data");
+		
+		deviationDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL);
+		deviationDataText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		deviationDataText.setFont(SWTResourceManager.getFont("Courier New", 11, SWT.NORMAL));
+		tbtmDeviationData.setControl(deviationDataText);
 		
 		// tab raw data
 		TabItem tbtmRawData = new TabItem(tabFolder, SWT.NONE);
@@ -234,14 +245,23 @@ public class LogView extends Shell {
 				violationData += mutationEvent.toString() + System.lineSeparator() + System.lineSeparator();
 			}
 			violationDataText.setText(violationData);
+			// deviation data
+			String deviationData = "";
+			for (ProcessInstanceInformation instanceInformation : controller.getLogGenerator().getModelMap().values()) {
+				deviationData += instanceInformation.toString() + System.lineSeparator() + System.lineSeparator();
+			}
+			deviationDataText.setText(deviationData);			
 			// raw data
 			rawDataText.setText(controller.getLogGenerator().logsToCSV());
 		} else {
 			// event table
 			createEventTableItems(controller.getLogGenerator().getEventLogs().get(id), eventsTable);
-			// vriolation data
+			// violation data
 			if( controller.getLogGenerator().getMutationLog().containsKey(id) )
 				violationDataText.setText(controller.getLogGenerator().getMutationLog().get(id).toString());
+			// deviation data
+			if( controller.getLogGenerator().getModelMap().containsKey(id) )
+				deviationDataText.setText(controller.getLogGenerator().getModelMap().get(id).toString());
 			// raw data
 			rawDataText.setText(controller.getLogGenerator().logToCSV(id));
 		}

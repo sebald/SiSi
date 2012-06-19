@@ -1,10 +1,13 @@
-package de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant;
+package de.freiburg.uni.iig.sisi.log;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
 import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
 
 public class MutationEvent {
 

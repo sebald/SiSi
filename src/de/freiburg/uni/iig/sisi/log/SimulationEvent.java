@@ -1,4 +1,4 @@
-package de.freiburg.uni.iig.sisi.simulation;
+package de.freiburg.uni.iig.sisi.log;
 
 import java.util.HashSet;
 

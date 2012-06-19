@@ -10,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import de.freiburg.uni.iig.sisi.log.SimulationEvent;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.Role;
@@ -19,7 +20,6 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy.PolicyType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantFactory;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
-import de.freiburg.uni.iig.sisi.simulation.SimulationEvent;
 import de.freiburg.uni.iig.sisi.utils.PNMLReader;
 
 public class MutantTest {

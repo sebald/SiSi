@@ -2,7 +2,6 @@ package de.freiburg.uni.iig.sisi.log;
 
 import java.util.LinkedList;
 
-import de.freiburg.uni.iig.sisi.simulation.SimulationEvent;
 
 public class EventLog {
 
