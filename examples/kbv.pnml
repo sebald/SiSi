@@ -1,96 +1,215 @@
 <pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml" type="de.freiburg.uni.iig.sisi">
 	<net id="240784" type="http://www.pnml.org/version-2009/grammar/ptnet">
 		<name>
-			<text>Kundebeschwerdeverfahren</text>
+			<text>Kundenbeschwerdeverfahren</text>
 		</name>
 		<page id="000">
 			<place id="p01">
 				<name>
-					<text></text>
+					<text>p1</text>
+			        <graphics>
+			        	<offset x="30" y="150"/>
+			        </graphics>					
 				</name>
 				<initialMarking>
 					<text>1</text>
 				</initialMarking>
+			    <graphics>
+			        <position x="20" y="110"/>
+		        	<dimension x="40" y="40"/>
+			    </graphics>				
 			</place>
 			<place id="p02">
 				<name>
-					<text></text>
+					<text>p2</text>
+					<graphics>
+			        	<offset x="210" y="60"/>
+			        </graphics>					
 				</name>
+			    <graphics>
+			        <position x="200" y="20"/>
+			        <dimension x="40" y="40"/>
+			    </graphics>				
 			</place>
 			<place id="p03">
 				<name>
-					<text></text>
+					<text>p3</text>
+			        <graphics>
+			        	<offset x="210" y="250"/>
+			        </graphics>						
 				</name>
+		      	<graphics>
+		        	<position x="200" y="210"/>
+		        	<dimension x="40" y="40"/>
+		        </graphics>			
 			</place>
 			<place id="p04">
 				<name>
-					<text></text>
+					<text>p4</text>
+			        <graphics>
+			        	<offset x="440" y="60"/>
+			        </graphics>					
 				</name>
+		      	<graphics>
+		        	<position x="430" y="20"/>
+		        	<dimension x="40" y="40"/>
+		      	</graphics>				
 			</place>
 			<place id="p05">
 				<name>
-					<text></text>
+					<text>p5</text>
+					<graphics>
+			        	<offset x="440" y="250"/>
+			        </graphics>					
 				</name>
+		        <graphics>
+			        <position x="430" y="210"/>
+			        <dimension x="40" y="40"/>
+			    </graphics>				
 			</place>
 			<place id="p06">
 				<name>
-					<text></text>
+					<text>p6</text>
+			        <graphics>
+			        	<offset x="630" y="150"/>
+			        </graphics>					
 				</name>
+		        <graphics>
+		        	<position x="620" y="110"/>
+		        	<dimension x="40" y="40"/>
+		      	</graphics>				
 			</place>
 			<place id="p07">
 				<name>
-					<text></text>
+					<text>p7</text>
+					<graphics>
+	          			<offset x="830" y="150"/>
+	       			</graphics>						
 				</name>
+		        <graphics>
+		       		<position x="820" y="110"/>
+		        	<dimension x="40" y="40"/>
+		      	</graphics>			
 			</place>
 			<place id="p08">
 				<name>
-					<text></text>
+					<text>p8</text>
+					<graphics>
+			          <offset x="1010" y="150"/>
+			        </graphics>					
 				</name>
+				<graphics>
+		        	<position x="1000" y="110"/>
+		        	<dimension x="40" y="40"/>
+		     	</graphics>				
 			</place>
 			<place id="p09">
 				<name>
-					<text></text>
+					<text>p9</text>
+					<graphics>
+	          			<offset x="1240" y="150"/>
+	        		</graphics>					
 				</name>
+		      	<graphics>
+		        	<position x="1230" y="110"/>
+		        	<dimension x="40" y="40"/>
+		      	</graphics>				
 			</place>
 		   	<transition id="t01">
 		   		<name>
 		   			<text>Beschwerde aufnehmen</text>
+			    	<graphics>
+	          			<offset x="70" y="150"/>
+	        		</graphics>		   			
 		    	</name>
+			    <graphics>
+			        <position x="120" y="110"/>
+			        <dimension x="40" y="40"/>
+			    </graphics>
 		   	</transition>
 		   	<transition id="t02">
 		   		<name>
 		   			<text>Abteilung informieren</text>
+					<graphics>
+			        	<offset x="270" y="60"/>
+			        </graphics>		   			
 		    	</name>
+			    <graphics>
+		        	<position x="310" y="20"/>
+		        	<dimension x="40" y="40"/>
+		        </graphics>		    	
 		   	</transition>
 		   	<transition id="t03">
 		   		<name>
 		   			<text>Kunden informieren</text>
+					<graphics>
+			        	<offset x="280" y="250"/>
+			        </graphics>		   			
 		    	</name>
+		    	<graphics>
+        			<position x="310" y="210"/>
+        			<dimension x="40" y="40"/>
+      			</graphics>
 		   	</transition>
 		   	<transition id="t04">
 		   		<name>
 		   			<text>Gutachten erstellen</text>
+		   			<graphics>
+          				<offset x="490" y="150"/>
+        			</graphics>
 		    	</name>
+		    	<graphics>
+        			<position x="520" y="110"/>
+        			<dimension x="40" y="40"/>
+      			</graphics>
 		   	</transition>
 		   	<transition id="t05">
 		   		<name>
 		   			<text>Gutachten beurteilen</text>
+		   			<graphics>
+          				<offset x="680" y="150"/>
+        			</graphics>
 		    	</name>
+				<graphics>
+        			<position x="720" y="110"/>
+        			<dimension x="40" y="40"/>
+      			</graphics>		    	
 		   	</transition>
 		   	<transition id="t06">
 		   		<name>
 		   			<text>Kunden benachrichtigen</text>
+		   			<graphics>
+          				<offset x="860" y="60"/>
+        			</graphics>
 		    	</name>
+		    	<graphics>
+			        <position x="910" y="20"/>
+			        <dimension x="40" y="40"/>
+      			</graphics>
 		   	</transition>		   	
 		   	<transition id="t07">
 		   		<name>
 		   			<text>Vergütungszahlung entrichten</text>
+		   			<graphics>
+          				<offset x="850" y="250"/>
+        			</graphics>
 		    	</name>
+		    	<graphics>
+			        <position x="910" y="210"/>
+			        <dimension x="40" y="40"/>
+      			</graphics>
 		   	</transition>
 		   	<transition id="t08">
 		   		<name>
 		   			<text>Beschwerde archvieren</text>
-		    	</name>	    	
+		   			<graphics>
+          				<offset x="1070" y="150"/>
+        			</graphics>
+		    	</name>
+		    	<graphics>
+			        <position x="1110" y="110"/>
+			        <dimension x="40" y="40"/>
+      			</graphics>	    	
 		   	</transition>
 		   	<arc id="a01" source="p01" target="t01">
 		    	<inscription>
@@ -184,97 +303,99 @@
 		   	</arc>	   						
 		</page>
 	</net>
-	<resourceModel>
-		<role id="r01">
-			<name>
-				<text>Kundenbetreuung</text>
-			</name>
-			<domain transRef="t01" />
-			<domain transRef="t02" />
-			<domain transRef="t03" />
-			<domain transRef="t06" />
-			<domain transRef="t08" />
-		</role>
-		<role id="r02">
-			<name>
-				<text>Gutachter</text>
-			</name>
-			<domain transRef="t04" />
-			<domain transRef="t05" />
-		</role>
-		<role id="r03">
-			<name>
-				<text>Finanzen</text>
-			</name>
-			<domain transRef="t07" />
-		</role>	
-		<subject id="s01">
-			<name>
-				<text>Gerhard</text>
-			</name>
-			<assigned roleRef="r02" />
-			<assigned roleRef="r03" />
-		</subject>
-		<subject id="s02">
-			<name>
-				<text>Maria</text>
-			</name>
-			<assigned roleRef="r01" />
-		</subject>
-		<subject id="s03">
-			<name>
-				<text>Renate</text>
-			</name>
-			<assigned roleRef="r01" />
-		</subject>
-		<subject id="s04">
-			<name>
-				<text>Frank</text>
-			</name>
-			<assigned roleRef="r01" />
-		</subject>
-		<subject id="s05">
-			<name>
-				<text>Anna</text>
-			</name>
-			<assigned roleRef="r02" />
-		</subject>
-		<subject id="s06">
-			<name>
-				<text>Walter</text>
-			</name>
-			<assigned roleRef="r03" />
-		</subject>
-		<object id="o01">
-			<name>
-				<text>Stellungnahme</text>
-			</name>
-			<usedBy transRef="t04" />		
-		</object>
-		<object id="o02">
-			<name>
-				<text>Kundenangaben</text>
-			</name>
-			<usedBy transRef="t04" />		
-		</object>
-		<object id="o03">
-			<name>
-				<text>Gutachten</text>
-			</name>
-			<usedBy transRef="t05" />		
-		</object>
-		<object id="o04">
-			<name>
-				<text>Beschwerde</text>
-			</name>
-			<usedBy transRef="t08" />		
-		</object>	
-	</resourceModel>
-	<safetyRequirements>
-		<delegations>
-			<delegation roleRef="r02" transRef="t07" />
-		</delegations>
-		<policy id="sr01" type="sod" objective="t04" eventually="t05" />
-		<usageControl id="uc01" type="ar" objective="t01" eventually="t08" />
-	</safetyRequirements>
+	<tollspecific tool="SiSi" version="1.0">
+		<resourceModel>
+			<role id="r01">
+				<name>
+					<text>Kundenbetreuung</text>
+				</name>
+				<domain transRef="t01" />
+				<domain transRef="t02" />
+				<domain transRef="t03" />
+				<domain transRef="t06" />
+				<domain transRef="t08" />
+			</role>
+			<role id="r02">
+				<name>
+					<text>Gutachter</text>
+				</name>
+				<domain transRef="t04" />
+				<domain transRef="t05" />
+			</role>
+			<role id="r03">
+				<name>
+					<text>Finanzen</text>
+				</name>
+				<domain transRef="t07" />
+			</role>	
+			<subject id="s01">
+				<name>
+					<text>Gerhard</text>
+				</name>
+				<assigned roleRef="r02" />
+				<assigned roleRef="r03" />
+			</subject>
+			<subject id="s02">
+				<name>
+					<text>Maria</text>
+				</name>
+				<assigned roleRef="r01" />
+			</subject>
+			<subject id="s03">
+				<name>
+					<text>Renate</text>
+				</name>
+				<assigned roleRef="r01" />
+			</subject>
+			<subject id="s04">
+				<name>
+					<text>Frank</text>
+				</name>
+				<assigned roleRef="r01" />
+			</subject>
+			<subject id="s05">
+				<name>
+					<text>Anna</text>
+				</name>
+				<assigned roleRef="r02" />
+			</subject>
+			<subject id="s06">
+				<name>
+					<text>Walter</text>
+				</name>
+				<assigned roleRef="r03" />
+			</subject>
+			<object id="o01">
+				<name>
+					<text>Stellungnahme</text>
+				</name>
+				<usedBy transRef="t04" />		
+			</object>
+			<object id="o02">
+				<name>
+					<text>Kundenangaben</text>
+				</name>
+				<usedBy transRef="t04" />		
+			</object>
+			<object id="o03">
+				<name>
+					<text>Gutachten</text>
+				</name>
+				<usedBy transRef="t05" />		
+			</object>
+			<object id="o04">
+				<name>
+					<text>Beschwerde</text>
+				</name>
+				<usedBy transRef="t08" />		
+			</object>	
+		</resourceModel>
+		<safetyRequirements>
+			<delegations>
+				<delegation roleRef="r02" transRef="t07" />
+			</delegations>
+			<policy id="sr01" type="sod" objective="t04" eventually="t05" />
+			<usageControl id="uc01" type="ar" objective="t01" eventually="t08" />
+		</safetyRequirements>
+	</tollspecific>
 </pnml>
