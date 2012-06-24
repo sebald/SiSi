@@ -141,7 +141,7 @@ public class LogView extends Shell {
 		TabItem tbtmViolations = new TabItem(tabFolder, SWT.NONE);
 		tbtmViolations.setText("Violations Data");
 		
-		violationDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL);
+		violationDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL);
 		violationDataText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		violationDataText.setFont(SWTResourceManager.getFont("Courier New", 11, SWT.NORMAL));
 		tbtmViolations.setControl(violationDataText);
@@ -150,7 +150,7 @@ public class LogView extends Shell {
 		TabItem tbtmDeviationData = new TabItem(tabFolder, SWT.NONE);
 		tbtmDeviationData.setText("Deviation Data");
 		
-		deviationDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL);
+		deviationDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL);
 		deviationDataText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		deviationDataText.setFont(SWTResourceManager.getFont("Courier New", 11, SWT.NORMAL));
 		tbtmDeviationData.setControl(deviationDataText);
