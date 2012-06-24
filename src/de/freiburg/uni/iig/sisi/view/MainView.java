@@ -100,7 +100,7 @@ public class MainView {
 	 */
 	protected void createContents(Display display) {
 		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
-		shell.setSize(513, 648);
+		shell.setSize(539, 648);
 		shell.setText("SiSi - Security-aware Event Log Generator");
 		shell.setImage(new Image(shell.getDisplay(), "imgs/shell.png"));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -403,10 +403,10 @@ public class MainView {
 		// set initial
 		controller.updateDeviationParameter(DeviationType.NONE, spinnerRunsWithOriginalModel.getSelection());
 		
-		createCheckBoxSpinnerCombo(DeviationType.SKIPPING, "Run Skipping Deviations", grpDeviationConfiguration);
-		createCheckBoxSpinnerCombo(DeviationType.SWAPPING, "Run Swapping Deviations", grpDeviationConfiguration);
-		createCheckBoxSpinnerCombo(DeviationType.AND2XOR, "Run AND2XOR Deviations", grpDeviationConfiguration);
-		createCheckBoxSpinnerCombo(DeviationType.XOR2AND, "Run XOR2AND Deviations", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.SKIPPING, "Runs with Skipping Deviation", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.SWAPPING, "Runs with Swapping Deviation", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.AND2XOR, "Runs with AND2XOR Deviation", grpDeviationConfiguration);
+		createCheckBoxSpinnerCombo(DeviationType.XOR2AND, "Runs with XOR2AND Deviation", grpDeviationConfiguration);
 	}
 
 	protected void createViolationConfigurationComposite(SafetyRequirements safetyRequirements) {
