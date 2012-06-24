@@ -124,30 +124,32 @@ public class SimulationEngine extends NarratorObject {
 				processModels.add(configuration.getOriginalModel().clone());
 			}
 		}
-		// # of runs with a skipping deviation
-		if( configuration.getDeviationMap().containsKey(DeviationType.SKIPPING) ) {
-			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.SKIPPING); i++) {
-				processModels.add(new VariantProcessModel(configuration.getOriginalModel()));
-			}			
+		if( configuration.isConsiderSafetyRequirements() ) {
+			// # of runs with a skipping deviation
+			if( configuration.getDeviationMap().containsKey(DeviationType.SKIPPING) ) {
+				for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.SKIPPING); i++) {
+					processModels.add(new VariantProcessModel(configuration.getOriginalModel()));
+				}			
+			}
+			// # of runs with a swapping deviation
+			if( configuration.getDeviationMap().containsKey(DeviationType.SWAPPING) ) {
+				for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.SWAPPING); i++) {
+					processModels.add(new VariantProcessModel(configuration.getOriginalModel(), DeviationType.SWAPPING));
+				}				
+			}
+			// # of runs with a AND2XOR deviation
+			if( configuration.getDeviationMap().containsKey(DeviationType.AND2XOR) ) {
+				for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.AND2XOR); i++) {
+					processModels.add(new VariantProcessModel(configuration.getOriginalModel(), DeviationType.AND2XOR));
+				}				
+			}		
+			// # of runs with a XOR2AND deviation
+			if( configuration.getDeviationMap().containsKey(DeviationType.XOR2AND) ) {
+				for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.XOR2AND); i++) {
+					processModels.add(new VariantProcessModel(configuration.getOriginalModel(), DeviationType.XOR2AND));
+				}				
+			}
 		}
-		// # of runs with a swapping deviation
-		if( configuration.getDeviationMap().containsKey(DeviationType.SWAPPING) ) {
-			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.SWAPPING); i++) {
-				processModels.add(new VariantProcessModel(configuration.getOriginalModel(), DeviationType.SWAPPING));
-			}				
-		}
-		// # of runs with a AND2XOR deviation
-		if( configuration.getDeviationMap().containsKey(DeviationType.AND2XOR) ) {
-			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.AND2XOR); i++) {
-				processModels.add(new VariantProcessModel(configuration.getOriginalModel(), DeviationType.AND2XOR));
-			}				
-		}		
-		// # of runs with a XOR2AND deviation
-		if( configuration.getDeviationMap().containsKey(DeviationType.XOR2AND) ) {
-			for (int i = 0; i < configuration.getDeviationMap().get(DeviationType.XOR2AND); i++) {
-				processModels.add(new VariantProcessModel(configuration.getOriginalModel(), DeviationType.XOR2AND));
-			}				
-		}		
 	}
 	
 	/**
