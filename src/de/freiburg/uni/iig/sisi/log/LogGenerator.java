@@ -96,6 +96,7 @@ public class LogGenerator implements PropertyChangeListener {
 			output.close();			
 		}
 		generateViolationLog(path, true);
+		generateModelLog(path, true);
 		return log;
 	}
 	
@@ -125,6 +126,7 @@ public class LogGenerator implements PropertyChangeListener {
 			generateLogFromID(id, violationPath, true);
 		}		
 		generateViolationLogFromID(id, path, true);
+		generateModelLogFromID(id, path, true);
 		return log;		
 	}
 	
@@ -136,10 +138,8 @@ public class LogGenerator implements PropertyChangeListener {
 		violationPath += "_violationData" + new String(path.substring(path.lastIndexOf('.')));
 		
 		String log = "";
-		if ( fileMode == FileMode.MXML ) {
-			log = logsToCSV();
-		} else {
-			log = logsToCSV();
+		for (MutationEvent event : mutationLog.values()) {
+			log += event.toString() + System.getProperty("line.separator");
 		}
 		
 		// create file
@@ -162,12 +162,54 @@ public class LogGenerator implements PropertyChangeListener {
 		String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
 		violationPath += "_violationData" + new String(path.substring(path.lastIndexOf('.')));		
 		// parse log
-		String log = "";
-		if ( fileMode == FileMode.MXML ) {
-			log = logToCSV(id);
-		} else {
-			log = logToCSV(id);
+		String log = mutationLog.get(id).toString() + System.getProperty("line.separator");
+		
+		// create file
+		if ( createFile ) {
+			Writer output = null;
+			File file = new File(violationPath);
+			if ( !file.exists() )
+				file.createNewFile();
+			output = new BufferedWriter(new FileWriter(file));
+			output.write(log);
+			output.close();			
 		}
+		return null;
+	}	
+
+	private String generateModelLog(String path, boolean createFile) throws IOException {
+		if ( modelMap.isEmpty() )
+			return null;
+		
+		String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
+		violationPath += "_modelData" + new String(path.substring(path.lastIndexOf('.')));
+		
+		String log = "";
+		for (ProcessInstanceInformation info : modelMap.values()) {
+			log += info.toString() + System.getProperty("line.separator");
+		}
+		
+		// create file
+		if ( createFile ) {
+			Writer output = null;
+			File file = new File(violationPath);
+			if ( !file.exists() )
+				file.createNewFile();
+			output = new BufferedWriter(new FileWriter(file));
+			output.write(log);
+			output.close();			
+		}	
+		return log;
+	}	
+
+	private String generateModelLogFromID(String id, String path, boolean createFile) throws IOException {
+		if ( !modelMap.containsKey(id) )
+			return null;
+		
+		String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
+		violationPath += "_modelnData" + new String(path.substring(path.lastIndexOf('.')));		
+		// parse log
+		String log = modelMap.get(id).toString() + System.getProperty("line.separator");
 		
 		// create file
 		if ( createFile ) {
