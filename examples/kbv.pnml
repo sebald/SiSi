@@ -303,7 +303,7 @@
 		   	</arc>	   						
 		</page>
 	</net>
-	<tollspecific tool="SiSi" version="1.0">
+	<toolspecific tool="SiSi" version="1.0">
 		<resourceModel>
 			<role id="r01">
 				<name>
@@ -397,5 +397,5 @@
 			<policy id="sr01" type="sod" objective="t04" eventually="t05" />
 			<usageControl id="uc01" type="ar" objective="t01" eventually="t08" />
 		</safetyRequirements>
-	</tollspecific>
+	</toolspecific>
 </pnml>
