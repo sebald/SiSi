@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import de.freiburg.uni.iig.sisi.SiSiController;
 import de.freiburg.uni.iig.sisi.log.EventLog;
 import de.freiburg.uni.iig.sisi.log.MutationEvent;
 import de.freiburg.uni.iig.sisi.log.ProcessInstanceInformation;
@@ -49,7 +50,7 @@ public class LogView extends Shell {
 	public static void main(String args[]) {
 		try {
 			Display display = Display.getDefault();
-			LogView shell = new LogView(new SiSiViewController());
+			LogView shell = new LogView(new SiSiController());
 			shell.open();
 			shell.layout();
 			while (!shell.isDisposed()) {
@@ -63,7 +64,7 @@ public class LogView extends Shell {
 	}
 
 
-	private final SiSiViewController controller;
+	private final SiSiController controller;
 	private Text rawDataText;
 	private Table eventsTable;
 	private Tree tree;
@@ -74,7 +75,7 @@ public class LogView extends Shell {
 	 * Create the shell.
 	 * @param display
 	 */
-	public LogView(SiSiViewController controller) {
+	public LogView(SiSiController controller) {
 		super(Display.getDefault(), SWT.SHELL_TRIM);
 		setLayout(new FillLayout(SWT.VERTICAL));
 		this.controller = controller;

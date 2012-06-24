@@ -1,4 +1,4 @@
-package de.freiburg.uni.iig.sisi.view;
+package de.freiburg.uni.iig.sisi;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -23,8 +23,9 @@ import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelec
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
 import de.freiburg.uni.iig.sisi.simulation.SimulationExcpetion;
 import de.freiburg.uni.iig.sisi.utils.PNMLReader;
+import de.freiburg.uni.iig.sisi.view.LogView;
 
-public class SiSiViewController {
+public class SiSiController {
 	
 	// model
 	private ProcessModel processModel = null;

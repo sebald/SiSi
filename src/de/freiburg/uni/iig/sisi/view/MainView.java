@@ -34,15 +34,16 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.xml.sax.SAXException;
 
+import de.freiburg.uni.iig.sisi.SiSiController;
 import de.freiburg.uni.iig.sisi.model.net.variant.NetDeviation.DeviationType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.simulation.SimulationExcpetion;
 
-public class SiSiView {
+public class MainView {
 	protected Shell shell;
-	protected SiSiViewController controller;
+	protected SiSiController controller = new SiSiController();
 	
 	private String selectedDir = new File("").getAbsolutePath();
 	
@@ -58,7 +59,7 @@ public class SiSiView {
 	 */
 	public static void main(String[] args) {
 		try {
-			SiSiView window = new SiSiView();
+			MainView window = new MainView();
 			window.open();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -68,9 +69,7 @@ public class SiSiView {
 	/**
 	 * Open the window.
 	 */
-	public void open() {
-		controller = new SiSiViewController();
-		
+	public void open() {		
 		Display display = Display.getDefault();
 		createContents(display);
 		center(display);
@@ -156,7 +155,7 @@ public class SiSiView {
 		mntmOpenExample.setText("Open Example");
 		
 		MenuItem mntmNewItem = new MenuItem(menu_1, SWT.SEPARATOR);
-		mntmNewItem.setText("Seperator1");
+		mntmNewItem.setText("Separator1");
 		
 		MenuItem mntmExit = new MenuItem(menu_1, SWT.NONE);
 		mntmExit.addSelectionListener(new SelectionAdapter() {
@@ -301,12 +300,12 @@ public class SiSiView {
 			}
 		});		
 
-		Button btnSeperateLogFile = new Button(activeComposite, SWT.CHECK);
+		Button btnSeparateLogFile = new Button(activeComposite, SWT.CHECK);
 		GridData gd_btnSeperateLogFile = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_btnSeperateLogFile.horizontalIndent = 10;
-		btnSeperateLogFile.setLayoutData(gd_btnSeperateLogFile);
-		btnSeperateLogFile.setText("Save Log in seperate Files");
-		btnSeperateLogFile.addSelectionListener(new SelectionAdapter() {
+		btnSeparateLogFile.setLayoutData(gd_btnSeperateLogFile);
+		btnSeparateLogFile.setText("Save Log in separate Files");
+		btnSeparateLogFile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 					controller.setSeperateLogs(((Button) e.getSource()).getSelection());
