@@ -1,3 +1,3 @@
 Manifest-Version: 1.0 
 Class-Path: swt.jar 
-Main-Class: de.freiburg.uni.iig.sisi.view.SiSiView
+Main-Class: de.freiburg.uni.iig.sisi.view.MainView

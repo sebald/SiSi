@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: SiSi
 Bundle-SymbolicName: SiSi
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.freiburg.uni.iig.sisi.view.SiSiView
+Bundle-Activator: de.freiburg.uni.iig.sisi.view.MainView
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.junit,
