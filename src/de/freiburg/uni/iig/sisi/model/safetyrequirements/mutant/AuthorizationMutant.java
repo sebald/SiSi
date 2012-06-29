@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
-import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.resource.Role;

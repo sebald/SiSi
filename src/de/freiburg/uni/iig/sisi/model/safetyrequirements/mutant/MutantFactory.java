@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Random;
 
-import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
@@ -17,24 +16,14 @@ public class MutantFactory {
 	
 	// counter to create ids for the mutants
 	private static int created = 0;
-	
-	/**
-	 * Creates a mutant that violates a authorization and/or delegation.
-	 * 
-	 * @param transition
-	 * @return mutant for {@link Transition}
-	 */
-	public static MutantObject createMutantFor(Transition transition, ProcessModel processModel) {
-		return new AuthorizationMutant(createID(), transition, processModel);
-	}
-	
+
 	/**
 	 * Creates a mutant that violates an authorization and/or delegation.
 	 * 
 	 * @param processModel
 	 * @return
 	 */
-	public static MutantObject createAuthorizationMutantFor(ProcessModel processModel) {
+	public static MutantObject createMutantFor(ProcessModel processModel) {
 		HashSet<Transition> transitions = new HashSet<Transition>(processModel.getNet().getTransitions());
 		SafetyRequirements sr = processModel.getSafetyRequirements();
 		for (Transition transition : processModel.getNet().getTransitions()) {
@@ -45,6 +34,16 @@ public class MutantFactory {
 		Random generator = new Random();
 		Object[] values = transitions.toArray();		
 		return new AuthorizationMutant(createID(), (Transition) values[generator.nextInt(values.length)], processModel);
+	}	
+	
+	/**
+	 * Creates a mutant that violates a authorization and/or delegation.
+	 * 
+	 * @param transition
+	 * @return mutant for {@link Transition}
+	 */
+	public static MutantObject createMutantFor(Transition transition, ProcessModel processModel) {
+		return new AuthorizationMutant(createID(), transition, processModel);
 	}
 	
 	/**

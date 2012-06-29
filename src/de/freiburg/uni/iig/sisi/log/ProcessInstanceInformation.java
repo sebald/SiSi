@@ -33,7 +33,7 @@ public class ProcessInstanceInformation extends ModelObject {
 	public String toString() {
 		String nl = System.lineSeparator();
 		
-		String s = "RunID: " + getId() + nl + "Deviation Type: " + deviationType + nl + "Details: ";
+		String s = "CaseID: " + getId() + nl + "Deviation Type: " + deviationType + nl + "Details: ";
 		
 		switch (deviationType) {
 		case NONE:

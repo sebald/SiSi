@@ -11,7 +11,6 @@ import de.freiburg.uni.iig.sisi.log.MutationEvent;
 import de.freiburg.uni.iig.sisi.log.ProcessInstanceInformation;
 import de.freiburg.uni.iig.sisi.log.SimulationEvent;
 import de.freiburg.uni.iig.sisi.model.ModelObject;
-import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.NarratorObject;
 import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
@@ -25,6 +24,7 @@ import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl.UsageControlType;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantFactory;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantObject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
 import de.freiburg.uni.iig.sisi.simulation.SimulationConfiguration.ResourceSelectionMode;
@@ -245,7 +245,7 @@ public class SimulationEngine extends NarratorObject {
 		
 		// create authorization violations
 		for (int i = 0; i < configuration.getRunsViolatingAuthorizations(); i++) {
-			mutations.add(MutantFactory.createAuthorizationMutantFor(currentProcessModel));
+			mutations.add(MutantFactory.createMutantFor(currentProcessModel));
 		}
 		// create policy/uc mutants
 		for (Entry<ModelObject, Integer> entry : configuration.getViolationMap().entrySet()) {

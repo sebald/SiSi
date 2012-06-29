@@ -1,7 +1,9 @@
-package de.freiburg.uni.iig.sisi.model;
+package de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant;
 
 import java.util.HashSet;
 
+import de.freiburg.uni.iig.sisi.model.ModelObject;
+import de.freiburg.uni.iig.sisi.model.ProcessModel;
 import de.freiburg.uni.iig.sisi.model.resource.Subject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements;
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;

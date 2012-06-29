@@ -95,7 +95,7 @@ public class LogView extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 		        FileDialog fd = new FileDialog(getShell(), SWT.SAVE);
-		        fd.setText("Save Log to...");
+		        fd.setText("Save Log(s) to...");
 		        fd.setFilterPath((String) ((ToolItem) e.getSource()).getData());
 		        String[] filterExt = { "*.log", "*.*" };
 		        fd.setFilterExtensions(filterExt);
@@ -139,7 +139,7 @@ public class LogView extends Shell {
 		
 		// tab violations
 		TabItem tbtmViolations = new TabItem(tabFolder, SWT.NONE);
-		tbtmViolations.setText("Violations Data");
+		tbtmViolations.setText("Violation Data");
 		
 		violationDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL);
 		violationDataText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
@@ -184,7 +184,7 @@ public class LogView extends Shell {
 		TreeItem trtmFullEventLog = new TreeItem(tree, SWT.NONE);
 		trtmFullEventLog.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		trtmFullEventLog.setImage(new Image(this.getDisplay(), "imgs/report.png"));
-		trtmFullEventLog.setText("Event Log");
+		trtmFullEventLog.setText("Composite Log");
 		trtmFullEventLog.setData("all");
 		
 		// add single runs to tree 
@@ -193,14 +193,13 @@ public class LogView extends Shell {
 				createTreeEntry(logEntry, trtmFullEventLog);
 			}
 		}
-			
-		trtmFullEventLog.setExpanded(true);
 		scrolledTreeComposite.setContent(tree);
 		scrolledTreeComposite.setMinSize(tree.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		createContents();
 		
 		// select "all"
 		tree.setSelection(trtmFullEventLog);
+		trtmFullEventLog.setExpanded(true);
 		writeLogToTabs("all");
 		resizeTable(eventsTable);
 	}

@@ -1,0 +1,318 @@
+<class-diagram version="1.0.9" icons="false" always-add-relationships="false" generalizations="false" 
+  realizations="false" associations="true" dependencies="false" nesting-relationships="false">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.ProcessModel" project="SiSi" 
+    file="/SiSi/src/de/freiburg/uni/iig/sisi/model/ProcessModel.java" binary="false">    
+    <position height="-1" width="-1" x="644" y="181"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.net.PTNet" project="SiSi" 
+    file="/SiSi/src/de/freiburg/uni/iig/sisi/model/net/PTNet.java" binary="false">    
+    <position height="-1" width="-1" x="644" y="247"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.net.Place" project="SiSi" 
+    file="/SiSi/src/de/freiburg/uni/iig/sisi/model/net/Place.java" binary="false">    
+    <position height="-1" width="-1" x="741" y="311"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.net.Arc" project="SiSi" 
+    file="/SiSi/src/de/freiburg/uni/iig/sisi/model/net/Arc.java" binary="false">    
+    <position height="-1" width="-1" x="516" y="311"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="5" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.net.Transition" 
+    project="SiSi" file="/SiSi/src/de/freiburg/uni/iig/sisi/model/net/Transition.java" binary="false">    
+    <position height="-1" width="-1" x="643" y="424"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="6" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.resource.ResourceModel" 
+    project="SiSi" file="/SiSi/src/de/freiburg/uni/iig/sisi/model/resource/ResourceModel.java" binary="false">    
+    <position height="-1" width="-1" x="1022" y="247"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="7" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.resource.WorkObject" 
+    project="SiSi" file="/SiSi/src/de/freiburg/uni/iig/sisi/model/resource/WorkObject.java" binary="false">    
+    <position height="-1" width="-1" x="919" y="311"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="8" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.resource.Subject" 
+    project="SiSi" file="/SiSi/src/de/freiburg/uni/iig/sisi/model/resource/Subject.java" binary="false">    
+    <position height="-1" width="-1" x="1147" y="311"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="9" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.resource.Role" project="SiSi" 
+    file="/SiSi/src/de/freiburg/uni/iig/sisi/model/resource/Role.java" binary="false">    
+    <position height="-1" width="-1" x="1022" y="424"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="10" corner="BOTTOM_RIGHT" language="java" 
+    name="de.freiburg.uni.iig.sisi.model.safetyrequirements.SafetyRequirements" project="SiSi" 
+    file="/SiSi/src/de/freiburg/uni/iig/sisi/model/safetyrequirements/SafetyRequirements.java" binary="false">    
+    <position height="-1" width="-1" x="311" y="247"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="11" corner="BOTTOM_RIGHT" language="java" name="de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy" 
+    project="SiSi" file="/SiSi/src/de/freiburg/uni/iig/sisi/model/safetyrequirements/Policy.java" binary="false">    
+    <position height="-1" width="-1" x="311" y="423"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="12" corner="BOTTOM_RIGHT" language="java" 
+    name="de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl" project="SiSi" 
+    file="/SiSi/src/de/freiburg/uni/iig/sisi/model/safetyrequirements/UsageControl.java" binary="false">    
+    <position height="-1" width="-1" x="311" y="470"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+      visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <association id="13">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="14" name="places"/>      
+      <multiplicity id="15" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="16">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="17" name="roles"/>      
+      <multiplicity id="18" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="19">    
+    <bendpoint x="1147" y="424"/>    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="20" name="roles"/>      
+      <multiplicity id="21" minimum="0" maximum="2147483647">        
+        <position height="14" width="16" x="1115" y="427"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="22">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="23" name="members"/>      
+      <multiplicity id="24" minimum="0" maximum="2147483647">        
+        <position height="14" width="16" x="1094" y="334"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="25">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="26" name="subjects"/>      
+      <multiplicity id="27" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="28">    
+    <bendpoint x="572" y="470"/>    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="29" name="objective"/>      
+      <multiplicity id="30" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="31">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="32" name="domains"/>      
+      <multiplicity id="33" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="34">    
+    <bendpoint x="663" y="338"/>    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="35" name="fireableTransitions"/>      
+      <multiplicity id="36" minimum="0" maximum="2147483647">        
+        <position height="14" width="16" x="655" y="387"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="37">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="38" name="net"/>      
+      <multiplicity id="39" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="40">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="41" name="usedBy"/>      
+      <multiplicity id="42" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="43">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="44" name="workObjects"/>      
+      <multiplicity id="45" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="46">    
+    <bendpoint x="362" y="355"/>    
+    <bendpoint x="446" y="377"/>    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="47" name="objectiveMap"/>      
+      <multiplicity id="48" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="49">    
+    <bendpoint x="626" y="335"/>    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="50" name="transitions"/>      
+      <multiplicity id="51" minimum="0" maximum="2147483647">        
+        <position height="14" width="16" x="619" y="389"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="52">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="53" name="safetyRequirements"/>      
+      <multiplicity id="54" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="55">    
+    <bendpoint x="523" y="451"/>    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="56" name="objective"/>      
+      <multiplicity id="57" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="58">    
+    <bendpoint x="493" y="424"/>    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="59" name="eventually"/>      
+      <multiplicity id="60" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="61">    
+    <bendpoint x="437" y="346"/>    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="62" name="eventuallyMap"/>      
+      <multiplicity id="63" minimum="0" maximum="2147483647">        
+        <position height="14" width="16" x="582" y="386"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="64">    
+    <bendpoint x="176" y="248"/>    
+    <bendpoint x="176" y="469"/>    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="65" name="usageControls"/>      
+      <multiplicity id="66" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="67">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="68" name="policies"/>      
+      <multiplicity id="69" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="70">    
+    <bendpoint x="310" y="497"/>    
+    <bendpoint x="644" y="497"/>    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="71" name="eventually"/>      
+      <multiplicity id="72" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="73">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="74" name="resourceModel"/>      
+      <multiplicity id="75" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="76">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="77" name="arcs"/>      
+      <multiplicity id="78" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="false" package="true" initial-value="false" signature="false" 
+    visibility="false">    
+    <attributes public="false" package="false" protected="false" private="false"/>    
+    <operations public="false" package="false" protected="false" private="false"/>  
+  </classifier-display>  
+  <association-display labels="false" multiplicity="true"/>
+</class-diagram>

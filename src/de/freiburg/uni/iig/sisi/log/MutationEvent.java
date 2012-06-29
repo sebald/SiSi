@@ -1,11 +1,11 @@
 package de.freiburg.uni.iig.sisi.log;
 
 import de.freiburg.uni.iig.sisi.model.ModelObject;
-import de.freiburg.uni.iig.sisi.model.MutantObject;
 import de.freiburg.uni.iig.sisi.model.net.Transition;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.Policy;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.UsageControl;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.AuthorizationMutant;
+import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.MutantObject;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.PolicyMutant;
 import de.freiburg.uni.iig.sisi.model.safetyrequirements.mutant.UsageControlMutant;
 
@@ -72,10 +72,10 @@ public class MutationEvent {
 			}
 		}
 		
-		String s = "RunID: " + simulationID + nl + "Type: " + mutant.getClass().getSimpleName();
+		String s = "CaseID: " + simulationID + nl + "Type: " + mutant.getClass().getSimpleName();
 		if( type != "" )
 			s += " (" + type + ")";
-		s += nl + "Violated: " + objectViolated + nl + "Mutation: " + mutation;
+		s += nl + "Violated: " + objectViolated + " (" + objectViolated.getId() +")"+ nl + "Mutation: " + mutation;
 		
 		return s;
 	}
