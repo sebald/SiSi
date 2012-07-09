@@ -256,7 +256,11 @@ public class VariantProcessModel extends ProcessModel {
 	private void silenceTransition() {
 		Random generator = new Random();
 		Object[] values = getNonEventuallyTransitions().toArray();
-		Transition transition = ((Transition) values[generator.nextInt(values.length)]);
+		Transition transition;
+		do {
+			transition = ((Transition) values[generator.nextInt(values.length)]);
+		// only skip if not eventually part of an safety requirement!
+		} while ( getSafetyRequirements().getEventuallyMap().contains(transition) );
 		getDeviation().addOldValue(transition);
 		transition.setType(TransitionType.SILENT);
 		getDeviation().addNewValue(transition);
