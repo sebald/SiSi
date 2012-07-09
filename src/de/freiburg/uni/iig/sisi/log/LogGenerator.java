@@ -2,11 +2,9 @@ package de.freiburg.uni.iig.sisi.log;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.TreeMap;
 
 import de.freiburg.uni.iig.sisi.simulation.SimulationEngine;
@@ -91,13 +89,13 @@ public class LogGenerator implements PropertyChangeListener {
 		
 		// create file
 		if ( createFile ) {
-			Writer output = null;
 			File file = new File(path + getFileType());
+			FileOutputStream fop = new FileOutputStream(file);
 			if ( !file.exists() )
 				file.createNewFile();
-			output = new BufferedWriter(new FileWriter(file));
-			output.write(log);
-			output.close();			
+			fop.write(log.getBytes("UTF-8"));
+			fop.flush();
+			fop.close();	
 		}
 		generateViolationLog(path, true);
 		generateModelLog(path, true);
@@ -113,13 +111,13 @@ public class LogGenerator implements PropertyChangeListener {
 			log = logToCSV(id);
 			// create file
 			if ( createFile ) {
-				Writer output = null;
 				File file = new File(path + getFileType());
+				FileOutputStream fop = new FileOutputStream(file);
 				if ( !file.exists() )
 					file.createNewFile();
-				output = new BufferedWriter(new FileWriter(file));
-				output.write(log);
-				output.close();			
+				fop.write(log.getBytes("UTF-8"));
+				fop.flush();
+				fop.close();	
 			}			
 		}
 
@@ -142,13 +140,15 @@ public class LogGenerator implements PropertyChangeListener {
 		
 		// create file
 		if ( createFile ) {
-			Writer output = null;
 			File file = new File(path + "_violationData.log");
 			if ( !file.exists() )
 				file.createNewFile();
-			output = new BufferedWriter(new FileWriter(file));
-			output.write(log);
-			output.close();			
+			FileOutputStream fop = new FileOutputStream(file);
+			if ( !file.exists() )
+				file.createNewFile();
+			fop.write(log.getBytes("UTF-8"));
+			fop.flush();
+			fop.close();		
 		}	
 		return log;
 	}
@@ -164,13 +164,13 @@ public class LogGenerator implements PropertyChangeListener {
 		
 		// create file
 		if ( createFile ) {
-			Writer output = null;
 			File file = new File(path + "_violationData.log");
+			FileOutputStream fop = new FileOutputStream(file);
 			if ( !file.exists() )
 				file.createNewFile();
-			output = new BufferedWriter(new FileWriter(file));
-			output.write(log);
-			output.close();			
+			fop.write(log.getBytes("UTF-8"));
+			fop.flush();
+			fop.close();	
 		}
 		return null;
 	}	
@@ -186,13 +186,13 @@ public class LogGenerator implements PropertyChangeListener {
 		
 		// create file
 		if ( createFile ) {
-			Writer output = null;
 			File file = new File(path + "_modelData.log");
+			FileOutputStream fop = new FileOutputStream(file);
 			if ( !file.exists() )
 				file.createNewFile();
-			output = new BufferedWriter(new FileWriter(file));
-			output.write(log);
-			output.close();			
+			fop.write(log.getBytes("UTF-8"));
+			fop.flush();
+			fop.close();	
 		}	
 		return log;
 	}	
@@ -206,13 +206,13 @@ public class LogGenerator implements PropertyChangeListener {
 		
 		// create file
 		if ( createFile ) {
-			Writer output = null;
 			File file = new File(path + "_modelData.log");
+			FileOutputStream fop = new FileOutputStream(file);
 			if ( !file.exists() )
 				file.createNewFile();
-			output = new BufferedWriter(new FileWriter(file));
-			output.write(log);
-			output.close();			
+			fop.write(log.getBytes("UTF-8"));
+			fop.flush();
+			fop.close();		
 		}
 		return null;
 	}	
