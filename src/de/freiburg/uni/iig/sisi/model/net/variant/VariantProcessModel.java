@@ -260,7 +260,7 @@ public class VariantProcessModel extends ProcessModel {
 		do {
 			transition = ((Transition) values[generator.nextInt(values.length)]);
 		// only skip if not eventually part of an safety requirement!
-		} while ( getSafetyRequirements().getEventuallyMap().contains(transition) );
+		} while ( getSafetyRequirements().getObjectiveMap().contains(transition) );
 		getDeviation().addOldValue(transition);
 		transition.setType(TransitionType.SILENT);
 		getDeviation().addNewValue(transition);
