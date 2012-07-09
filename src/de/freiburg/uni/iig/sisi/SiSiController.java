@@ -55,7 +55,7 @@ public class SiSiController {
 			// generate file name
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH-mm-ss");
 			Date date = new Date();
-			String fileName = "SiSiLog_"+ dateFormat.format(date)  + ".log";
+			String fileName = "SiSiLog_"+ dateFormat.format(date);
 			String path = simulationConfiguration.getSaveLogPath() + fileName;
 			logGenerator.generateLog(path, true);
 		}

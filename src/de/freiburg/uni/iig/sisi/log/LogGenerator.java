@@ -92,7 +92,7 @@ public class LogGenerator implements PropertyChangeListener {
 		// create file
 		if ( createFile ) {
 			Writer output = null;
-			File file = new File(path);
+			File file = new File(path + getFileType());
 			if ( !file.exists() )
 				file.createNewFile();
 			output = new BufferedWriter(new FileWriter(file));
@@ -114,7 +114,7 @@ public class LogGenerator implements PropertyChangeListener {
 			// create file
 			if ( createFile ) {
 				Writer output = null;
-				File file = new File(path);
+				File file = new File(path + getFileType());
 				if ( !file.exists() )
 					file.createNewFile();
 				output = new BufferedWriter(new FileWriter(file));
@@ -124,9 +124,7 @@ public class LogGenerator implements PropertyChangeListener {
 		}
 
 		if ( !mutationLog.isEmpty() ) {
-			String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
-			violationPath += "_violationData" + new String(path.substring(path.lastIndexOf('.')));
-			generateLogFromID(id, violationPath, true);
+			generateLogFromID(id, path + "_violationData.log", true);
 		}		
 		generateViolationLogFromID(id, path, true);
 		generateModelLogFromID(id, path, true);
@@ -137,9 +135,6 @@ public class LogGenerator implements PropertyChangeListener {
 		if ( mutationLog.isEmpty() )
 			return null;
 		
-		String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
-		violationPath += "_violationData" + new String(path.substring(path.lastIndexOf('.')));
-		
 		String log = "";
 		for (MutationEvent event : mutationLog.values()) {
 			log += event.toString() + System.getProperty("line.separator");
@@ -148,7 +143,7 @@ public class LogGenerator implements PropertyChangeListener {
 		// create file
 		if ( createFile ) {
 			Writer output = null;
-			File file = new File(violationPath);
+			File file = new File(path + "_violationData.log");
 			if ( !file.exists() )
 				file.createNewFile();
 			output = new BufferedWriter(new FileWriter(file));
@@ -170,7 +165,7 @@ public class LogGenerator implements PropertyChangeListener {
 		// create file
 		if ( createFile ) {
 			Writer output = null;
-			File file = new File(violationPath);
+			File file = new File(path + "_violationData.log");
 			if ( !file.exists() )
 				file.createNewFile();
 			output = new BufferedWriter(new FileWriter(file));
@@ -184,9 +179,6 @@ public class LogGenerator implements PropertyChangeListener {
 		if ( modelMap.isEmpty() )
 			return null;
 		
-		String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
-		violationPath += "_modelData" + new String(path.substring(path.lastIndexOf('.')));
-		
 		String log = "";
 		for (ProcessInstanceInformation info : modelMap.values()) {
 			log += info.toString() + System.getProperty("line.separator");
@@ -195,7 +187,7 @@ public class LogGenerator implements PropertyChangeListener {
 		// create file
 		if ( createFile ) {
 			Writer output = null;
-			File file = new File(violationPath);
+			File file = new File(path + "_modelData.log");
 			if ( !file.exists() )
 				file.createNewFile();
 			output = new BufferedWriter(new FileWriter(file));
@@ -208,16 +200,14 @@ public class LogGenerator implements PropertyChangeListener {
 	private String generateModelLogFromID(String id, String path, boolean createFile) throws IOException {
 		if ( !modelMap.containsKey(id) )
 			return null;
-		
-		String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
-		violationPath += "_modelnData" + new String(path.substring(path.lastIndexOf('.')));		
+
 		// parse log
 		String log = modelMap.get(id).toString() + System.getProperty("line.separator");
 		
 		// create file
 		if ( createFile ) {
 			Writer output = null;
-			File file = new File(violationPath);
+			File file = new File(path + "_modelData.log");
 			if ( !file.exists() )
 				file.createNewFile();
 			output = new BufferedWriter(new FileWriter(file));
@@ -253,6 +243,11 @@ public class LogGenerator implements PropertyChangeListener {
 	
 	public String logsToMXML(){
 		return MXMLLog.createMXML(eventLogs);
+	}
+	
+	private String getFileType() {
+		if ( fileMode == FileMode.CSV ) return ".csv";
+		return ".mxml";
 	}
 	
 }
