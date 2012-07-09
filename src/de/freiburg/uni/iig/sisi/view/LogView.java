@@ -32,6 +32,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import de.freiburg.uni.iig.sisi.SiSiController;
 import de.freiburg.uni.iig.sisi.log.EventLog;
+import de.freiburg.uni.iig.sisi.log.LogGenerator.FileMode;
 import de.freiburg.uni.iig.sisi.log.MutationEvent;
 import de.freiburg.uni.iig.sisi.log.ProcessInstanceInformation;
 import de.freiburg.uni.iig.sisi.log.SimulationEvent;
@@ -158,7 +159,7 @@ public class LogView extends Shell {
 		// tab raw data
 		TabItem tbtmRawData = new TabItem(tabFolder, SWT.NONE);
 		tbtmRawData.setText("Raw Data");
-		rawDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.V_SCROLL);
+		rawDataText = new Text(tabFolder, SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL);
 		rawDataText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		tbtmRawData.setControl(rawDataText);
 		scrolledFolderComposite.setContent(tabFolder);
@@ -252,7 +253,12 @@ public class LogView extends Shell {
 			}
 			deviationDataText.setText(deviationData);			
 			// raw data
-			rawDataText.setText(controller.getLogGenerator().logsToCSV());
+			if( controller.getLogGenerator().getFileMode() == FileMode.CSV ) {
+				rawDataText.setText(controller.getLogGenerator().logsToCSV());
+			} else {
+				rawDataText.setText(controller.getLogGenerator().logsToMXML());
+			}
+			
 		} else {
 			// event table
 			createEventTableItems(controller.getLogGenerator().getEventLogs().get(id), eventsTable);
@@ -263,7 +269,11 @@ public class LogView extends Shell {
 			if( controller.getLogGenerator().getModelMap().containsKey(id) )
 				deviationDataText.setText(controller.getLogGenerator().getModelMap().get(id).toString());
 			// raw data
-			rawDataText.setText(controller.getLogGenerator().logToCSV(id));
+			if( controller.getLogGenerator().getFileMode() == FileMode.CSV ) {
+				rawDataText.setText(controller.getLogGenerator().logToCSV(id));
+			} else {
+				rawDataText.setText(controller.getLogGenerator().logToMXML(id));
+			}
 		}
 	}
 	

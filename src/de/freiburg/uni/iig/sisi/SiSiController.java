@@ -48,6 +48,7 @@ public class SiSiController {
 
 	public void runSimulation() throws SimulationExcpetion, IOException{
 		SimulationEngine se = new SimulationEngine(simulationConfiguration);
+		System.out.println(simulationConfiguration.getFileMode());
 		logGenerator = new LogGenerator(se, simulationConfiguration.getFileMode());
 		se.run();
 		

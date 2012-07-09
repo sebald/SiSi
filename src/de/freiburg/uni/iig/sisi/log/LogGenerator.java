@@ -34,6 +34,10 @@ public class LogGenerator implements PropertyChangeListener {
 		this.fileMode = fileMode;
 	}
 	
+	public FileMode getFileMode() {
+		return fileMode;
+	}
+
 	public TreeMap<String, EventLog> getEventLogs() {
 		return eventLogs;
 	}	
@@ -80,7 +84,7 @@ public class LogGenerator implements PropertyChangeListener {
 		// parse log
 		String log = "";
 		if ( fileMode == FileMode.MXML ) {
-			log = logsToCSV();
+			log = MXMLLog.createMXML(eventLogs);
 		} else {
 			log = logsToCSV();
 		}
@@ -104,20 +108,19 @@ public class LogGenerator implements PropertyChangeListener {
 		// parse log
 		String log = "";
 		if ( fileMode == FileMode.MXML ) {
-			log = logToCSV(id);
+			log = MXMLLog.createMXML(eventLogs);
 		} else {
 			log = logToCSV(id);
-		}
-		
-		// create file
-		if ( createFile ) {
-			Writer output = null;
-			File file = new File(path);
-			if ( !file.exists() )
-				file.createNewFile();
-			output = new BufferedWriter(new FileWriter(file));
-			output.write(log);
-			output.close();			
+			// create file
+			if ( createFile ) {
+				Writer output = null;
+				File file = new File(path);
+				if ( !file.exists() )
+					file.createNewFile();
+				output = new BufferedWriter(new FileWriter(file));
+				output.write(log);
+				output.close();			
+			}			
 		}
 
 		if ( !mutationLog.isEmpty() ) {
@@ -225,7 +228,7 @@ public class LogGenerator implements PropertyChangeListener {
 	}	
 	
 	public String logToCSV(String id) {
-		String log = "";
+		String log = "Case ID,Task,Subjekt,Obejcts" + System.getProperty("line.separator");
 		for (SimulationEvent event : eventLogs.get(id).getEvents()) {
 			log += event.toCSV() + System.getProperty("line.separator");
 		}
@@ -233,7 +236,7 @@ public class LogGenerator implements PropertyChangeListener {
 	}
 	
 	public String logsToCSV(){
-		String log = "";
+		String log = "Case ID,Task,Subjekt,Obejcts" + System.getProperty("line.separator");
 		for (EventLog eventLog : eventLogs.values()) {
 			for (SimulationEvent event : eventLog.getEvents()) {
 				log += event.toCSV() + System.getProperty("line.separator");
@@ -241,5 +244,15 @@ public class LogGenerator implements PropertyChangeListener {
 		}		
 		return log;
 	}
-
+	
+	public String logToMXML(String id){
+		TreeMap<String, EventLog> tree = new TreeMap<>();
+		tree.put(id, eventLogs.get(id));
+		return MXMLLog.createMXML(tree);
+	}
+	
+	public String logsToMXML(){
+		return MXMLLog.createMXML(eventLogs);
+	}
+	
 }
