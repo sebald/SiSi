@@ -29,7 +29,7 @@ public class SimulationConfiguration {
 	private HashMap<ModelObject, Integer> violationMap = new HashMap<ModelObject, Integer>();
 	private HashMap<DeviationType, Integer> deviationMap = new HashMap<DeviationType, Integer>();
 	
-	private FileMode fileMode = FileMode.CSV;
+	private FileMode fileMode = FileMode.MXML;
 	private String saveLogPath = System.getProperty("user.dir") + System.getProperty("file.separator");
 	private boolean seperateLogs = false;
 

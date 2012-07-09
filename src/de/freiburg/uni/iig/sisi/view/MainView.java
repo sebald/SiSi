@@ -290,7 +290,7 @@ public class MainView {
 		lblSelectLogMode.setText("Select Log Mode:");
 		
 		Combo combo = new Combo(selectLogModeComposite, SWT.READ_ONLY);
-		combo.setItems(new String[] {"CSV", "MXML"});
+		combo.setItems(new String[] {"MXML", "CSV"});
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		combo.select(0);
 		combo.addSelectionListener(new SelectionAdapter() {
