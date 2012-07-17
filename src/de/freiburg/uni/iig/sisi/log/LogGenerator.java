@@ -156,9 +156,7 @@ public class LogGenerator implements PropertyChangeListener {
 	private String generateViolationLogFromID(String id, String path, boolean createFile) throws IOException {
 		if ( !mutationLog.containsKey(id) )
 			return null;
-		
-		String violationPath = new String(path.substring(0, path.lastIndexOf('.')));
-		violationPath += "_violationData" + new String(path.substring(path.lastIndexOf('.')));		
+	
 		// parse log
 		String log = mutationLog.get(id).toString() + System.getProperty("line.separator");
 		

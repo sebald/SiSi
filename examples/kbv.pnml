@@ -391,9 +391,7 @@
 			</object>	
 		</resourceModel>
 		<safetyRequirements>
-			<delegations>
-				<delegation roleRef="r02" transRef="t07" />
-			</delegations>
+			<delegation roleRef="r02" transRef="t07" />
 			<policy id="sr01" type="sod" objective="t04" eventually="t05" />
 			<usageControl id="uc01" type="ar" objective="t01" eventually="t08" />
 		</safetyRequirements>
